@@ -1,0 +1,13 @@
+{% include 'youtube/_tool_brand.html' %}
+<main class="media-shell youtube-utility-shell">
+    <div class="media-privacy"><i class="bi bi-shield-check"></i> Processed locally in your browser where possible</div>
+    <div class="media-toolbar" aria-label="Tool controls">
+        <button class="media-btn light" id="mediaTheme"><i class="bi bi-moon-stars"></i> Dark mode</button>
+        <button class="media-btn light" id="mediaFavorite"><i class="bi bi-star"></i> Favorite</button>
+        <button class="media-btn light" id="mediaShare"><i class="bi bi-share"></i> Share</button>
+        <button class="media-btn light" id="mediaHelp"><i class="bi bi-question-circle"></i> How to use</button>
+        <button class="media-btn light" id="mediaHistory"><i class="bi bi-clock-history"></i> History</button>
+    </div>
+    <div class="media-history" id="mediaHistoryPanel" hidden></div>
+</main>
+<script src="{{ url_for('static', filename='js/media_tools/media-tools.js') }}"></script>

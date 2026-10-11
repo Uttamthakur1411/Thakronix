@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Sketch Art Studio | Thakronix</title>
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sketch_studio.css', v=2) }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+
+<body class="sketch-page-body">
+
+
+<div class="sketch-app container" id="sketchApp">
+
+    <header class="sketch-topbar">
+        <div class="tool-actions" aria-label="Sketch tool actions">
+            <button class="tool-action" id="sketchThemeToggle" type="button" aria-label="Switch to dark mode"><i class="bi bi-moon-stars"></i> Dark mode</button>
+            <button class="tool-action" type="button"><i class="bi bi-star"></i> Favorite</button>
+            <button class="tool-action" type="button"><i class="bi bi-share"></i> Share</button>
+            <button class="tool-action" type="button"><i class="bi bi-question-circle"></i> How to use</button>
+            <button class="tool-action" type="button"><i class="bi bi-clock-history"></i> History</button>
+        </div>
+    </header>
+
+    <div class="header sketch-header">
+        <span class="sketch-eyebrow"><i class="bi bi-image-alt" aria-hidden="true"></i> LOCAL IMAGE WORKSPACE</span>
+        <h1>Sketch <span>Art Studio</span></h1>
+        <p>
+            Turn a photo into expressive pencil, ink, cartoon and color artwork.
+            Your original stays untouched while you explore each style.
+        </p>
+    </div>
+
+    <main class="studio-card" id="sketchWorkspace">
+        <div class="workspace-head">
+            <div class="workspace-heading-group">
+                <a class="workspace-back" href="/"><i class="bi bi-arrow-left"></i> All image tools</a>
+                <span class="workspace-kicker">FOCUSED WORKSPACE</span>
+                <h2>Sketch Art Studio</h2>
+            </div>
+            <button class="workspace-close" type="button" id="workspaceClose">Close</button>
+        </div>
+
+        <section class="editor-panel" aria-labelledby="sourceHeading">
+            <div class="panel-heading">
+                <span class="step-index">01</span>
+                <div><h2 id="sourceHeading">Add your image</h2><p>Choose a clear photo to get the best result.</p></div>
+            </div>
+
+
+        <!-- UPLOAD -->
+
+        <div
+            class="upload-box"
+            id="uploadBox"
+            role="group"
+            tabindex="0"
+            aria-label="Choose or drop an image to upload"
+        >
+
+            <div class="upload-content">
+
+                <div class="upload-icon"><i class="bi bi-cloud-arrow-up" aria-hidden="true"></i></div>
+
+                <h3>
+                    Upload Your Photo
+                </h3>
+
+                <p>
+                    JPG, PNG, WEBP, BMP or GIF · Up to 20 MB
+                </p>
+
+                <button
+                    type="button"
+                    class="choose-btn"
+                    id="chooseBtn"
+                >
+                    <i class="bi bi-image" aria-hidden="true"></i> Choose image
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <input
+            type="file"
+            id="imageInput"
+            accept="image/jpeg,image/png,image/webp,image/bmp,image/gif"
+            aria-label="Choose an image file"
+        >
+
+
+        <div
+            class="file-name"
+            id="fileName"
+            aria-live="polite"
+        ></div>
+
+
+        </section>
+
+        <section class="style-panel" aria-labelledby="stylesHeading">
+            <div class="panel-heading">
+                <span class="step-index">02</span>
+                <div><h2 id="stylesHeading">Choose an art style</h2><p>Pick a look. You can switch styles anytime.</p></div>
+            </div>
+        <!-- FILTER TITLE -->
+
+        <h2 class="filters-title">Style presets <span>6 looks</span></h2>
+        <!-- FILTER BUTTONS -->
+
+        <div class="filter-buttons">
+
+
+            <button
+                class="filter-btn"
+                data-filter="pencil"
+            >
+                <span class="filter-icon"><i class="bi bi-pencil" aria-hidden="true"></i></span>
+                <span class="filter-copy"><strong>Pencil</strong><small>Graphite detail</small></span>
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="ink"
+            >
+                <span class="filter-icon"><i class="bi bi-pen" aria-hidden="true"></i></span>
+                <span class="filter-copy"><strong>Ink drawing</strong><small>Bold linework</small></span>
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="cartoon"
+            >
+                <span class="filter-icon"><i class="bi bi-brush" aria-hidden="true"></i></span>
+                <span class="filter-copy"><strong>Cartoon</strong><small>Graphic color</small></span>
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="oil"
+            >
+                <span class="filter-icon"><i class="bi bi-palette2" aria-hidden="true"></i></span>
+                <span class="filter-copy"><strong>Oil art</strong><small>Painted texture</small></span>
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="bw"
+            >
+                <span class="filter-icon"><i class="bi bi-circle-half" aria-hidden="true"></i></span>
+                <span class="filter-copy"><strong>Black &amp; white</strong><small>Pure contrast</small></span>
+            </button>
+
+
+            <button
+                class="filter-btn"
+                data-filter="color"
+            >
+                <span class="filter-icon"><i class="bi bi-brightness-high" aria-hidden="true"></i></span>
+                <span class="filter-copy"><strong>Color art</strong><small>Vivid finish</small></span>
+            </button>
+
+
+        </div>
+
+
+
+        <!-- LOADING -->
+
+        <div
+            class="loading"
+            id="loading"
+        >
+
+            <div class="spinner"></div>
+
+            <p>
+                Creating your artwork...
+            </p>
+
+        </div>
+
+
+
+        <!-- STATUS -->
+
+        <div
+            class="status"
+            id="status"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+        </section>
+
+
+
+        <!-- PREVIEW -->
+
+        <div
+            class="preview-section"
+            id="previewSection"
+        >
+
+
+            <div class="preview-heading">
+                <div><span class="sketch-eyebrow">03 · YOUR RESULT</span><h2>Compare your artwork</h2></div>
+                <span class="preview-note"><i class="bi bi-shield-check" aria-hidden="true"></i> Original image stays unchanged</span>
+            </div>
+
+            <div class="preview-grid">
+
+
+                <!-- ORIGINAL -->
+
+                <div class="preview-card">
+
+                    <h3>
+                        Source image
+                    </h3>
+
+                    <div class="image-wrapper">
+
+                        <img
+                            id="originalPreview"
+                            alt="Original Image"
+                        >
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RESULT -->
+
+                <div class="preview-card">
+
+                    <h3 id="resultTitle">
+                        Artwork preview
+                    </h3>
+
+                    <div class="image-wrapper">
+
+                        <img
+                            id="previewImage"
+                            alt="Generated Artwork"
+                        >
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+
+                <button
+                    class="action-btn download-btn"
+                    id="downloadBtn"
+                >
+                    <i class="bi bi-download" aria-hidden="true"></i> Download artwork
+                </button>
+
+
+                <button
+                    class="action-btn reset-btn"
+                    id="resetBtn"
+                >
+                    <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Start over
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+</div>
+
+
+
+<script>
+
+
+/* ==========================================
+   ELEMENTS
+========================================== */
+
+
+const imageInput =
+    document.getElementById(
+        "imageInput"
+    );
+
+
+const uploadBox =
+    document.getElementById(
+        "uploadBox"
+    );
+
+
+const chooseBtn =
+    document.getElementById(
+        "chooseBtn"
+    );
+
+
+const fileName =
+    document.getElementById(
+        "fileName"
+    );
+
+
+const originalPreview =
+    document.getElementById(
+        "originalPreview"
+    );
+
+
+const previewImage =
+    document.getElementById(
+        "previewImage"
+    );
+
+
+const previewSection =
+    document.getElementById(
+        "previewSection"
+    );
+
+
+const loading =
+    document.getElementById(
+        "loading"
+    );
+
+
+const statusBox =
+    document.getElementById(
+        "status"
+    );
+
+
+const downloadBtn =
+    document.getElementById(
+        "downloadBtn"
+    );
+
+
+const resetBtn =
+    document.getElementById(
+        "resetBtn"
+    );
+
+const sketchThemeToggle = document.getElementById("sketchThemeToggle");
+
+const applySketchTheme = (isDark) => {
+    const body = document.body;
+    body.dataset.theme = isDark ? "dark" : "light";
+    if (sketchThemeToggle) {
+        const icon = sketchThemeToggle.querySelector("i");
+        if (icon) {
+            icon.className = isDark ? "bi bi-moon-stars" : "bi bi-sun";
+        }
+        sketchThemeToggle.innerHTML = isDark
+            ? '<i class="bi bi-moon-stars"></i> Light mode'
+            : '<i class="bi bi-sun"></i> Dark mode';
+        sketchThemeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+    }
+    localStorage.setItem("thakronix-theme:v7", isDark ? "dark" : "light");
+};
+
+if (sketchThemeToggle) {
+    const savedSketchTheme = localStorage.getItem("thakronix-theme:v7");
+    applySketchTheme(savedSketchTheme === "dark");
+    sketchThemeToggle.addEventListener("click", () => {
+        const isDark = document.body.dataset.theme !== "light";
+        applySketchTheme(!isDark);
+    });
+}
+
+const resultTitle =
+    document.getElementById(
+        "resultTitle"
+    );
+
+
+const filterButtons =
+    document.querySelectorAll(
+        ".filter-btn"
+    );
+
+
+/* ==========================================
+   VARIABLES
+========================================== */
+
+
+let selectedFile =
+    null;
+
+
+let resultURL =
+    null;
+
+
+
+/* ==========================================
+   OPEN FILE SELECTOR
+========================================== */
+
+
+chooseBtn.addEventListener(
+    "click",
+    function(event) {
+
+        event.stopPropagation();
+
+        imageInput.click();
+
+    }
+);
+
+
+
+uploadBox.addEventListener(
+    "click",
+    function() {
+
+        imageInput.click();
+
+    }
+);
+
+
+uploadBox.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.target === uploadBox &&
+            (event.key === "Enter" || event.key === " ")
+        ) {
+
+            event.preventDefault();
+
+            imageInput.click();
+
+        }
+
+    }
+);
+
+
+
+/* ==========================================
+   FILE SELECTED
+========================================== */
+
+
+imageInput.addEventListener(
+    "change",
+    function() {
+
+        if (
+            !this.files ||
+            !this.files.length
+        ) {
+
+            return;
+
+        }
+
+
+        selectedFile =
+            this.files[0];
+
+
+        fileName.textContent =
+            "Selected: " +
+            selectedFile.name;
+
+
+        /* Original Preview */
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            function(event) {
+
+                originalPreview.src =
+                    event.target.result;
+
+            };
+
+
+        reader.readAsDataURL(
+            selectedFile
+        );
+
+
+        previewSection.style.display =
+            "block";
+
+
+        previewImage.removeAttribute(
+            "src"
+        );
+
+
+        showStatus(
+            "Image selected successfully. Choose an art style.",
+            "success"
+        );
+
+    }
+);
+
+
+
+/* ==========================================
+   FILTER BUTTONS
+========================================== */
+
+
+filterButtons.forEach(
+    function(button) {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                if (
+                    !selectedFile
+                ) {
+
+                    showStatus(
+                        "Please upload an image first.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+                /* Remove active */
+
+                filterButtons.forEach(
+                    function(btn) {
+
+                        btn.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+                /* Add active */
+
+                this.classList.add(
+                    "active"
+                );
+
+
+                const filterType =
+                    this.dataset.filter;
+
+
+                createArtwork(
+                    filterType
+                );
+
+            }
+        );
+
+    }
+);
+
+
+
+/* ==========================================
+   CREATE ARTWORK
+========================================== */
+
+
+async function createArtwork(
+    filterType
+) {
+
+
+    /* Loading */
+
+    loading.style.display =
+        "block";
+
+
+    statusBox.style.display =
+        "none";
+
+
+    /* Disable buttons */
+
+    filterButtons.forEach(
+        function(button) {
+
+            button.disabled =
+                true;
+
+        }
+    );
+
+
+    try {
+
+
+        /* FormData */
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "image",
+            selectedFile
+        );
+
+
+        formData.append(
+            "filter",
+            filterType
+        );
+
+
+        /* API Request */
+
+        const response =
+            await fetch(
+                "/api/sketch",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        /* Check response */
+
+        if (
+            !response.ok
+        ) {
+
+            let errorMessage =
+                "Unable to create artwork.";
+
+
+            try {
+
+                const errorData =
+                    await response.json();
+
+
+                errorMessage =
+                    errorData.message ||
+                    errorMessage;
+
+            }
+
+            catch (
+                error
+            ) {
+
+                console.log(
+                    "Error response not JSON"
+                );
+
+            }
+
+
+            throw new Error(
+                errorMessage
+            );
+
+        }
+
+
+        /* Get Blob */
+
+        const blob =
+            await response.blob();
+
+
+        /* Remove old URL */
+
+        if (
+            resultURL
+        ) {
+
+            URL.revokeObjectURL(
+                resultURL
+            );
+
+        }
+
+
+        /* Create new URL */
+
+        resultURL =
+            URL.createObjectURL(
+                blob
+            );
+
+
+        /* Show Result */
+
+        previewImage.src =
+            resultURL;
+
+
+        previewSection.style.display =
+            "block";
+
+
+        /* Title */
+
+        const names = {
+
+            pencil:
+                "Pencil Sketch",
+
+            ink:
+                "Ink Drawing",
+
+            cartoon:
+                "Cartoon Effect",
+
+            oil:
+                "Oil Art",
+
+            bw:
+                "Black & White",
+
+            color:
+                "Color Art"
+
+        };
+
+
+        resultTitle.textContent =
+            names[filterType] ||
+            "Your Artwork";
+
+
+        showStatus(
+            "Artwork created successfully!",
+            "success"
+        );
+
+
+    }
+
+    catch (
+        error
+    ) {
+
+
+        console.error(
+            "Artwork Error:",
+            error
+        );
+
+
+        showStatus(
+            error.message ||
+            "Something went wrong.",
+            "error"
+        );
+
+
+    }
+
+    finally {
+
+
+        /* Hide loading */
+
+        loading.style.display =
+            "none";
+
+
+        /* Enable buttons */
+
+        filterButtons.forEach(
+            function(button) {
+
+                button.disabled =
+                    false;
+
+            }
+        );
+
+    }
+
+}
+
+
+
+/* ==========================================
+   DOWNLOAD ARTWORK
+========================================== */
+
+
+downloadBtn.addEventListener(
+    "click",
+    function() {
+
+
+        if (
+            !resultURL
+        ) {
+
+            showStatus(
+                "Please create an artwork first.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.href =
+            resultURL;
+
+
+        link.download =
+            "my-artwork-" +
+            Date.now() +
+            ".png";
+
+
+        document.body.appendChild(
+            link
+        );
+
+
+        link.click();
+
+
+        document.body.removeChild(
+            link
+        );
+
+    }
+);
+
+
+
+/* ==========================================
+   RESET
+========================================== */
+
+
+resetBtn.addEventListener(
+    "click",
+    function() {
+
+
+        /* Clear file */
+
+        imageInput.value =
+            "";
+
+
+        selectedFile =
+            null;
+
+
+        fileName.textContent =
+            "";
+
+
+        /* Clear images */
+
+        originalPreview.removeAttribute(
+            "src"
+        );
+
+
+        previewImage.removeAttribute(
+            "src"
+        );
+
+
+        /* Remove active buttons */
+
+        filterButtons.forEach(
+            function(button) {
+
+                button.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+        /* Hide preview */
+
+        previewSection.style.display =
+            "none";
+
+
+        /* Hide status */
+
+        statusBox.style.display =
+            "none";
+
+
+        /* Remove URL */
+
+        if (
+            resultURL
+        ) {
+
+            URL.revokeObjectURL(
+                resultURL
+            );
+
+            resultURL =
+                null;
+
+        }
+
+    }
+);
+
+
+
+/* ==========================================
+   STATUS MESSAGE
+========================================== */
+
+
+function showStatus(
+    message,
+    type
+) {
+
+
+    statusBox.textContent =
+        message;
+
+
+    statusBox.className =
+        "status " +
+        type;
+
+
+    statusBox.style.display =
+        "block";
+
+}
+
+
+
+/* ==========================================
+   DRAG & DROP
+========================================== */
+
+
+uploadBox.addEventListener(
+    "dragover",
+    function(event) {
+
+        event.preventDefault();
+
+        uploadBox.classList.add(
+            "is-dragging"
+        );
+
+    }
+);
+
+
+
+uploadBox.addEventListener(
+    "dragleave",
+    function() {
+
+        uploadBox.classList.remove(
+            "is-dragging"
+        );
+
+    }
+);
+
+
+
+uploadBox.addEventListener(
+    "drop",
+    function(event) {
+
+        event.preventDefault();
+
+
+        uploadBox.classList.remove(
+            "is-dragging"
+        );
+
+
+        const files =
+            event.dataTransfer.files;
+
+
+        if (
+            files.length
+        ) {
+
+            imageInput.files =
+                files;
+
+
+            imageInput.dispatchEvent(
+                new Event(
+                    "change"
+                )
+            );
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+@media(max-width:1050px){.app-shell{grid-template-columns:minmax(0,220px) minmax(0,1fr)}}
+@media(max-width:900px){
+  .utility-shell{grid-template-columns:minmax(0,1fr)}
+  .utility-shell>.utility-sidebar,.utility-shell>.utility-workspace,.utility-shell .utility-nav{width:100%;min-width:0;max-width:100%}
+  .utility-workspace .panel-grid{grid-template-columns:minmax(0,1fr)}
+  .utility-workspace .panel-grid>*{min-width:0}
+  .app-shell>.sidebar,.app-shell>.workspace{min-width:0}
+  .app-shell .workspace-head{align-items:flex-start;flex-direction:column}
+  .app-shell .head-actions{width:100%}
+  .app-shell .head-actions button{flex:1}
+  .app-shell .panel-grid,.app-shell .two-col,.app-shell .text-analyzer,.app-shell .calculator-layout{grid-template-columns:minmax(0,1fr)}
+  .app-shell .panel-grid>*,.app-shell .two-col>*,.app-shell .input-card,.app-shell .info-card,.app-shell .breakup-card,.app-shell .result-card{min-width:0}
+}
+@media(max-width:760px){.app-shell .calculator-nav{width:100%;min-width:0;max-width:100%}.app-shell .nav-item{flex:0 0 118px}}
+@media(max-width:600px){.utility-workspace .panel-grid .card{align-items:stretch;flex-direction:column}.utility-workspace .panel-grid .card input[type="file"]{max-width:100%;min-width:0;width:100%}.finance-catalog .filter-row{flex-wrap:wrap;overflow:visible;min-width:0}.app-shell [data-panel="discount"] .flow-label{white-space:normal;flex-wrap:wrap}}

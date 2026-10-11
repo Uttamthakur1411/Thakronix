@@ -1,0 +1,60 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Life Admin Studio{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/productivity_hubs.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/life_admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/emergency_qr.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/lifevault.css', v=1) }}">
+{% endblock %}
+{% block content %}
+{% set life_tools = [
+('expiry','Smart Document Expiry Manager','bi-calendar2-check','documents','Track renewals, priorities, upcoming expiries, calendar, timeline and document bundles.'),
+('receipt','Smart Bill & Receipt Analyzer','bi-receipt-cutoff','money','Upload a bill, extract or enter line items, verify totals, detect duplicates and save expenses.'),
+('shopping','Shopping Cost Comparison Studio','bi-cart-check','money','Compare actual, monthly, yearly and ownership costs across alternatives.'),
+('repair','Repair vs Replace Calculator','bi-tools','assets','Compare repair, replacement, warranty and maintenance costs over multiple years.'),
+('tco','Total Cost of Ownership Calculator','bi-car-front','assets','Add purchase, running, insurance, maintenance, repair and resale costs by year.'),
+('complaints','Smart Complaint & Service Tracker','bi-headset','assets','Track service cases, SLA dates, follow-ups, communication and resolution history.'),
+('warranty','Warranty Claim Manager','bi-shield-check','assets','Connect product, warranty, claim, service and repair history in one timeline.'),
+('maintenance','Home Maintenance Manager','bi-house-gear','assets','Schedule recurring home maintenance and track service costs and providers.'),
+('assets','Personal Asset Manager','bi-box-seam','assets','Manage electronics, appliances and vehicles with value, warranty, insurance and service history.'),
+('filelifecycle','Smart File Lifecycle Manager','bi-folder2-open','documents','Review file age, size, duplicates and lifecycle without moving or deleting originals.'),
+('vault','Personal Records Vault','bi-safe2','documents','Store private record details and attachments in a passphrase-encrypted local vault.'),
+('lifevault','LifeVault: Prepare for Life','bi-boxes','documents','Find documents by task, prepare life-event and emergency packs, review missing items and deadlines.'),
+('meeting','Smart Meeting Planner','bi-calendar3','work','Compare time zones, plan duration and capture agenda, notes and follow-ups.'),
+('actions','Meeting Action Tracker','bi-list-check','work','Track meeting decisions, owners, priorities, deadlines and completion.'),
+('projectcost','Smart Project Cost Estimator','bi-calculator','work','Estimate team labour, tools, hosting, materials, contingency and quote margin.'),
+('freelance','Freelance Project Command Center','bi-kanban','work','Connect client, project, milestones, tasks, hours, expenses, invoice and payment.'),
+('timebudget','Smart Time Budget Planner','bi-clock','work','Plan and compare daily and weekly time across commitments and activities.'),
+('audit','Digital Life Audit','bi-clipboard2-data','overview','Review expiry, subscriptions, files, warranties and tasks from local records.'),
+('dashboard','Life Admin Dashboard','bi-speedometer2','overview','See documents, money, assets, service, meetings and projects at a glance.'),
+('beforebuy','Before You Buy Analyzer','bi-bag-check','money','Compare price, usage, warranty, upkeep, alternatives and resale transparently.'),
+('emergency','Personal Emergency Information Card','bi-heart-pulse','documents','Create a printable card or a selected, encrypted emergency QR with expiry and instant revocation.'),
+('handover','Important Information Handover Pack','bi-archive','documents','Bundle selected contacts, assets, documents and instructions for handover.'),
+('lifeadmin','Universal Life Admin Workspace','bi-grid-1x2','overview','Connect records, reminders and workflows in one searchable private workspace.')
+] %}
+<section class="hub-page life-admin-page">
+  <header class="hub-hero">
+    <div class="hub-eyebrow"><i class="bi bi-grid-1x2"></i> LOCAL-FIRST LIFE ADMIN</div>
+    <h1>Life Admin <span>Studio</span></h1>
+    <p>Keep important records, renewals, assets, household tasks, projects and everyday costs organized in one private workspace.</p>
+    <div class="hub-badges"><span>23 focused tools</span><span>Browser-local records</span><span>Searchable workflows</span></div>
+  </header>
+  <section class="hub-catalog life-admin-catalog" aria-labelledby="lifeToolsTitle">
+    <div class="hub-heading"><div><span class="hub-kicker">POPULAR TOOLS</span><h2 id="lifeToolsTitle">Your records, work and life in one place</h2></div><label class="hub-search"><i class="bi bi-search" aria-hidden="true"></i><input id="lifeToolSearch" type="search" placeholder="Search Life Admin tools" aria-label="Search Life Admin tools"></label></div>
+    <div class="life-filter-row" role="group" aria-label="Filter Life Admin tools"><button class="life-filter active" data-filter="all" type="button">All</button><button class="life-filter" data-filter="documents" type="button">Documents</button><button class="life-filter" data-filter="money" type="button">Money</button><button class="life-filter" data-filter="assets" type="button">Assets</button><button class="life-filter" data-filter="work" type="button">Work</button><button class="life-filter" data-filter="overview" type="button">Overview</button></div>
+    <div class="hub-grid life-tool-grid" id="lifeToolCatalog">{% for key, title, icon, category, description in life_tools %}<button class="hub-card" type="button" data-tool="{{ key }}" data-category="{{ category }}"><span class="hub-icon"><i class="bi {{ icon }}" aria-hidden="true"></i></span><strong>{{ title }}</strong><small>{{ description }}</small><em>Open workspace <i class="bi bi-arrow-up-right" aria-hidden="true"></i></em></button>{% endfor %}</div>
+    <p class="life-empty" id="lifeToolEmpty" hidden>No tools match this search.</p>
+  </section>
+  <section class="hub-workspace life-workspace" id="lifeWorkspace" hidden>
+    <div class="workspace-head"><div><a href="/life-admin" class="hub-back"><i class="bi bi-arrow-left"></i> All Life Admin tools</a><span class="hub-kicker">FOCUSED WORKSPACE</span><h2 id="lifeWorkspaceTitle">Choose a tool</h2></div><button class="hub-secondary" id="lifeWorkspaceClose" type="button">Close</button></div>
+    <div id="lifeWorkspaceBody"></div>
+  </section>
+  <p class="hub-privacy"><i class="bi bi-shield-check"></i> Records are stored in this browser. The Records Vault encrypts its contents with your passphrase. Keep a separate backup of important information.</p>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="{{ url_for('static', filename='js/life_admin.js') }}"></script>
+{% endblock %}

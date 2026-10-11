@@ -1,0 +1,14 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Emergency Information Card{% endblock %}
+{% block head %}<meta name="robots" content="noindex,nofollow,noarchive"><link rel="stylesheet" href="{{ url_for('static', filename='css/emergency_qr.css') }}">{% endblock %}
+{% block content %}
+<section class="emergency-public-page" aria-labelledby="emergencyPublicTitle">
+  <header class="emergency-public-heading"><span class="hub-kicker"><i class="bi bi-heart-pulse"></i> EMERGENCY INFORMATION</span><h1 id="emergencyPublicTitle">Emergency card</h1><p>Read-only information shared by the card owner. This private link can expire or be revoked at any time.</p></header>
+  {% if card %}
+  <article class="emergency-public-card">
+    {% for section in card %}<section class="emergency-public-section"><h2>{{ section.name }}</h2><dl>{% for field in section.fields %}<div><dt>{{ field.label }}</dt><dd>{{ field.value }}</dd></div>{% endfor %}</dl></section>{% endfor %}
+    <footer><i class="bi bi-shield-lock"></i> Temporary, read-only emergency information</footer>
+  </article>
+  {% else %}<div class="emergency-public-unavailable"><i class="bi bi-shield-exclamation"></i><h2>Card unavailable</h2><p>{{ status }}</p></div>{% endif %}
+</section>
+{% endblock %}

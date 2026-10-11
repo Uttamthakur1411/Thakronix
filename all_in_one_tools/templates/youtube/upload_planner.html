@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Planner | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button"><i class="bi bi-arrow-left"></i> Back to YouTube Tools</a>
+        <div class="tool-header">
+            <h1>🗓️ YouTube Upload Planner</h1>
+            <p>Plan your YouTube uploads with a calendar and production checklist</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="videoTitle">Video Title</label>
+                <input id="videoTitle" type="text" placeholder="e.g., 10 Python Tips for Beginners">
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px">
+                <div class="input-group"><label for="uploadDate">Upload Date</label><input id="uploadDate" type="date"></div>
+                <div class="input-group"><label for="uploadTime">Upload Time</label><input id="uploadTime" type="time" value="18:00"></div>
+                <div class="input-group"><label for="contentType">Content Type</label><select id="contentType"><option>Long Video</option><option>YouTube Short</option><option>Live Stream</option><option>Premiere</option></select></div>
+            </div>
+            <div class="input-group"><label for="notes">Planning Notes</label><textarea id="notes" placeholder="Topics, links, sponsor notes, or reminders"></textarea></div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="addPlan()"><i class="bi bi-calendar-plus"></i> Add to Planner</button>
+                <button class="btn btn-secondary" onclick="clearForm()"><i class="bi bi-arrow-clockwise"></i> Clear</button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section">
+            <div class="result-meta">
+                <div class="meta-item"><div class="meta-label">Planned Uploads</div><div class="meta-value" id="planCount">0</div></div>
+                <div class="meta-item"><div class="meta-label">Completed Tasks</div><div class="meta-value" id="completedCount">0</div></div>
+                <div class="meta-item"><div class="meta-label">Next Upload</div><div class="meta-value" id="nextUpload">-</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:25px">
+                <div><h3>📋 Production Checklist</h3><div id="checklist"></div></div>
+                <div><h3>📅 Upcoming Uploads</h3><div id="planList"></div></div>
+            </div>
+            <div class="button-group" style="margin-top:20px">
+                <button class="btn btn-success" onclick="exportPlan()"><i class="bi bi-download"></i> Export Plan</button>
+                <button class="btn btn-secondary" onclick="clearPlans()"><i class="bi bi-trash"></i> Clear Saved Plans</button>
+            </div>
+        </div>
+        <div id="alertBox" style="display:none;margin-top:20px"></div>
+    </div>
+</div>
+<script>
+    const storageKey = 'Thakronix-youtube-upload-plans';
+    const checklistItems = ['Topic researched', 'Script completed', 'Recording completed', 'Thumbnail designed', 'Title and description optimized', 'Tags and chapters added', 'Final quality check'];
+    let plans = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    let checked = JSON.parse(localStorage.getItem(storageKey + '-checklist') || '[]');
+
+    function showAlert(message, type = 'success') {
+        const box = document.getElementById('alertBox');
+        box.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-info-circle"></i> ${message}</div>`;
+        box.style.display = 'block';
+        setTimeout(() => box.style.display = 'none', 4000);
+    }
+    function addPlan() {
+        const title = document.getElementById('videoTitle').value.trim();
+        const date = document.getElementById('uploadDate').value;
+        if (!title || !date) { showAlert('Please enter a title and upload date.', 'warning'); return; }
+        plans.push({ title, date, time: document.getElementById('uploadTime').value, type: document.getElementById('contentType').value, notes: document.getElementById('notes').value.trim() });
+        plans.sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`));
+        savePlans(); clearForm(); render(); showAlert('Upload added to your planner.');
+    }
+    function savePlans() { localStorage.setItem(storageKey, JSON.stringify(plans)); }
+    function render() {
+        document.getElementById('planCount').textContent = plans.length;
+        document.getElementById('completedCount').textContent = checked.filter(Boolean).length + '/' + checklistItems.length;
+        document.getElementById('nextUpload').textContent = plans[0] ? formatDate(plans[0].date) : '-';
+        document.getElementById('checklist').innerHTML = checklistItems.map((item, index) => `<label class="card" style="display:flex;gap:10px;align-items:center;cursor:pointer"><input type="checkbox" ${checked[index] ? 'checked' : ''} onchange="toggleTask(${index}, this.checked)"><span>${item}</span></label>`).join('');
+        document.getElementById('planList').innerHTML = plans.length ? plans.map((plan, index) => `<div class="card"><div style="display:flex;justify-content:space-between;gap:10px"><div><strong>${escapeHtml(plan.title)}</strong><small style="display:block;color:#666;margin-top:5px">${formatDate(plan.date)} at ${plan.time} · ${plan.type}</small>${plan.notes ? `<small style="display:block;margin-top:8px">${escapeHtml(plan.notes)}</small>` : ''}</div><button class="btn btn-danger btn-sm" onclick="removePlan(${index})"><i class="bi bi-trash"></i></button></div></div>`).join('') : '<div class="card">No uploads planned yet.</div>';
+    }
+    function toggleTask(index, value) { checked[index] = value; localStorage.setItem(storageKey + '-checklist', JSON.stringify(checked)); render(); }
+    function removePlan(index) { plans.splice(index, 1); savePlans(); render(); }
+    function clearPlans() { if (!confirm('Clear all saved upload plans?')) return; plans = []; savePlans(); render(); showAlert('Saved plans cleared.'); }
+    function clearForm() { document.getElementById('videoTitle').value = ''; document.getElementById('notes').value = ''; }
+    function formatDate(value) { return new Date(value + 'T00:00:00').toLocaleDateString(undefined, { day:'numeric', month:'short', year:'numeric' }); }
+    function escapeHtml(value) { return value.replace(/[&<>'"]/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[character])); }
+    function exportPlan() { const text = plans.map((p, i) => `${i + 1}. ${p.title}\n${formatDate(p.date)} at ${p.time} | ${p.type}\n${p.notes || ''}`).join('\n\n'); const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([text || 'No upload plans saved.'], { type:'text/plain' })); link.download = 'youtube-upload-plan.txt'; link.click(); }
+    document.getElementById('uploadDate').value = new Date().toISOString().slice(0, 10);
+    render();
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}{% if download_tool %}{{ download_tool.title }}{% else %}Downloader Studio{% endif %}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/downloader_studio.css') }}">{% endblock %}
+{% block content %}
+    <section class="media-page downloader-page{% if download_tool %} downloader-tool-detail{% else %} downloader-directory{% endif %}"{% if download_tool %} data-tool-panel="{{ download_tool.panel }}" data-tool-mode="{{ download_tool.mode }}" data-tool-title="{{ download_tool.title }}" data-media-type="{{ download_tool.media_type }}" data-audio-format="{{ download_tool.audio_format }}"{% endif %}>
+            <header class="media-hero downloader-header">
+                <div class="media-eyebrow"><i class="bi bi-download"></i> DOWNLOAD & INSPECT</div>
+                <h1>{% if download_tool %}{{ download_tool.title }}{% else %}Downloader Studio{% endif %}</h1>
+                <p>{% if download_tool %}{{ download_tool.title }} workspace with focused controls for this download or inspection task.{% else %}Download direct files and authorized public media, inspect APKs and EPUBs, or export music metadata.{% endif %}</p>
+                {% if download_tool %}<a class="download-back-link" href="{{ url_for('downloader_studio') }}"><i class="bi bi-arrow-left"></i> All downloader tools</a>{% endif %}
+            </header>
+
+            <section class="download-workbench" id="workbench" aria-labelledby="workbenchTitle">
+                <div class="workbench-heading">
+                    <div><span class="section-kicker">{{ download_tool.title if download_tool else 'Downloader Studio' }}</span><h2 id="workbenchTitle">{{ download_tool.title if download_tool else 'Downloader Studio' }}</h2></div>
+                    <a class="workbench-link" href="/youtube-downloader">YouTube details <i class="bi bi-arrow-up-right"></i></a>
+                </div>
+
+                <div class="workbench-tabs" role="tablist" aria-label="Downloader workbench"{% if download_tool %} hidden{% endif %}>
+                    <button class="workbench-tab active" type="button" role="tab" aria-selected="true" data-panel="directPanel"><i class="bi bi-link-45deg"></i> Direct file</button>
+                    <button class="workbench-tab" type="button" role="tab" aria-selected="false" data-panel="mediaPanel"><i class="bi bi-play-btn"></i> Public media</button>
+                    <button class="workbench-tab" type="button" role="tab" aria-selected="false" data-panel="apkPanel"><i class="bi bi-android2"></i> APK / AAB</button>
+                    <button class="workbench-tab" type="button" role="tab" aria-selected="false" data-panel="epubPanel"><i class="bi bi-book"></i> EPUB</button>
+                    <button class="workbench-tab" type="button" role="tab" aria-selected="false" data-panel="metadataPanel"><i class="bi bi-file-earmark-spreadsheet"></i> Metadata export</button>
+                </div>
+
+                <div class="workbench-panel{% if not download_tool or download_tool.panel == 'directPanel' %} active{% endif %}" id="directPanel" role="tabpanel"{% if download_tool and download_tool.panel != 'directPanel' %} hidden{% endif %}>
+                    <form id="directForm" class="workbench-form">
+                        <label for="directUrl">Direct file URL</label>
+                        <div class="input-action"><input id="directUrl" type="url" placeholder="https://example.com/file.mp3" required><button class="primary-action" type="submit"><i class="bi bi-download"></i> Download</button></div>
+                        <p class="form-hint">HTTP(S) links only. Maximum 50 MB. Private network addresses and unsafe redirects are blocked.</p>
+                    </form>
+                    <p class="tool-status" id="directStatus" aria-live="polite"></p>
+                </div>
+
+                <div class="workbench-panel{% if download_tool and download_tool.panel == 'mediaPanel' %} active{% endif %}" id="mediaPanel" role="tabpanel"{% if not download_tool or download_tool.panel != 'mediaPanel' %} hidden{% endif %}>
+                    <form id="mediaForm" class="workbench-form">
+                        <label for="mediaUrl">Public media URL</label>
+                        <input id="mediaUrl" type="url" placeholder="Paste a public URL supported by yt-dlp" required>
+                        <div class="form-options">
+                            <div><label for="mediaType">Output</label><select id="mediaType"><option value="video">Video (MP4, up to 720p)</option><option value="audio">Audio</option></select></div>
+                            <div id="videoQualityGroup"><label for="mediaQuality">Video quality</label><select id="mediaQuality"><option value="360">360p</option><option value="480">480p</option><option value="720" selected>720p</option><option value="1080">1080p</option></select></div>
+                            <div id="audioFormatGroup" hidden><label for="audioFormat">Audio format</label><select id="audioFormat"><option>mp3</option><option>m4a</option><option>wav</option><option>opus</option></select></div>
+                        </div>
+                        <label class="rights-check"><input id="mediaAuthorized" type="checkbox" required> I own this media or have permission to download it.</label>
+                        <button class="primary-action" type="submit"><i class="bi bi-download"></i> Prepare download</button>
+                        <p class="form-hint">No account cookies or private-content bypass. Platform extractor support can change; audio conversion requires FFmpeg on the server.</p>
+                    </form>
+                    <p class="tool-status" id="mediaStatus" aria-live="polite"></p>
+                </div>
+
+                <div class="workbench-panel{% if download_tool and download_tool.panel == 'apkPanel' %} active{% endif %}" id="apkPanel" role="tabpanel"{% if not download_tool or download_tool.panel != 'apkPanel' %} hidden{% endif %}>
+                    <form id="apkForm" class="workbench-form upload-form">
+                        <label for="apkFile">APK or AAB file</label><input id="apkFile" type="file" accept=".apk,.aab,application/vnd.android.package-archive" required>
+                        <button class="primary-action" type="submit"><i class="bi bi-search"></i> Inspect package</button>
+                    </form>
+                    <div class="tool-result" id="apkResult" hidden></div><p class="tool-status" id="apkStatus" aria-live="polite"></p>
+                </div>
+
+                <div class="workbench-panel{% if download_tool and download_tool.panel == 'epubPanel' %} active{% endif %}" id="epubPanel" role="tabpanel"{% if not download_tool or download_tool.panel != 'epubPanel' %} hidden{% endif %}>
+                    <form id="epubForm" class="workbench-form upload-form">
+                        <label for="epubFile">EPUB ebook</label><input id="epubFile" type="file" accept=".epub,application/epub+zip" required>
+                        <div class="input-action"><button class="primary-action" type="submit" data-epub-action="inspect"><i class="bi bi-info-circle"></i> Read metadata</button><button class="secondary-action" type="submit" data-epub-action="text"><i class="bi bi-file-earmark-text"></i> Export TXT</button></div>
+                    </form>
+                    <div class="tool-result" id="epubResult" hidden></div><p class="tool-status" id="epubStatus" aria-live="polite"></p>
+                </div>
+
+                <div class="workbench-panel{% if download_tool and download_tool.panel == 'metadataPanel' %} active{% endif %}" id="metadataPanel" role="tabpanel"{% if not download_tool or download_tool.panel != 'metadataPanel' %} hidden{% endif %}>
+                    <form id="metadataForm" class="workbench-form">
+                        <label for="metadataInput">Track records (JSON or CSV)</label>
+                        <textarea id="metadataInput" rows="5" placeholder='[{"title":"Track","artist":"Artist","album":"Album"}]'></textarea>
+                        <div class="input-action"><select id="metadataFormat" aria-label="Export format"><option value="csv">CSV</option><option value="json">JSON</option><option value="txt">TXT</option></select><button class="primary-action" type="submit"><i class="bi bi-download"></i> Export records</button></div>
+                        <p class="form-hint">Exports metadata you provide. Spotify, Apple Music, SoundCloud and regional music catalogs need their official API credentials for live search; no track audio is downloaded here.</p>
+                    </form>
+                    <p class="tool-status" id="metadataStatus" aria-live="polite"></p>
+                </div>
+            </section>
+
+            {% if not download_tool %}
+            <section class="catalog-section" aria-labelledby="catalogTitle">
+                <div class="catalog-heading"><div><span class="section-kicker">TOOL LIBRARY</span><h2 id="catalogTitle">All downloader tools</h2></div><label class="catalog-search"><i class="bi bi-search"></i><input id="toolSearch" type="search" placeholder="Find a tool" aria-label="Find a downloader tool"></label></div>
+                <div class="filter-row" role="group" aria-label="Filter tools">
+                    <button class="filter-chip active" type="button" data-filter="all">All tools</button><button class="filter-chip" type="button" data-filter="files">Files</button><button class="filter-chip" type="button" data-filter="media">Public media</button><button class="filter-chip" type="button" data-filter="music">Music metadata</button><button class="filter-chip" type="button" data-filter="audio">Audio tools</button>
+                </div>
+                <div class="tool-catalog" id="toolCatalog">
+                    <button class="catalog-tool" data-category="files" data-mode="apk" data-title="APK Downloader & Inspector"><span class="catalog-icon green"><i class="bi bi-android2"></i></span><span><strong>APK Downloader & Inspector</strong><small>Direct APK links, SHA-256 and archive details</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="files" data-mode="epub" data-title="Ebook Downloader & Converter"><span class="catalog-icon amber"><i class="bi bi-book"></i></span><span><strong>Ebook Downloader & Converter</strong><small>Direct ebook links, EPUB details and TXT export</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <a class="catalog-tool" data-category="files" href="/media-tools/image-url-downloader"><span class="catalog-icon coral"><i class="bi bi-images"></i></span><span><strong>Image Downloader</strong><small>Preview and collect direct image URLs</small></span><i class="bi bi-arrow-up-right"></i></a>
+                    <button class="catalog-tool" data-category="media" data-mode="media" data-title="Facebook Public Media"><span class="catalog-icon blue"><i class="bi bi-facebook"></i></span><span><strong>Facebook Public Media</strong><small>Public authorized media, extractor availability varies</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="media" data-mode="media" data-title="Pinterest Media"><span class="catalog-icon coral"><i class="bi bi-pin-angle"></i></span><span><strong>Pinterest Media</strong><small>Public Pins where the extractor supports them</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="music" data-mode="metadata" data-title="Spotify Track & Playlist Exporter"><span class="catalog-icon green"><i class="bi bi-spotify"></i></span><span><strong>Spotify Track & Playlist Exporter</strong><small>Export supplied track data; no MP3 ripping</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="music" data-mode="metadata" data-title="JioSaavn Metadata Tool"><span class="catalog-icon amber"><i class="bi bi-music-note-list"></i></span><span><strong>JioSaavn Metadata Tool</strong><small>Export supplied song and playlist metadata</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="music" data-mode="metadata" data-title="Apple Music Metadata Exporter"><span class="catalog-icon coral"><i class="bi bi-apple-music"></i></span><span><strong>Apple Music Metadata Exporter</strong><small>Metadata export workflow; no protected audio</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="music" data-mode="metadata" data-title="Gaana Metadata Tool"><span class="catalog-icon blue"><i class="bi bi-music-note"></i></span><span><strong>Gaana Metadata Tool</strong><small>Export supplied catalog metadata</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="music" data-mode="metadata" data-title="Hungama Metadata Tool"><span class="catalog-icon green"><i class="bi bi-soundwave"></i></span><span><strong>Hungama Metadata Tool</strong><small>Export supplied catalog metadata</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <a class="catalog-tool" data-category="audio" href="/youtube/to-mp3"><span class="catalog-icon coral"><i class="bi bi-youtube"></i></span><span><strong>YouTube to MP3</strong><small>Authorized audio workflow with format options</small></span><i class="bi bi-arrow-up-right"></i></a>
+                    <button class="catalog-tool" data-category="media" data-mode="media" data-title="Instagram Public Media"><span class="catalog-icon coral"><i class="bi bi-instagram"></i></span><span><strong>Instagram Public Media</strong><small>Public authorized media only; no login cookies</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="audio" data-mode="media" data-title="Instagram Audio"><span class="catalog-icon amber"><i class="bi bi-music-note-beamed"></i></span><span><strong>Instagram Audio</strong><small>Extract audio from authorized accessible media</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <a class="catalog-tool" data-category="files" href="/media-tools/image-url-downloader"><span class="catalog-icon blue"><i class="bi bi-image"></i></span><span><strong>Instagram Image / Carousel</strong><small>Use image URL previews for accessible images</small></span><i class="bi bi-arrow-up-right"></i></a>
+                    <button class="catalog-tool" data-category="media" data-mode="media" data-title="Snapchat Public Media"><span class="catalog-icon amber"><i class="bi bi-camera"></i></span><span><strong>Snapchat Public Media</strong><small>Public links only; no private stories or login</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="media" data-mode="media" data-title="YouTube Shorts Downloader"><span class="catalog-icon coral"><i class="bi bi-youtube"></i></span><span><strong>YouTube Shorts Downloader</strong><small>Public authorized Shorts via the media engine</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="media" data-mode="media" data-title="ShareChat Public Video"><span class="catalog-icon green"><i class="bi bi-play-btn"></i></span><span><strong>ShareChat Public Video</strong><small>Public authorized links if extractor support exists</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="audio" data-mode="direct" data-title="Audio URL Downloader"><span class="catalog-icon blue"><i class="bi bi-file-music"></i></span><span><strong>Audio URL Downloader</strong><small>Download a direct MP3, M4A, WAV, OGG or FLAC link</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <a class="catalog-tool" data-category="audio" href="/audio-tools"><span class="catalog-icon amber"><i class="bi bi-phone"></i></span><span><strong>Mobile Ringtone Maker</strong><small>Continue in Audio Tools for local-file editing</small></span><i class="bi bi-arrow-up-right"></i></a>
+                    <a class="catalog-tool" data-category="audio" href="/audio-tools"><span class="catalog-icon coral"><i class="bi bi-bell"></i></span><span><strong>Ringtone Search & Creator</strong><small>Create from local audio in Audio Tools</small></span><i class="bi bi-arrow-up-right"></i></a>
+                    <button class="catalog-tool" data-category="audio" data-mode="media" data-title="DJ Remix / Audio Pack"><span class="catalog-icon green"><i class="bi bi-disc"></i></span><span><strong>DJ Remix / Audio Pack</strong><small>Authorized public media; local audio tools for editing</small></span><i class="bi bi-arrow-up-right"></i></button>
+                    <button class="catalog-tool" data-category="music" data-mode="metadata" data-title="SoundCloud Track & Metadata"><span class="catalog-icon coral"><i class="bi bi-cloud"></i></span><span><strong>SoundCloud Track & Metadata</strong><small>Export metadata; no user-content file saving</small></span><i class="bi bi-arrow-up-right"></i></button>
+                </div>
+                <p class="catalog-empty" id="catalogEmpty" hidden>No matching tools.</p>
+            </section>
+            {% endif %}
+            <p class="privacy-note"><i class="bi bi-shield-check"></i> Uploaded files are processed for this request only. Downloads are size-limited and temporary server files are removed after delivery.</p>
+    </section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/downloader_studio.js') }}"></script>{% endblock %}

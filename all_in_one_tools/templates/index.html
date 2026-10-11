@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakronix | All-in-One Free Online Tools</title>
+<!-- Main Website CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=16) }}">
+
+    <!-- Converter & Compressor CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/converter.css', v=2) }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=16) }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/command_center.css', v=1) }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+
+<body class="home-page">
+
+<!-- Animated Background -->
+<div class="background">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span class="logo-icon">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </span>
+            Thakro<span>nix</span>
+        </a>
+
+        <div class="search-box nav-search-box" role="search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <input type="search" id="toolSearch" placeholder="Search all tools..." autocomplete="off" aria-label="Search all tools" aria-controls="toolSearchResults" aria-expanded="false">
+            <button id="toolSearchSubmit" type="button" aria-label="Open first matching tool"><span>Search</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+            <div class="tool-search-results" id="toolSearchResults" role="listbox" aria-label="Tool suggestions" hidden></div>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Open navigation">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tools">Tools</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#categories">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('developer_profile') }}">Developer</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('workflow_studio') }}">Workflows</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+    <div class="container">
+        <div class="hero-content">
+            <div class="badge-pill">
+                <span class="pulse-dot"></span>
+                100% Free Tools • No Signup Required
+            </div>
+
+            <h1>
+                Everything You Need.
+                <span>One Powerful Platform.</span>
+            </h1>
+
+            <p class="hero-text">
+                Convert images, create QR codes, generate photo art,
+                work with PDFs and discover powerful utilities —
+                all in one simple and secure place.
+            </p>
+
+            <div class="tool-trending" id="toolTrending" aria-label="Trending tools on this device" hidden></div>
+
+            <button class="command-center-launch" id="commandCenterTrigger" type="button" aria-label="Open Command Center, Ctrl K" title="Open Command Center (Ctrl K)" aria-haspopup="dialog" aria-controls="commandCenter">
+                <i class="bi bi-command" aria-hidden="true"></i>
+                <span>Open Command Center</span>
+                <kbd>Ctrl K</kbd>
+            </button>
+
+            <div class="quick-links">
+                <span>Popular:</span>
+                <a href="{{ url_for('youtube_tools') }}">YouTube Tools</a>
+                <a href="#tools">Image Converter</a>
+                <a href="#tools">QR Generator</a>
+                <a href="#tools">Sketch Art</a>
+                <a href="#tools">PDF Tools</a>
+                <a href="{{ url_for('calculators') }}">Calculator Studio</a>
+                <a href="{{ url_for('security_tools') }}">Security Studio</a>
+                <a href="{{ url_for('documents') }}">Documents &amp; File Hub</a>
+                <a href="{{ url_for('finance_hub') }}">Personal Finance</a>
+                <a href="{{ url_for('student_tools') }}">Student Tools</a>
+                <a href="{{ url_for('utility_studio') }}">Text &amp; Utility Studio</a>
+                <a href="{{ url_for('real_world_tools') }}">Real-World Tools</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="bi bi-tools"></i>
+                <div>
+                    <h3>20+</h3>
+                    <p>Powerful Tools</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="bi bi-lightning-charge"></i>
+                <div>
+                    <h3>Fast</h3>
+                    <p>Instant Processing</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="bi bi-shield-check"></i>
+                <div>
+                    <h3>Private</h3>
+                    <p>Secure Processing</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="bi bi-phone"></i>
+                <div>
+                    <h3>100%</h3>
+                    <p>Responsive</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TOOLS -->
+<section class="tools-section" id="tools">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="section-label">EXPLORE</span>
+                <h2>
+                    All <span>Tools</span>
+                </h2>
+                <p>
+                    Browse every tool by category. Each tool has its own card and workspace.
+                </p>
+                <span class="tool-directory-count" id="toolDirectoryCount" aria-live="polite">Loading tools...</span>
+            </div>
+        </div>
+
+        <nav class="tool-category-rail" id="toolCategoryRail" aria-label="Filter tools by category"></nav>
+
+        <div class="tool-directory" id="toolDirectory" aria-live="polite">
+            <p class="tool-directory-loading">Loading all available tools...</p>
+        </div>
+
+        <div class="tools-grid" id="legacyToolGrid" hidden>
+            <!-- CALCULATOR STUDIO -->
+            <div class="tool-card" data-name="calculators age bmi gst discount emi scientific text analyzer life expectancy">
+                <div class="tool-icon compress-icon">
+                    <i class="bi bi-calculator"></i>
+                </div>
+                <span class="tool-tag">CALCULATORS</span>
+                <h3>Calculator Studio</h3>
+                <p>Age, BMI, GST, discounts, longevity, text, scientific and EMI tools in one workspace.</p>
+                <a href="{{ url_for('calculators') }}" class="tool-link">
+                    Open Studio
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- SECURITY STUDIO -->
+            <div class="tool-card" data-name="security image share password generator entropy rdap ip whois privacy">
+                <div class="tool-icon pdf-icon">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <span class="tool-tag">SECURITY</span>
+                <h3>Security Studio</h3>
+                <p>Encrypt temporary image shares, generate secrets, inspect passwords, domains and IP intelligence.</p>
+                <a href="{{ url_for('security_tools') }}" class="tool-link">
+                    Open Studio
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- PRIVACY & DEVELOPER TOOLS -->
+            <div class="tool-card" data-name="privacy developer digital tools password json regex encoder decoder hash security">
+                <div class="tool-icon compress-icon">
+                    <i class="bi bi-incognito"></i>
+                </div>
+                <span class="tool-tag">PRIVACY &amp; DEVELOPER</span>
+                <h3>Privacy &amp; Developer Tools</h3>
+                <p>Browse 43 tools for privacy checks, encoding, developer workflows and digital utilities.</p>
+                <a href="{{ url_for('privacy_dev_tools') }}" class="tool-link">
+                    Open Toolbox
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- INTERNET & NETWORK TOOLS -->
+            <div class="tool-card" data-name="internet network speed wifi dns ping latency ip address stability website troubleshooting">
+                <div class="tool-icon image-icon">
+                    <i class="bi bi-globe2"></i>
+                </div>
+                <span class="tool-tag">INTERNET &amp; NETWORK</span>
+                <h3>Internet &amp; Network Tools</h3>
+                <p>Open 8 tools for speed, Wi-Fi, ping, DNS, IP information and network troubleshooting.</p>
+                <a href="{{ url_for('real_world_tools') }}" class="tool-link">
+                    Open Toolbox
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- DEVICE & HARDWARE LAB -->
+            <div class="tool-card" data-name="device hardware bluetooth ble usb hid serial esp32 arduino camera microphone gamepad capability diagnostics">
+                <div class="tool-icon image-icon">
+                    <i class="bi bi-cpu"></i>
+                </div>
+                <span class="tool-tag">DEVICE &amp; HARDWARE</span>
+                <h3>Device &amp; Hardware Lab</h3>
+                <p>Inspect browser capabilities and connect supported Bluetooth, USB, HID and Serial devices.</p>
+                <a href="{{ url_for('device_lab') }}" class="tool-link">
+                    Open Device Lab
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- UTILITY STUDIO -->
+            <div class="tool-card" data-name="text utility studio notepad text color stopwatch countdown typing world clock organizer random user generator">
+                <div class="tool-icon qr-icon">
+                    <i class="bi bi-collection"></i>
+                </div>
+                <span class="tool-tag">UTILITY</span>
+                <h3>Text &amp; Utility Studio</h3>
+                <p>Explore 22 tools for text, files, color, creative utilities, time, research and everyday tasks.</p>
+                <a href="{{ url_for('utility_studio') }}" class="tool-link">
+                    Open Studio
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- DOCUMENTS HUB -->
+            <div class="tool-card" data-name="documents file hub scanner pdf redaction signature forms organizer compare privacy renamer zip">
+                <div class="tool-icon pdf-icon">
+                    <i class="bi bi-file-earmark-richtext"></i>
+                </div>
+                <span class="tool-tag">DOCUMENTS</span>
+                <h3>Documents &amp; File Hub</h3>
+                <p>Open 11 tools for scanning, redaction, signatures, PDF forms, file organization and archives.</p>
+                <a href="{{ url_for('documents') }}" class="tool-link">
+                    Open Hub
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- PERSONAL FINANCE -->
+            <div class="tool-card" data-name="personal finance budget expenses bills subscriptions savings debt invoice quote receipt net worth">
+                <div class="tool-icon compress-icon">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+                <span class="tool-tag">FINANCE</span>
+                <h3>Personal Finance Suite</h3>
+                <p>Use 12 tools to track spending, plan budgets, manage goals and debt, and create business documents.</p>
+                <a href="{{ url_for('finance_hub') }}" class="tool-link">
+                    Open Suite
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- WORKFLOW STUDIO -->
+            <div class="tool-card" data-name="workflow studio documents money organize protect analyze plan developer workflows">
+                <div class="tool-icon image-icon">
+                    <i class="bi bi-kanban"></i>
+                </div>
+                <span class="tool-tag">WORKFLOWS</span>
+                <h3>Everyday Workflow Studio</h3>
+                <p>Explore guided workflows for documents, money, files, privacy, planning and development.</p>
+                <a href="{{ url_for('workflow_studio') }}" class="tool-link">
+                    Open Studio
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- LIFE ADMIN STUDIO -->
+            <div class="tool-card" data-name="life admin documents expiry assets warranties maintenance projects receipts meetings time emergency handover">
+                <div class="tool-icon compress-icon">
+                    <i class="bi bi-grid-1x2"></i>
+                </div>
+                <span class="tool-tag">LIFE ADMIN</span>
+                <h3>Life Admin Studio</h3>
+                <p>Connect renewals, receipts, assets, service, meetings, projects and personal records across 22 focused tools.</p>
+                <a href="{{ url_for('life_admin_studio') }}" class="tool-link">
+                    Open Studio
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- HOME & LIFESTYLE HUB -->
+            <div class="tool-card" data-name="home lifestyle room measurement renovation paint tile electricity water moving inventory warranty">
+                <div class="tool-icon image-icon">
+                    <i class="bi bi-house-heart"></i>
+                </div>
+                <span class="tool-tag">HOME &amp; LIFESTYLE</span>
+                <h3>Home &amp; Lifestyle</h3>
+                <p>Open 7 tools for room planning, paint, tiles, utilities, moving and home inventory.</p>
+                <a href="{{ url_for('home_travel_tools') }}" class="tool-link">
+                    Open Hub
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- STUDENT TOOLBOX -->
+            <div class="tool-card" data-name="student study planner exam attendance marks flashcards syllabus notes coding timetable internship">
+                <div class="tool-icon sketch-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+                <span class="tool-tag">STUDENT</span>
+                <h3>Student Toolbox</h3>
+                <p>Open 15 tools for study plans, assignments, exams, attendance, flashcards, notes and applications.</p>
+                <a href="{{ url_for('student_tools') }}" class="tool-link">
+                    Open Toolbox
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- TRAVEL & VEHICLE HUB -->
+            <div class="tool-card" data-name="travel vehicle trip fuel mileage maintenance service packing bag budget planner">
+                <div class="tool-icon compress-icon">
+                    <i class="bi bi-car-front"></i>
+                </div>
+                <span class="tool-tag">TRAVEL &amp; VEHICLE</span>
+                <h3>Travel &amp; Vehicle</h3>
+                <p>Open 10 tools for trip costs, fuel logs, vehicle maintenance, packing and travel budgets.</p>
+                <a href="{{ url_for('travel_tools') }}" class="tool-link">
+                    Open Hub
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- IMAGE COMPRESSOR -->
+            <div class="tool-card" data-name="image compressor reduce size">
+                <div class="tool-icon compress-icon">
+                    <i class="bi bi-file-zip"></i>
+                </div>
+                <span class="tool-tag">IMAGE</span>
+                <h3>Image Compressor</h3>
+                <p>Reduce image file size while maintaining the best possible quality.</p>
+                <a href="{{ url_for('image_compressor') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- SKETCH -->
+            <div class="tool-card" data-name="ai sketch art photo">
+                <div class="tool-icon sketch-icon">
+                    <i class="bi bi-palette"></i>
+                </div>
+                <span class="tool-tag">AI ART</span>
+                <h3>Sketch Art</h3>
+                <p>Transform your photos into beautiful pencil and artistic sketch effects.</p>
+                <a href="{{ url_for('sketch') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- QR -->
+            <div class="tool-card" data-name="qr code generator url">
+                <div class="tool-icon qr-icon">
+                    <i class="bi bi-qr-code"></i>
+                </div>
+                <span class="tool-tag">UTILITY</span>
+                <h3>QR Generator</h3>
+                <p>Create professional QR codes from URLs, text and other information.</p>
+                <a href="{{ url_for('qr_generator') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- PDF -->
+            <div class="tool-card" data-name="pdf merge split compress">
+                <div class="tool-icon pdf-icon">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                </div>
+                <span class="tool-tag">DOCUMENT</span>
+                <h3>PDF Tools</h3>
+                <p>Merge, split, compress and manage your PDF documents with ease.</p>
+                <a href="{{ url_for('media_pdf_tools_index') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- MEDIA STUDIO -->
+            <div class="tool-card" data-name="media image tools converter collage watermark text to image passport photo video library">
+                <div class="tool-icon image-icon">
+                    <i class="bi bi-images"></i>
+                </div>
+                <span class="tool-tag">IMAGE &amp; MEDIA</span>
+                <h3>Image &amp; Media Tools</h3>
+                <p>Browse 26 focused image editing and file tools in the complete media catalog.</p>
+                <a href="{{ url_for('media_tools_index') }}" class="tool-link">
+                    Open Catalog
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- IMAGE & MEDIA STUDIO -->
+            <div class="tool-card" data-name="image media studio local converter collage profile picture watermark passport photo designer">
+                <div class="tool-icon image-icon">
+                    <i class="bi bi-camera-reels"></i>
+                </div>
+                <span class="tool-tag">IMAGE &amp; MEDIA STUDIO</span>
+                <h3>Image &amp; Media Studio</h3>
+                <p>Use 11 browser-first tools for image conversion, collage, profile photos, video library and design.</p>
+                <a href="{{ url_for('media_studio') }}" class="tool-link">
+                    Open Studio
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- DOWNLOADER STUDIO -->
+            <div class="tool-card" data-name="downloader media youtube mp3 apk epub direct public media file upload">
+                <div class="tool-icon qr-icon">
+                    <i class="bi bi-download"></i>
+                </div>
+                <span class="tool-tag">DOWNLOAD</span>
+                <h3>Downloader Studio</h3>
+                <p>Download direct files, inspect APKs and EPUBs, and work with authorized public media in one toolkit.</p>
+                <a href="{{ url_for('downloader_studio') }}" class="tool-link">
+                    Open Studio
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- YOUTUBE TOOLS -->
+            <div class="tool-card" data-name="youtube tools titles tags thumbnails descriptions channel video">
+                <div class="tool-icon sketch-icon">
+                    <i class="bi bi-youtube"></i>
+                </div>
+                <span class="tool-tag">YOUTUBE</span>
+                <h3>YouTube Tools</h3>
+                <p>Open 20+ creator tools for video ideas, titles, tags, descriptions, thumbnails and channel work.</p>
+                <a href="{{ url_for('youtube_tools') }}" class="tool-link">
+                    Open Toolbox
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- AUDIO STUDIO -->
+            <div class="tool-card" data-name="audio trimmer cutter dj octapad noise reducer waveform converter mastering studio">
+                <div class="tool-icon text-icon">
+                    <i class="bi bi-music-note-beamed"></i>
+                </div>
+                <span class="tool-tag">AUDIO</span>
+                <h3>Audio Studio</h3>
+                <p>Trim, clean, visualize, sequence, convert and master audio locally in your browser.</p>
+                <a href="{{ url_for('audio_tools') }}" class="tool-link">
+                    Open Studio
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- SOCIAL PROFILE & IDENTITY STUDIO -->
+            <div class="tool-card" data-name="social profile identity studio whatsapp instagram linkedin youtube gaming avatar headshot brand kit">
+                <div class="tool-icon image-icon">
+                    <i class="bi bi-person-bounding-box"></i>
+                </div>
+                <span class="tool-tag">SOCIAL IDENTITY</span>
+                <h3>Social Profile &amp; Identity Studio</h3>
+                <p>Open a dedicated page with 12 profile, avatar, brand and social image tools.</p>
+                <a href="{{ url_for('social_identity_studio') }}" class="tool-link">Open Studio <i class="bi bi-arrow-up-right"></i></a>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- TOOL REQUEST -->
+<section class="tool-request-section" id="request-tool" aria-labelledby="toolRequestTitle">
+    <div class="container">
+        <div class="tool-request-panel">
+            <div class="tool-request-copy">
+                <span class="section-label">YOUR IDEA</span>
+                <h2 id="toolRequestTitle">Need another tool?</h2>
+                <p>Tell us what would make your work easier. We read every request.</p>
+            </div>
+
+            <form class="tool-request-form" id="toolRequestForm">
+                <label class="tool-request-description" for="toolRequestDescription">
+                    What tool would help you?
+                    <textarea id="toolRequestDescription" name="request" rows="3" maxlength="1200" placeholder="Describe the tool or task you have in mind..." required></textarea>
+                </label>
+
+                <div class="tool-request-fields">
+                    <label for="toolRequestReplyEmail">
+                        Your email <span>(optional)</span>
+                        <input id="toolRequestReplyEmail" name="replyEmail" type="email" autocomplete="email" placeholder="you@example.com">
+                    </label>
+                    <button class="tool-request-submit" type="submit">
+                        <i class="bi bi-send" aria-hidden="true"></i>
+                        <span>Send request</span>
+                    </button>
+                </div>
+                <p class="tool-request-note" id="toolRequestNote" aria-live="polite">Your email is only used if we need to follow up.</p>
+            </form>
+            <div class="tool-request-success" id="toolRequestSuccess" role="status" tabindex="-1" hidden>
+                <span class="tool-request-success-icon" aria-hidden="true"><i class="bi bi-check2"></i></span>
+                <div>
+                    <h3>Thank you for your idea!</h3>
+                    <p>Your tool request has been received.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+    <div class="container">
+        <div class="about-box">
+            <div class="about-content">
+                <span class="section-label">WHY Thakronix?</span>
+                <h2>
+                    Simple Tools.
+                    <span>Powerful Results.</span>
+                </h2>
+                <p>
+                    Thakronix is designed to bring useful digital tools
+                    together in one modern platform. Our goal is to make
+                    everyday tasks faster, simpler and accessible to everyone.
+                </p>
+
+                <div class="about-features">
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        No mandatory signup
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Fast processing
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Easy downloads
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Mobile friendly
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-visual">
+                <div class="about-visual-art" aria-hidden="true">
+                    <div class="floating-icon icon-one">
+                        <i class="bi bi-image"></i>
+                    </div>
+                    <div class="floating-icon icon-two">
+                        <i class="bi bi-qr-code"></i>
+                    </div>
+                    <div class="floating-icon icon-three">
+                        <i class="bi bi-file-earmark-pdf"></i>
+                    </div>
+                    <div class="main-logo">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-brand-block">
+                <a class="navbar-brand" href="/">
+                    <span class="logo-icon">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                    </span>
+                    Thakro<span>nix</span>
+                </a>
+                <p>Useful tools for everyday work. Free to use, no signup.</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#tools">Tools</a>
+                <a href="#about">About</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Thakronix. Built with Python & Flask.</p>
+            <p>Free tools. No account required.</p>
+        </div>
+    </div>
+</footer>
+
+<div class="command-center-backdrop" id="commandCenter" hidden>
+    <section class="command-center" role="dialog" aria-modal="true" aria-labelledby="commandCenterTitle">
+        <header class="command-center-heading">
+            <div>
+                <span class="command-center-eyebrow">Thakronix</span>
+                <h2 id="commandCenterTitle">Command Center</h2>
+            </div>
+            <button class="command-center-close" id="commandCenterClose" type="button" aria-label="Close Command Center">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </header>
+        <label class="command-center-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <span class="visually-hidden">Search tools or type a command</span>
+            <input id="commandCenterInput" type="search" placeholder="Search tools or type a command..." autocomplete="off" aria-autocomplete="list" aria-controls="commandCenterResults">
+            <kbd>ESC</kbd>
+        </label>
+        <div class="command-center-results" id="commandCenterResults" aria-live="polite"></div>
+        <footer class="command-center-footer">
+            <span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
+            <span><kbd>↵</kbd> Open</span>
+            <span><kbd>Esc</kbd> Close</span>
+        </footer>
+    </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js', v=20) }}"></script>
+</body>
+</html>

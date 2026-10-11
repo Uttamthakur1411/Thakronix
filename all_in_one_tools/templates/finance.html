@@ -1,0 +1,56 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Personal Finance Suite{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/downloader_studio.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/finance.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/tool_responsive_overrides.css') }}">{% endblock %}
+{% block content %}
+<section class="media-page finance-page"{% if selected_tool %} data-selected-tool="{{ selected_tool }}"{% endif %}>
+<header class="media-hero finance-hero"><div class="media-eyebrow"><i class="bi bi-wallet2"></i> LOCAL-FIRST PERSONAL FINANCE</div><h1 id="financeHeroTitle">Personal Finance <span>Suite</span></h1><p id="financeHeroText">Plan, track and understand your money without bank logins or APIs. Your finance data stays in this browser.</p><div class="finance-stats"><span><strong id="statIncome">₹0</strong> income</span><span><strong id="statExpense">₹0</strong> expenses</span><span><strong id="statSavings">₹0</strong> savings</span><span><strong id="statRate">0%</strong> savings rate</span></div></header>
+<section class="finance-catalog" aria-labelledby="financeCatalogTitle"><div class="catalog-heading"><div><span class="section-kicker">POPULAR TOOLS</span><h2 id="financeCatalogTitle">Personal finance, one private suite</h2></div><label class="catalog-search"><i class="bi bi-search"></i><input id="financeSearch" type="search" placeholder="Search finance tools"></label></div><div class="filter-row"><button class="filter-chip active" data-filter="all">All tools</button><button class="filter-chip" data-filter="track">Track</button><button class="filter-chip" data-filter="plan">Plan</button><button class="filter-chip" data-filter="business">Business</button><button class="filter-chip" data-filter="overview">Overview</button></div><div class="tool-catalog" id="financeCatalog">
+{% set tools = [
+('expenses','expense-tracker','bi-receipt','Track','Expense Tracker Pro','Income, expenses, recurring entries, heatmap, alerts, reports and local CSV/JSON backup.'),
+('budget','budget-planner','bi-pie-chart','Plan','Budget Planner Pro','Multiple category budgets, 50/30/20 mode, rollover and instant affordability simulator.'),
+('splitter','bill-splitter','bi-people','track','Bill Splitter Pro','Equal, percentage, exact and item splits with tax, tip and simplified settlements.'),
+('subscriptions','subscription-tracker','bi-arrow-repeat','track','Subscription Tracker Pro','Renewal calendar, monthly/annual totals, usage-based waste flags and trial alerts.'),
+('goals','savings-goals','bi-bullseye','plan','Savings Goal Planner Pro','Multiple goals, milestones, streaks and contribution scenario simulator.'),
+('debt','debt-payoff','bi-graph-down-arrow','plan','Debt Payoff Planner Pro','Snowball vs avalanche, extra payment simulator, interest and payoff schedule.'),
+('invoice','invoice-generator','bi-file-earmark-text','business','Freelance Invoice Generator Pro','Professional items, tax, discount, status, print and local invoice history.'),
+('quote','quotation-generator','bi-file-earmark-richtext','business','Quotation / Estimate Pro','Packages, optional items, milestones, validity, statuses and comparison-ready quote.'),
+('receipt','receipt-maker','bi-receipt-cutoff','business','Receipt Maker Pro','Paid/pending receipts, thermal/A4 print layouts, payment confirmation and history.'),
+('networth','net-worth','bi-bar-chart-line','overview','Net Worth Tracker','Manual assets, liabilities, history and monthly change with breakdown.'),
+('dashboard','finance-dashboard','bi-speedometer2','overview','Personal Finance Dashboard','Unified income, expenses, budgets, goals, debts and subscriptions overview.'),
+('scenario','scenario-simulator','bi-sliders','plan','Financial Scenario Simulator','Change income, expenses, savings and debt payments to see the difference instantly.'),
+('gst','gst-tax-invoice','bi-receipt','business','GST / Tax Invoice Calculator','Inclusive or exclusive tax, GST split, discount, round-off and invoice-ready breakup.'),
+('cashflow','cash-flow-calculator','bi-cash-stack','business','Cash Flow Calculator','Opening balance, receipts, expenses, receivables, payables and shortage forecast.'),
+('receivables','accounts-receivable','bi-person-lines-fill','business','Accounts Receivable Tracker','Invoice balances, due dates, overdue days and customer-wise outstanding reports.'),
+('payables','accounts-payable','bi-credit-card-2-front','business','Accounts Payable Tracker','Vendor bills, due dates, payment status and upcoming payable reports.'),
+('paymenttracker','customer-payment-tracker','bi-wallet2','business','Customer Payment Tracker','Customer invoice balances, advances, payment methods and payment history.'),
+('businessloan','business-loan-calculator','bi-bank','business','Business Loan Calculator','EMI, processing fee, amortization schedule and prepayment comparison.'),
+('revenue','business-revenue-calculator','bi-graph-up-arrow','business','Business Revenue Calculator','Daily, weekly and monthly product revenue with target projections.'),
+('salestarget','sales-target-calculator','bi-bullseye','business','Sales Target Calculator','Required orders, customers and daily pace based on target and conversion.'),
+('businessroi','business-roi-calculator','bi-percent','business','Business ROI Calculator','Profit, monthly and annual ROI with saved investment comparisons.'),
+('clv','customer-lifetime-value','bi-person-heart','business','Customer Lifetime Value Calculator','Estimate lifetime value from order size, frequency, lifespan and margin.'),
+('employeecost','employee-cost-calculator','bi-people','business','Employee Cost Calculator','Salary, allowances, bonus, employer contributions and benefits.'),
+('overtime','overtime-calculator','bi-clock-history','business','Overtime Calculator','Overtime pay and monthly payroll impact from rate, hours and multiplier.'),
+('businessbudget','business-budget-planner','bi-pie-chart','business','Business Budget Planner','Compare planned vs actual revenue, payroll, rent, marketing and operating costs.'),
+('commission','sales-commission-calculator','bi-award','business','Sales Commission Calculator','Fixed, percentage and tiered commission with target achievement.'),
+('inventory','inventory-valuation-calculator','bi-box-seam','business','Inventory Valuation Calculator','Product stock value, potential revenue and expected profit across saved items.'),
+('purchasecost','purchase-cost-calculator','bi-basket','business','Purchase Cost Calculator','Calculate total and per-unit landed cost with tax, shipping and packaging.'),
+('productprofit','product-profitability-calculator','bi-bar-chart-line','business','Product Profitability Calculator','Net profit and margin after product, platform, payment and marketing costs.'),
+('marketplace','marketplace-fee-calculator','bi-shop','business','Marketplace Fee Calculator','Estimate fees, payout and profit after commission, shipping and tax.'),
+('discountprofit','discount-profit-calculator','bi-tag','business','Discount & Profit Calculator','Discount, tax, profit margin and maximum discount guardrail.'),
+('breakeven','business-break-even-simulator','bi-graph-up','business','Business Break-Even Simulator','Multi-scenario revenue, costs, profit/loss and break-even chart.'),
+('quoteinvoice','quotation-invoice-workflow','bi-file-earmark-spreadsheet','business','Quotation → Invoice Workflow','Move a quote through acceptance, invoice, payment and receipt with print history.'),
+('purchaseorder','purchase-order-inventory-workflow','bi-boxes','business','Purchase Order → Inventory','Track ordered, received and pending quantities and update local stock.'),
+('challan','delivery-challan-invoice','bi-truck','business','Delivery Challan → Invoice','Record delivery details, status and convert delivered items to invoice.'),
+('numbering','business-document-numbering','bi-hash','business','Business Document Numbering Manager','Generate unique quote, invoice, PO, challan and receipt numbers.'),
+('customers','business-customer-directory','bi-person-vcard','business','Business Customer Directory','Customer profiles with linked orders, paid totals and outstanding balances.'),
+('vendors','supplier-vendor-manager','bi-building','business','Supplier / Vendor Manager','Vendor profiles, supplied products, purchase history and payable totals.'),
+('orders','business-order-manager','bi-clipboard2-check','business','Business Order Manager','Track order products, price, tax, payment, delivery and invoice status.'),
+('businessdashboard','business-dashboard','bi-speedometer2','business','Business Dashboard','Revenue, expenses, profit, orders, stock, receivables and payables overview.')
+] %}
+{% for key, slug, icon, category, title, description in tools %}<button class="catalog-tool" data-tool="{{ key }}" data-slug="{{ slug }}" data-category="{{ category }}"><span class="catalog-icon {% if loop.index % 3 == 0 %}coral{% elif loop.index % 2 == 0 %}amber{% else %}green{% endif %}"><i class="bi {{ icon }}"></i></span><span><strong>{{ title }}</strong><small>{{ description }}</small></span><i class="bi bi-arrow-up-right"></i></button>{% endfor %}
+</div><p class="catalog-empty" id="financeEmpty" hidden>No matching finance tools.</p></section>
+<section class="finance-workbench" id="financeWorkbench" hidden><div class="workbench-heading"><div><a class="finance-back" href="/finance"><i class="bi bi-arrow-left"></i> All finance tools</a><span class="section-kicker">WORKSPACE</span><h2 id="financeWorkspaceTitle">Choose a tool</h2></div><button class="secondary-action" id="financeClose"><i class="bi bi-x-lg"></i> Close</button></div><div id="financePanel" class="finance-panel"></div></section>
+<p class="privacy-note"><i class="bi bi-shield-check"></i> No bank credentials, accounts or financial data leave this browser. Export a JSON backup regularly. Calculations are planning estimates, not financial advice.</p>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/finance.js') }}"></script><script src="{{ url_for('static', filename='js/business_finance.js') }}"></script>{% endblock %}

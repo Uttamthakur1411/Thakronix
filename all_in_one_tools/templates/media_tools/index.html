@@ -1,0 +1,8 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Image & Media Studio{% endblock %}
+{% block content %}
+<section class="media-hero"><div><div class="media-eyebrow">Image & Media</div><h1>Professional tools for everyday visual work.</h1><p>Choose a focused workspace. Uploads stay local for browser-based tools.</p></div></section>
+<div class="media-tool-grid">
+{% for tool in media_tool_pages %}<a class="media-tool-card" href="{{ url_for(tool.endpoint) }}"><i class="bi {{ tool.icon }}"></i><h2>{{ tool.name }}</h2><p>{{ tool.description }}</p><span>Open tool <i class="bi bi-arrow-up-right"></i></span></a>{% endfor %}
+</div>
+{% endblock %}

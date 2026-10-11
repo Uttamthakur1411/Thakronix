@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thumbnail URL Extractor | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button"><i class="bi bi-arrow-left"></i> Back to YouTube Tools</a>
+        <div class="tool-header">
+            <h1>🖼️ YouTube Thumbnail URL Extractor</h1>
+            <p>Extract thumbnail URLs in all available resolutions</p>
+        </div>
+        <div class="input-section">
+            <div class="input-group">
+                <label for="videoUrl">YouTube Video URL</label>
+                <input id="videoUrl" type="url" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="extractThumbnails()"><i class="bi bi-images"></i> Extract URLs</button>
+                <button class="btn btn-secondary" onclick="clearTool()"><i class="bi bi-arrow-clockwise"></i> Clear</button>
+            </div>
+        </div>
+        <div id="resultSection" class="result-section" style="display:none">
+            <div class="result-meta">
+                <div class="meta-item"><div class="meta-label">Video ID</div><div class="meta-value" id="videoId">-</div></div>
+                <div class="meta-item"><div class="meta-label">Resolutions</div><div class="meta-value">4</div></div>
+                <div class="meta-item"><div class="meta-label">Format</div><div class="meta-value">JPG</div></div>
+            </div>
+            <div id="thumbnailGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:24px"></div>
+            <div class="button-group" style="margin-top:20px">
+                <button class="btn btn-success" onclick="copyAllUrls()"><i class="bi bi-files"></i> Copy All URLs</button>
+                <button class="btn btn-secondary" onclick="downloadUrls()"><i class="bi bi-download"></i> Download TXT</button>
+            </div>
+        </div>
+        <div id="alertBox" style="display:none;margin-top:20px"></div>
+    </div>
+</div>
+<script>
+    let extractedThumbnails = [];
+    const resolutions = [
+        ['Max Resolution', 'maxresdefault.jpg', '1280 × 720'],
+        ['High Quality', 'hqdefault.jpg', '480 × 360'],
+        ['Medium Quality', 'mqdefault.jpg', '320 × 180'],
+        ['Standard', 'default.jpg', '120 × 90']
+    ];
+
+    function showAlert(message, type = 'error') {
+        const box = document.getElementById('alertBox');
+        box.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-info-circle"></i> ${message}</div>`;
+        box.style.display = 'block';
+        setTimeout(() => box.style.display = 'none', 4500);
+    }
+
+    function extractVideoId(value) {
+        try {
+            const parsed = new URL(value);
+            const queryId = parsed.searchParams.get('v');
+            if (queryId && /^[A-Za-z0-9_-]{11}$/.test(queryId)) return queryId;
+            const parts = parsed.pathname.split('/').filter(Boolean);
+            const candidate = parts[parts.length - 1];
+            if (/^[A-Za-z0-9_-]{11}$/.test(candidate)) return candidate;
+        } catch (error) {
+            return null;
+        }
+        return null;
+    }
+
+    function extractThumbnails() {
+        const input = document.getElementById('videoUrl').value.trim();
+        const id = extractVideoId(input);
+        if (!id) {
+            showAlert('Please enter a valid YouTube video URL.', 'warning');
+            return;
+        }
+        document.getElementById('videoId').textContent = id;
+        extractedThumbnails = resolutions.map(item => ({
+            name: item[0], size: item[2], url: `https://i.ytimg.com/vi/${id}/${item[1]}`
+        }));
+        document.getElementById('thumbnailGrid').innerHTML = extractedThumbnails.map((item, index) => `
+            <div class="card">
+                <img src="${item.url}" alt="${item.name}" style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:8px;margin-bottom:12px" onerror="this.style.opacity='.35'">
+                <strong>${item.name}</strong>
+                <small style="display:block;color:#666;margin:5px 0 10px">${item.size}</small>
+                <input readonly value="${item.url}" style="width:100%;font-size:.78rem;margin-bottom:10px;padding:8px;border:1px solid #ddd;border-radius:5px">
+                <div class="button-group" style="gap:8px">
+                    <button class="btn btn-success" style="flex:1" onclick="downloadThumbnail(${index})"><i class="bi bi-download"></i> Download</button>
+                    <button class="btn btn-secondary" style="flex:1" onclick="copyUrl(${index})"><i class="bi bi-files"></i> Copy</button>
+                </div>
+            </div>`).join('');
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Thumbnail URLs extracted successfully.', 'success');
+    }
+
+    function copyUrl(index) {
+        navigator.clipboard.writeText(extractedThumbnails[index].url).then(() => showAlert('URL copied.', 'success'));
+    }
+
+    async function downloadThumbnail(index) {
+        const item = extractedThumbnails[index];
+        try {
+            const response = await fetch(item.url);
+            if (!response.ok) throw new Error('Thumbnail unavailable');
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(await response.blob());
+            link.download = `youtube-${document.getElementById('videoId').textContent}-${index + 1}.jpg`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        } catch (error) {
+            window.open(item.url, '_blank', 'noopener');
+            showAlert('Direct download blocked by the browser; thumbnail opened in a new tab.', 'warning');
+        }
+    }
+
+    function copyAllUrls() {
+        navigator.clipboard.writeText(extractedThumbnails.map(item => `${item.name}: ${item.url}`).join('\n'));
+        showAlert('All URLs copied.', 'success');
+    }
+
+    function downloadUrls() {
+        const text = extractedThumbnails.map(item => `${item.name} (${item.size})\n${item.url}`).join('\n\n');
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([text], {type:'text/plain'}));
+        link.download = 'youtube-thumbnail-urls.txt';
+        link.click();
+    }
+
+    function clearTool() {
+        document.getElementById('videoUrl').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        extractedThumbnails = [];
+    }
+</script>
+</body>
+</html>

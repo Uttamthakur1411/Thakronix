@@ -1,0 +1,28 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Student Toolbox{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/productivity_hubs.css') }}">{% endblock %}
+{% block content %}
+{% set tools = [
+('study','study-planner','bi-calendar2-week','Study Planner Pro','Subjects, chapters, exam dates, daily targets, workload distribution and progress.'),
+('assignment','assignment-planner','bi-list-check','Assignment & Project Planner','Deadlines, status, checklists, hours, links, notes and risk indicators.'),
+('exam','exam-countdown','bi-hourglass-split','Exam Countdown Dashboard','Multiple exams, days remaining, preparation progress and revision checklist.'),
+('marks','marks-calculator','bi-calculator','Marks Calculator Pro','Weighted theory, internal, practical, viva and required target marks.'),
+('attendance','attendance-planner','bi-person-check','Attendance Planner Pro','Current percentage, target attendance and exact attend/miss scenarios.'),
+('sessions','study-session-tracker','bi-stopwatch','Study Session Tracker','Pomodoro/custom focus sessions, subject totals, streak and history.'),
+('flashcards','flashcard-maker','bi-card-text','Flashcard Maker Pro','Decks, quiz mode, import/export and Again/Hard/Good/Easy review state.'),
+('syllabus','syllabus-tracker','bi-journal-check','Syllabus Tracker','Courses, units, topics, completion bars, priority and revision status.'),
+('revision','revision-planner','bi-arrow-repeat','Revision Planner','Revision queue with confidence, difficulty and next-review dates.'),
+('notes','notes-organizer','bi-journal-richtext','Notes Organizer','Searchable subject notes, tags, favorites, checklists and Markdown export.'),
+('coding','coding-practice','bi-code-slash','Coding Practice Tracker','Problems, topics, languages, difficulty, attempts, links and revision dates.'),
+('habits','student-goals-habits','bi-trophy','Student Goal & Habit Tracker','Study, coding, reading goals, streaks and weekly progress.'),
+('checklist','student-checklist','bi-clipboard2-check','Student Document Checklist','Reusable admission, scholarship, internship and exam document checklists.'),
+('internship','internship-tracker','bi-briefcase','Internship / Job Application Tracker','Companies, positions, rounds, deadlines, follow-ups and resume versions.'),
+('timetable','student-timetable','bi-table','Student Timetable Builder','Weekly subjects, teachers, rooms, breaks, free-period finder and print view.')
+] %}
+<section class="hub-page student-hub" data-hub="student">
+<header class="hub-hero"><div class="hub-eyebrow"><i class="bi bi-mortarboard-fill"></i> LOCAL STUDENT WORKSPACE</div><h1>Student <span>Toolbox</span></h1><p>A practical study operating system for planning, preparation, notes, coding, applications and academic routines.</p><div class="hub-badges"><span>15 new tools</span><span>Local storage</span><span>Student-first workflows</span></div></header>
+<section class="hub-catalog"><div class="hub-heading"><div><span class="hub-kicker">POPULAR TOOLS</span><h2>Plan better, study consistently</h2></div><label class="hub-search"><i class="bi bi-search"></i><input id="hubSearch" placeholder="Search student tools"></label></div><div class="hub-grid">{% for key, slug, icon, title, desc in tools %}<button class="hub-card" data-tool="{{ key }}" data-slug="{{ slug }}"><span class="hub-icon"><i class="bi {{ icon }}"></i></span><strong>{{ title }}</strong><small>{{ desc }}</small><em>Open workspace ↗</em></button>{% endfor %}</div></section>
+<section class="hub-workspace" id="hubWorkspace" hidden><div class="workspace-head"><div><a href="/student-tools" class="hub-back"><i class="bi bi-arrow-left"></i> All student tools</a><span class="hub-kicker">FOCUSED WORKSPACE</span><h2 id="workspaceTitle">Choose a tool</h2></div><button class="hub-secondary" id="workspaceClose">Close</button></div><div id="workspaceBody"></div></section>
+<p class="hub-privacy"><i class="bi bi-shield-check"></i> Student records stay in this browser. Export your data before clearing site storage.</p></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/productivity_hubs.js') }}"></script>{% endblock %}

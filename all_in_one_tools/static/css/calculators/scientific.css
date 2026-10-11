@@ -1,0 +1,2 @@
+/* Scientific calculator feature styles. Shared calculator layout remains in calculators.css. */
+[data-panel="scientific"] .calc-keys { contain: layout; }

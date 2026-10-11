@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111715">
+  <meta name="description" content="A project case study of Thakronix by Uttam Thakur.">
+  <title>Thakronix Case Study | Uttam Thakur</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/developer_profile.css', v=2) }}">
+</head>
+<body class="developer-profile-page case-study-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="developer-topbar">
+    <a class="developer-brand" href="/developer"><span class="brand-mark">UT</span><span>Uttam Thakur<small>Developer profile</small></span></a>
+    <button class="developer-menu-toggle" id="developerMenuToggle" type="button" aria-expanded="false" aria-controls="developerNav" aria-label="Open navigation"><i class="bi bi-list" aria-hidden="true"></i></button>
+    <nav class="developer-nav" id="developerNav" aria-label="Main navigation">
+      <a href="/">Home</a><a href="/tools">Tools</a><a href="/#categories">Categories</a><a class="active" href="/developer">Developer</a><a href="/workflow-studio">Workflows</a><a href="/developer#about">About</a>
+    </nav>
+    <a class="command-trigger case-back" href="/developer#projects"><i class="bi bi-arrow-left" aria-hidden="true"></i><span>Profile</span></a>
+  </header>
+  <main id="main">
+    <section class="case-hero section-wrap">
+      <div class="case-breadcrumb"><a href="/developer#projects">Developer / Projects</a><span>/</span><span>Case study 01</span></div>
+      <div class="case-title-grid"><div><span class="section-kicker">FEATURED BUILD / WEB APPLICATION</span><h1>Thakronix</h1><p>A multi-tool web application focused on making common digital tasks easier to discover and complete.</p><div class="project-meta case-stack"><span>Python</span><span>Flask</span><span>Jinja</span><span>JavaScript</span><span>CSS</span><span>SQLite</span></div></div><div class="case-mark" aria-hidden="true"><span>TX</span><i class="bi bi-grid-1x2-fill"></i><small>THAKRONIX<br>UTILITY SYSTEM</small></div></div>
+      <div class="case-facts"><div><span>ROLE</span><strong>Builder</strong></div><div><span>FORMAT</span><strong>Web application</strong></div><div><span>STATUS</span><strong>Active project</strong></div><div><span>CODE LINK</span><strong>Not publicly linked</strong></div></div>
+    </section>
+
+    <section class="case-body section-wrap">
+      <aside class="case-index"><span>ON THIS PAGE</span><a href="#problem">01 Problem</a><a href="#approach">02 Approach</a><a href="#architecture">03 Architecture</a><a href="#features">04 Features</a><a href="#decisions">05 Decisions</a><a href="#next">06 Next steps</a></aside>
+      <div class="case-content">
+        <article class="case-chapter" id="problem"><span class="chapter-number">01</span><div><span class="section-kicker">THE PROBLEM</span><h2>Small tasks, too many context switches.</h2><p>Image conversion, PDF operations, QR creation and security checks are often spread across separate sites. Thakronix brings these workflows into one discoverable application, with a focused workspace for each task.</p></div></article>
+        <article class="case-chapter" id="approach"><span class="chapter-number">02</span><div><span class="section-kicker">THE APPROACH</span><h2>One platform. Focused workspaces.</h2><p>The product is organized around tool categories and individual work areas. A visitor can move from the directory to a task, provide the required input, review the result and continue into a related workflow.</p><p>The implementation favors task-specific interfaces over one generic form trying to serve every tool.</p></div></article>
+        <article class="case-chapter" id="architecture"><span class="chapter-number">03</span><div><span class="section-kicker">SYSTEM SHAPE</span><h2>Routes, templates and focused modules.</h2><p>Flask serves page routes and task APIs. Jinja templates provide the page structure, while JavaScript modules handle browser interactions. SQLite is used for selected persistent features; image and document libraries support server-side processing where needed.</p>
+          <div class="architecture-map"><div><span>01 / ENTRY</span><strong>Tool directory</strong><small>Browse by category and workflow</small></div><i class="bi bi-arrow-down" aria-hidden="true"></i><div><span>02 / EXPERIENCE</span><strong>Focused tool pages</strong><small>Jinja templates + browser JavaScript</small></div><i class="bi bi-arrow-down" aria-hidden="true"></i><div><span>03 / PROCESSING</span><strong>Browser or Flask API</strong><small>Use the suitable processing boundary</small></div><i class="bi bi-arrow-down" aria-hidden="true"></i><div><span>04 / PERSISTENCE</span><strong>SQLite where needed</strong><small>Selected features store local app data</small></div></div>
+        </div></article>
+        <article class="case-chapter" id="features"><span class="chapter-number">04</span><div><span class="section-kicker">WHAT EXISTS IN THE CODEBASE</span><h2>Working areas, not a mock feature list.</h2><p>These links open current Thakronix workspaces:</p><div class="case-tool-links"><a href="/media-tools"><i class="bi bi-image" aria-hidden="true"></i><span><strong>Image &amp; media</strong><small>Conversion, compression and related workflows</small></span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/media-tools/pdf-tools"><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i><span><strong>PDF &amp; documents</strong><small>Separate workspaces for document tasks</small></span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/qr-studio"><i class="bi bi-qr-code" aria-hidden="true"></i><span><strong>QR &amp; barcode studio</strong><small>Create, scan and validate codes</small></span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/security-tools"><i class="bi bi-shield-check" aria-hidden="true"></i><span><strong>Security tools</strong><small>Focused privacy and security utilities</small></span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div></div></article>
+        <article class="case-chapter" id="decisions"><span class="chapter-number">05</span><div><span class="section-kicker">TECHNICAL DECISIONS</span><h2>Choose the right place for the work.</h2><div class="decision-list"><div><strong>Browser-side when practical</strong><p>Local interactions can keep simple tasks responsive and avoid unnecessary uploads.</p></div><div><strong>Flask APIs for server work</strong><p>Operations that need a backend use dedicated routes rather than hiding work behind a generic endpoint.</p></div><div><strong>Separate templates by workflow</strong><p>Distinct workspaces make task states and controls easier to understand and maintain.</p></div><div><strong>Shared behavior at app level</strong><p>Navigation, feedback and cross-tool next actions can be provided without duplicating them on every page.</p></div></div></div></article>
+        <article class="case-chapter" id="next"><span class="chapter-number">06</span><div><span class="section-kicker">NEXT STEPS</span><h2>Keep improving the working product.</h2><p>Current direction: make every tool comfortable on mobile and desktop, keep result states clear, and help users move naturally to the next relevant task.</p><div class="case-cta-row"><a class="button-primary" href="/tools">Explore Thakronix <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a class="button-quiet" href="/developer#contact">Contact Uttam <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div></div></article>
+      </div>
+    </section>
+  </main>
+  <footer class="developer-footer"><a href="/developer">UT <span>Developer profile</span></a><span>Thakronix / Case study 01</span><a href="#main">Back to top ↑</a></footer>
+  <script src="{{ url_for('static', filename='js/developer_profile.js', v=1) }}"></script>
+</body>
+</html>

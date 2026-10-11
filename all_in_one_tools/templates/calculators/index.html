@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculator Studio | Thakronix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators.css', v=2) }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/age.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/bmi.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/gst.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/discount.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/life.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/words.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/scientific.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/emi.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/calculators/advanced.css', v=2) }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tool_responsive_overrides.css') }}">
+</head>
+<body>
+  <header class="topbar"><a href="/" class="brand"><span class="brand-mark">+</span> Thakronix</a><div class="top-actions"><a href="/" class="back-link">Back to tools</a><button class="icon-btn" id="themeToggle" type="button" aria-label="Switch to light mode" title="Switch to light mode"><span class="theme-icon" aria-hidden="true">☼</span><span>Light</span></button></div></header>
+  <main class="app-shell">
+    <aside class="sidebar"><div class="eyebrow">CALCULATOR STUDIO</div><h1>Numbers,<br><em>made useful.</em></h1><p class="sidebar-copy">Thirty focused tools for everyday decisions, planning and analysis.</p>
+      <nav class="calculator-nav" aria-label="Calculators">
+        <button class="nav-item active" data-tool="age"><span>01</span><b>Age</b><small>Timeline & milestones</small></button>
+        <button class="nav-item" data-tool="bmi"><span>02</span><b>BMI</b><small>Body metrics</small></button>
+        <button class="nav-item" data-tool="gst"><span>03</span><b>GST</b><small>India invoice</small></button>
+        <button class="nav-item" data-tool="discount"><span>04</span><b>Discount</b><small>Shopping math</small></button>
+        <button class="nav-item" data-tool="life"><span>05</span><b>Longevity</b><small>Lifestyle simulator</small></button>
+        <button class="nav-item" data-tool="words"><span>06</span><b>Text analyzer</b><small>Writing insights</small></button>
+        <button class="nav-item" data-tool="scientific"><span>07</span><b>Scientific</b><small>Engineering mode</small></button>
+        <button class="nav-item" data-tool="emi"><span>08</span><b>EMI</b><small>Loan planner</small></button>
+        <button class="nav-item" data-tool="sip"><span>09</span><b>SIP & Goal</b><small>Investment planner</small></button>
+        <button class="nav-item" data-tool="compound"><span>10</span><b>Compound</b><small>Wealth timeline</small></button>
+        <button class="nav-item" data-tool="salary"><span>11</span><b>Salary / CTC</b><small>Take-home estimate</small></button>
+        <button class="nav-item" data-tool="rentbuy"><span>12</span><b>Rent vs Buy</b><small>Break-even planning</small></button>
+        <button class="nav-item" data-tool="fuel"><span>13</span><b>Fuel Cost</b><small>Trip planner</small></button>
+        <button class="nav-item" data-tool="electricity"><span>14</span><b>Electricity</b><small>Bill simulator</small></button>
+        <button class="nav-item" data-tool="percentage"><span>15</span><b>Percentage Lab</b><small>Reverse and change</small></button>
+        <button class="nav-item" data-tool="statistics"><span>16</span><b>Statistics</b><small>Dataset insights</small></button>
+        <button class="nav-item" data-tool="probability"><span>17</span><b>Probability</b><small>Simulation lab</small></button>
+        <button class="nav-item" data-tool="geometry"><span>18</span><b>Geometry</b><small>2D and 3D shapes</small></button>
+        <button class="nav-item" data-tool="units"><span>19</span><b>Unit Lab</b><small>Multi-convert</small></button>
+        <button class="nav-item" data-tool="datetime"><span>20</span><b>Date & Time</b><small>Working days</small></button>
+        <button class="nav-item" data-tool="productivity"><span>21</span><b>Productivity</b><small>Workday planner</small></button>
+        <button class="nav-item" data-tool="developer"><span>22</span><b>Developer</b><small>Bases and bits</small></button>
+        <button class="nav-item" data-tool="storage"><span>23</span><b>Storage</b><small>Bandwidth planner</small></button>
+        <button class="nav-item" data-tool="construction"><span>24</span><b>Construction</b><small>Material estimate</small></button>
+        <button class="nav-item" data-tool="bandwidth"><span>25</span><b>Bandwidth</b><small>Download time</small></button>
+        <button class="nav-item" data-tool="ratio"><span>26</span><b>Ratio</b><small>Proportion lab</small></button>
+        <button class="nav-item" data-tool="cooking"><span>27</span><b>Cooking</b><small>Recipe scaling</small></button>
+        <button class="nav-item" data-tool="gpa"><span>28</span><b>GPA / CGPA</b><small>Target performance</small></button>
+        <button class="nav-item" data-tool="marks"><span>29</span><b>Study Marks</b><small>Required final marks</small></button>
+        <button class="nav-item" data-tool="loancompare"><span>30</span><b>Loan Compare</b><small>Side-by-side loans</small></button>
+      </nav>
+      <div class="privacy-note"><span>●</span><div><strong>Runs in your browser</strong><br><small>Your inputs stay on this device.</small></div></div>
+    </aside>
+    <section class="workspace">
+      <div class="workspace-head"><div><span class="eyebrow" id="toolKicker">PERSONAL</span><h2 id="toolTitle">Age calculator</h2><p id="toolDescription">See the full story between two dates.</p></div><div class="head-actions"><button class="soft-btn" id="resetTool">Reset</button><button class="primary-btn" id="printResult">Print / PDF</button></div></div>
+      {% include 'calculators/age.html' %}
+      {% include 'calculators/bmi.html' %}
+      {% include 'calculators/gst.html' %}
+      {% include 'calculators/discount.html' %}
+      {% include 'calculators/life.html' %}
+      {% include 'calculators/words.html' %}
+      {% include 'calculators/scientific.html' %}
+      {% include 'calculators/emi.html' %}
+      {% include 'calculators/advanced.html' %}
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='js/calculators.js', v=5) }}"></script>
+  <script src="{{ url_for('static', filename='js/advanced_calculators.js') }}"></script>
+</body>
+</html>

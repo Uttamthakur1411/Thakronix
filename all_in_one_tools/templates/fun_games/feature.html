@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ feature.title }} | Fun & Games</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fun_games.css') }}" />
+</head>
+<body class="fun-games-body" data-feature="{{ feature.slug }}">
+    <header class="Thakronix-topbar">
+        <div class="Thakronix-nav container">
+            <div class="brand-wrap">
+                <div class="brand-icon"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+                <div class="brand-name">Tool Forge</div>
+            </div>
+            <nav class="top-nav">
+                <a href="/">Home</a>
+                <a href="/fun-games" class="active">Fun & Games</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container fun-page">
+        <section class="feature-hero">
+            <div class="badge-pill">{{ feature.badge }}</div>
+            <h1>{{ feature.icon }} {{ feature.title }}</h1>
+            <p>{{ feature.description }}</p>
+        </section>
+
+        <section class="control-panel">
+            <div class="panel-actions">
+                <button class="primary-btn generate-btn" type="button">Generate</button>
+                <button class="secondary-btn reset-btn" type="button">Reset</button>
+            </div>
+
+            <div class="input-grid">
+                <div class="field">
+                    <label>Primary input</label>
+                    <input id="toolInput" type="text" value="Try a sample idea" />
+                </div>
+                <div class="field">
+                    <label>Mode</label>
+                    <select id="toolMode">
+                        <option>Classic</option>
+                        <option>Premium</option>
+                        <option>Funny</option>
+                        <option>Party</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="result-box" id="toolResult">This feature is ready. Generate a live result and keep the experience playful and responsive.</div>
+        </section>
+
+        <section class="feature-meta">
+            <h3>Feature Highlights</h3>
+            <div class="tag-row">
+                {% for tag in feature.highlights %}
+                    <span>{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/fun_games.js') }}"></script>
+</body>
+</html>

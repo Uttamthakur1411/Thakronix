@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Tags Extractor | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>🏷️ YouTube Tags Extractor</h1>
+            <p>Extract tags, hashtags and keywords from YouTube videos instantly</p>
+        </div>
+
+        <!-- INPUT SECTION -->
+        <div class="input-section">
+            <div class="input-group">
+                <label for="youtubeUrl">
+                    <i class="bi bi-link-45deg"></i> YouTube Video URL
+                </label>
+                <input 
+                    type="text" 
+                    id="youtubeUrl" 
+                    placeholder="Paste YouTube URL (https://youtube.com/watch?v=... or https://youtu.be/...)"
+                    value=""
+                >
+                <small class="text-muted">Supports: youtube.com, youtu.be, m.youtube.com</small>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="extractTags()">
+                    <i class="bi bi-lightning-charge"></i> Extract Tags
+                </button>
+                <button class="btn btn-secondary" onclick="clearAll()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SECTION -->
+        <div id="resultSection" class="result-section" style="display: none;">
+            
+            <!-- VIDEO INFO -->
+            <div id="videoInfo" style="margin-bottom: 30px;"></div>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(event, 'tagsTab')">
+                    <i class="bi bi-tags"></i> Tags
+                </button>
+                <button class="tab" onclick="switchTab(event, 'hashtagTab')">
+                    <i class="bi bi-hash"></i> Hashtags
+                </button>
+                <button class="tab" onclick="switchTab(event, 'analysisTab')">
+                    <i class="bi bi-bar-chart"></i> Analysis
+                </button>
+            </div>
+
+            <!-- TAGS TAB -->
+            <div id="tagsTab" class="tab-content active">
+                <div class="result-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Total Tags</div>
+                        <div class="meta-value" id="totalTags">0</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Total Characters</div>
+                        <div class="meta-value" id="totalChars">0</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Average Length</div>
+                        <div class="meta-value" id="avgLength">0</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Unique Tags</div>
+                        <div class="meta-value" id="uniqueTags">0</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Filter tags..." 
+                        style="width: 100%; padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; margin-bottom: 15px;"
+                        onkeyup="filterTags()"
+                    >
+                </div>
+
+                <div id="tagsContainer" style="margin-top: 20px;"></div>
+
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="copyAllTags()">
+                        <i class="bi bi-files"></i> Copy All
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadTXT()">
+                        <i class="bi bi-download"></i> Download TXT
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadCSV()">
+                        <i class="bi bi-download"></i> Download CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- HASHTAGS TAB -->
+            <div id="hashtagTab" class="tab-content">
+                <div id="hashtagsContainer" style="margin-top: 20px;"></div>
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="copyHashtagsFormatted()">
+                        <i class="bi bi-files"></i> Copy Formatted
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyHashtagsRaw()">
+                        <i class="bi bi-files"></i> Copy Raw
+                    </button>
+                </div>
+            </div>
+
+            <!-- ANALYSIS TAB -->
+            <div id="analysisTab" class="tab-content">
+                <div class="result-meta" style="margin-bottom: 30px;">
+                    <div class="meta-item">
+                        <div class="meta-label">Most Used Length</div>
+                        <div class="meta-value" id="mostUsedLength">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Longest Tag</div>
+                        <div class="meta-value" id="longestTag">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Shortest Tag</div>
+                        <div class="meta-value" id="shortestTag">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Duplicate Tags</div>
+                        <div class="meta-value" id="duplicateCount">0</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">SEO Recommendations</div>
+                    <div class="card-content" id="recommendations"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ERROR ALERT -->
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+
+    </div>
+</div>
+
+<script>
+    let allTags = [];
+    let allHashtags = [];
+    let videoData = {};
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `
+            <div class="alert alert-${type}">
+                <i class="bi bi-exclamation-circle"></i> ${message}
+            </div>
+        `;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function extractVideoId(url) {
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+            /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/,
+            /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+        ];
+
+        for (let pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) return match[1];
+        }
+        return null;
+    }
+
+    function extractTags() {
+        const url = document.getElementById('youtubeUrl').value.trim();
+
+        if (!url) {
+            showAlert('Please enter a YouTube URL', 'warning');
+            return;
+        }
+
+        const videoId = extractVideoId(url);
+        if (!videoId) {
+            showAlert('Invalid YouTube URL. Please check and try again.', 'error');
+            return;
+        }
+
+        // Mock data for demonstration
+        // In production, this would call a backend API
+        const mockData = {
+            'ABC123': {
+                title: 'Python Programming Tutorial - Complete Guide',
+                channel: 'Learn Code',
+                thumbnail: 'https://via.placeholder.com/120/667eea/ffffff?text=Video',
+                tags: ['python', 'programming', 'tutorial', 'coding', 'python tutorial', 'web development', 'python for beginners', 'django', 'flask', 'python projects', 'computer science'],
+            }
+        };
+
+        // For demonstration, use mock data
+        const data = mockData[videoId] || mockData['ABC123'];
+
+        videoData = data;
+        allTags = data.tags || [];
+        allHashtags = allTags.map(tag => '#' + tag);
+
+        displayVideoInfo();
+        displayResults();
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Tags extracted successfully!', 'success');
+    }
+
+    function displayVideoInfo() {
+        const infoHtml = `
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; display: flex; gap: 20px; align-items: center;">
+                <img src="${videoData.thumbnail}" alt="Thumbnail" style="width: 80px; height: 60px; border-radius: 8px;">
+                <div>
+                    <h3 style="margin: 0; color: white;">${videoData.title}</h3>
+                    <p style="margin: 5px 0 0 0; opacity: 0.9;">Channel: ${videoData.channel}</p>
+                </div>
+            </div>
+        `;
+        document.getElementById('videoInfo').innerHTML = infoHtml;
+    }
+
+    function displayResults() {
+        // Calculate stats
+        const totalChars = allTags.join('').length;
+        const uniqueTags = new Set(allTags).size;
+        const avgLen = allTags.length > 0 ? (totalChars / allTags.length).toFixed(1) : 0;
+
+        document.getElementById('totalTags').textContent = allTags.length;
+        document.getElementById('totalChars').textContent = totalChars;
+        document.getElementById('avgLength').textContent = avgLen;
+        document.getElementById('uniqueTags').textContent = uniqueTags;
+
+        // Display tags
+        const tagsHtml = allTags.map((tag, idx) => `
+            <span class="tag clickable" onclick="copyToClipboard('${tag}')" title="Click to copy">
+                #${tag}
+                <i class="bi bi-check-circle" style="display: none;" id="check-${idx}"></i>
+            </span>
+        `).join('');
+        document.getElementById('tagsContainer').innerHTML = tagsHtml || '<p class="text-muted">No tags found</p>';
+
+        // Display hashtags
+        const hashtagsHtml = allHashtags.map(ht => `
+            <span class="tag" onclick="copyToClipboard('${ht}')" style="cursor: pointer;">
+                ${ht}
+            </span>
+        `).join('');
+        document.getElementById('hashtagsContainer').innerHTML = hashtagsHtml || '<p class="text-muted">No hashtags found</p>';
+
+        // Analysis
+        displayAnalysis();
+    }
+
+    function displayAnalysis() {
+        const lengths = allTags.map(t => t.length);
+        const sorted = [...allTags].sort((a, b) => b.length - a.length);
+        
+        const duplicates = allTags.filter((item, index) => allTags.indexOf(item) !== index);
+
+        document.getElementById('longestTag').textContent = sorted[0] || '-';
+        document.getElementById('shortestTag').textContent = sorted[sorted.length - 1] || '-';
+        document.getElementById('duplicateCount').textContent = new Set(duplicates).size;
+
+        const recommendations = `
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Use ${allTags.length} tags for optimal reach</li>
+                <li>Average tag length: ${(allTags.reduce((a, b) => a + b.length, 0) / allTags.length).toFixed(1)} characters</li>
+                <li>Mix broad and specific tags for better visibility</li>
+                <li>Include trending tags for more impressions</li>
+                <li>Avoid duplicate tags: ${new Set(duplicates).size} duplicates found</li>
+            </ul>
+        `;
+        document.getElementById('recommendations').innerHTML = recommendations;
+    }
+
+    function filterTags() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allTags.filter(tag => tag.toLowerCase().includes(searchTerm));
+        
+        const tagsHtml = filtered.map((tag, idx) => `
+            <span class="tag clickable" onclick="copyToClipboard('${tag}')" title="Click to copy">
+                #${tag}
+            </span>
+        `).join('');
+        document.getElementById('tagsContainer').innerHTML = tagsHtml || '<p class="text-muted">No tags found</p>';
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert(`Copied: "${text}"`, 'success');
+        });
+    }
+
+    function copyAllTags() {
+        const text = allTags.join(', ');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('All tags copied!', 'success');
+        });
+    }
+
+    function copyHashtagsFormatted() {
+        const text = allHashtags.join(' ');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('Hashtags copied!', 'success');
+        });
+    }
+
+    function copyHashtagsRaw() {
+        const text = allHashtags.join('\n');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('Hashtags copied!', 'success');
+        });
+    }
+
+    function downloadTXT() {
+        const content = `YouTube Tags - ${videoData.title}\nExtracted Tags:\n\n${allTags.join('\n')}`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        downloadFile(blob, 'youtube-tags.txt');
+    }
+
+    function downloadCSV() {
+        const csv = 'Tag,Length\n' + allTags.map(t => `"${t}",${t.length}`).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        downloadFile(blob, 'youtube-tags.csv');
+    }
+
+    function downloadFile(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function switchTab(event, tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName).classList.add('active');
+        event.target.closest('.tab').classList.add('active');
+    }
+
+    function clearAll() {
+        document.getElementById('youtubeUrl').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        allTags = [];
+        allHashtags = [];
+        document.getElementById('searchInput').value = '';
+    }
+</script>
+
+</body>
+</html>

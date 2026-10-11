@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a0c">
+  <meta name="description" content="Uttam Thakur, BCA student and developer building practical software and utility tools.">
+  <title>Uttam Thakur | Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/developer_profile.css', v=4) }}">
+</head>
+<body class="developer-profile-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="developer-topbar">
+    <a class="developer-brand" href="/" aria-label="Thakronix home"><span class="brand-mark">UT</span><span>Uttam Thakur<small>Developer profile</small></span></a>
+    <button class="developer-menu-toggle" id="developerMenuToggle" type="button" aria-expanded="false" aria-controls="developerNav" aria-label="Open navigation"><i class="bi bi-list" aria-hidden="true"></i></button>
+    <nav class="developer-nav" id="developerNav" aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/tools">Tools</a>
+      <a href="/#categories">Categories</a>
+      <a class="active" href="/developer" aria-current="page">Developer</a>
+      <a href="/workflow-studio">Workflows</a>
+      <a href="/#about">About</a>
+    </nav>
+    <button class="command-trigger" id="commandTrigger" type="button" aria-haspopup="dialog" aria-controls="developerCommand" title="Search this profile">
+      <i class="bi bi-command" aria-hidden="true"></i><span>Explore</span><kbd>Ctrl K</kbd>
+    </button>
+  </header>
+
+  <main id="main">
+    <section class="developer-hero section-wrap" id="identity" aria-labelledby="heroTitle">
+      <div class="hero-copy">
+        <div class="hero-overline"><span class="status-light"></span> OPEN TO OPPORTUNITIES <span class="overline-index">PROFILE / 01</span></div>
+        <p class="hero-intro">HI, I'M</p>
+        <h1 id="heroTitle">UTTAM<br><span>THAKUR</span></h1>
+        <p class="hero-role">BCA Student <i></i> Developer <i></i> Builder</p>
+        <p class="hero-description">I build practical software, web applications and developer-focused tools that solve real-world problems.</p>
+        <div class="hero-actions">
+          <a class="button-primary" href="#projects">View my projects <i class="bi bi-arrow-down-right" aria-hidden="true"></i></a>
+          <a class="button-quiet" href="#contact">Let's connect <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+        </div>
+        <p class="availability"><span>Available for</span> Internships <b>·</b> Freelance <b>·</b> Full-time opportunities</p>
+      </div>
+      <div class="hero-visual" aria-label="Developer identity card">
+        <div class="visual-topline"><span>DEVELOPER / BCA</span><span>UT—01</span></div>
+        <div class="monogram-art" aria-hidden="true"><span class="monogram-orbit orbit-one"></span><span class="monogram-orbit orbit-two"></span><span class="monogram-grid"></span><span class="monogram">UT</span><span class="monogram-coordinate">BUILD<br>WITH INTENT</span></div>
+        <div class="visual-caption"><div><span class="caption-label">CURRENT BUILD</span><strong>Thakronix</strong></div><a href="/developer/projects/thakronix" aria-label="Open Thakronix case study"><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="visual-facts"><span>Education <b>BCA</b></span><span>Focus <b>Useful software</b></span><span>Location <b>Not listed</b></span></div>
+      </div>
+      <a class="scroll-cue" href="#snapshot"><span>SCROLL TO EXPLORE</span><i class="bi bi-arrow-down" aria-hidden="true"></i></a>
+    </section>
+
+    <section class="snapshot-section section-wrap" id="snapshot" aria-labelledby="snapshotTitle">
+      <div class="section-heading"><div><span class="section-kicker">01 / A QUICK READ</span><h2 id="snapshotTitle">Developer snapshot</h2></div><p>Only project and profile details that can be backed up are shown here.</p></div>
+      <div class="snapshot-grid">
+        <article class="snapshot-item"><span class="snapshot-icon"><i class="bi bi-mortarboard" aria-hidden="true"></i></span><span class="snapshot-label">EDUCATION</span><strong>BCA student</strong><small>Current degree</small></article>
+        <article class="snapshot-item"><span class="snapshot-icon"><i class="bi bi-window-stack" aria-hidden="true"></i></span><span class="snapshot-label">FEATURED BUILD</span><strong>Thakronix</strong><small>All-in-one online tools</small></article>
+        <article class="snapshot-item"><span class="snapshot-icon"><i class="bi bi-code-slash" aria-hidden="true"></i></span><span class="snapshot-label">PROJECT STACK</span><strong>Python · Flask</strong><small>JavaScript · HTML · CSS · SQLite</small></article>
+        <article class="snapshot-item"><span class="snapshot-icon"><i class="bi bi-patch-check" aria-hidden="true"></i></span><span class="snapshot-label">CREDENTIALS</span><strong>Not linked</strong><small>No certificates claimed without proof</small></article>
+      </div>
+    </section>
+
+    <section class="about-section section-wrap" id="about" aria-labelledby="aboutTitle">
+      <div class="section-heading"><div><span class="section-kicker">02 / THE PERSON BEHIND THE BUILD</span><h2 id="aboutTitle">Who I am</h2></div><span class="section-aside">Curious by default.<br>Practical by design.</span></div>
+      <div class="about-grid">
+        <p class="about-lead">I’m Uttam, a BCA student building software that makes everyday digital tasks feel simpler.</p>
+        <div class="about-story">
+          <p>My current work is centered on Thakronix: a collection of practical web tools spanning images, documents, QR workflows and security utilities. It gives me a place to work across the full product loop: understand a task, shape a useful interface, connect the logic and keep the experience responsive.</p>
+          <p>I’m most interested in problems where a small, thoughtful workflow can remove friction. I prefer clear behavior, honest feedback and useful defaults over features that only look impressive in a demo.</p>
+          <div class="about-note"><span>RIGHT NOW</span><strong>Building and refining practical web experiences.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stack-section section-wrap" id="stack" aria-labelledby="stackTitle">
+      <div class="section-heading"><div><span class="section-kicker">03 / EVIDENCE, NOT A LOGO WALL</span><h2 id="stackTitle">Technology in the current build</h2></div><p>These technologies are present in the Thakronix codebase; this is not a self-rated proficiency chart.</p></div>
+      <div class="stack-layout">
+        <div class="stack-intro"><span class="stack-count">PROJECT<br>STACK</span><p>Tool choices follow the task: browser-side interfaces where they fit, and focused Flask endpoints for server-backed work.</p></div>
+        <div class="stack-groups">
+          <div class="stack-row"><h3>Application</h3><div class="skill-tags"><span>Python</span><span>Flask</span><span>JavaScript</span><span>Jinja</span></div></div>
+          <div class="stack-row"><h3>Web interface</h3><div class="skill-tags"><span>HTML</span><span>CSS</span><span>Responsive UI</span></div></div>
+          <div class="stack-row"><h3>Data &amp; media</h3><div class="skill-tags"><span>SQLite</span><span>Pillow</span><span>OpenCV</span><span>PyMuPDF</span><span>qrcode</span></div></div>
+          <div class="stack-row"><h3>Project areas</h3><div class="skill-tags"><span>Image workflows</span><span>PDF tools</span><span>QR studio</span><span>Security utilities</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="projects-section section-wrap" id="projects" aria-labelledby="projectsTitle">
+      <div class="section-heading"><div><span class="section-kicker">04 / PROOF OF WORK</span><h2 id="projectsTitle">Selected project</h2></div><p>One substantial, verifiable build is better than a longer list of unverified claims.</p></div>
+      <article class="featured-project">
+        <div class="project-index"><span>FEATURED BUILD</span><strong>01</strong><span>WEB APPLICATION</span></div>
+        <div class="project-content"><div class="project-meta"><span>PYTHON</span><span>FLASK</span><span>JAVASCRIPT</span></div><h3>Thakronix</h3><p>A practical utility platform bringing image, document, QR, security and everyday workflows into one web application.</p><div class="project-proof"><div><span>PROBLEM</span><p>Common tasks often require jumping between separate sites and interfaces.</p></div><div><span>APPROACH</span><p>Organize focused tools behind a shared navigation system and clear task-specific workspaces.</p></div><div><span>IMPLEMENTATION</span><p>Flask routes and APIs, Jinja templates, browser JavaScript and SQLite-backed features.</p></div></div><div class="project-actions"><a class="button-primary" href="/developer/projects/thakronix">View case study <i class="bi bi-arrow-right" aria-hidden="true"></i></a><a class="text-link" href="/tools">Explore working tools <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div></div>
+        <div class="project-art" aria-label="Thakronix working areas"><div class="project-art-top"><span>Thakronix / MODULES</span><span class="live-dot">LIVE BUILD</span></div><a href="/image-tools"><i class="bi bi-image" aria-hidden="true"></i><span>Image workflows</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/documents"><i class="bi bi-file-earmark-text" aria-hidden="true"></i><span>Documents &amp; PDF</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/qr-studio"><i class="bi bi-qr-code" aria-hidden="true"></i><span>QR studio</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/security-tools"><i class="bi bi-shield-lock" aria-hidden="true"></i><span>Security tools</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><div class="project-art-foot"><span>UTILITY / PRIVACY / WORKFLOW</span><i class="bi bi-plus-lg" aria-hidden="true"></i></div></div>
+      </article>
+    </section>
+
+    <section class="thinking-section section-wrap" id="thinking" aria-labelledby="thinkingTitle">
+      <div class="section-heading"><div><span class="section-kicker">05 / HOW I APPROACH A BUILD</span><h2 id="thinkingTitle">My development thinking</h2></div><p>A repeatable process, with room to revisit decisions when the evidence changes.</p></div>
+      <ol class="thinking-flow">
+        <li><span>01</span><strong>Understand</strong><small>Who has the problem, and where does the friction start?</small></li>
+        <li><span>02</span><strong>Plan</strong><small>Break the workflow into clear inputs, states and outcomes.</small></li>
+        <li><span>03</span><strong>Build</strong><small>Choose the simplest architecture that fits the task.</small></li>
+        <li><span>04</span><strong>Test</strong><small>Check the happy path, errors and narrow screens.</small></li>
+        <li><span>05</span><strong>Improve</strong><small>Use real behavior to decide what deserves the next iteration.</small></li>
+      </ol>
+      <div class="thinking-notes"><article><span>WHEN SOMETHING BREAKS</span><p>Reproduce it, find the controlling layer, make one focused change, then verify the behavior again.</p></article><article><span>WHEN I LEARN</span><p>Connect a new concept to a small working feature, then keep the useful parts in the project.</p></article><article><span>WHEN I DESIGN</span><p>Make the next action obvious, keep states visible and let the interface adapt to the device.</p></article></div>
+    </section>
+
+    <section class="journey-section section-wrap" id="journey" aria-labelledby="journeyTitle">
+      <div class="section-heading"><div><span class="section-kicker">06 / IN PROGRESS</span><h2 id="journeyTitle">Developer journey</h2></div><p>No invented dates: this timeline shows the verified current chapter and direction.</p></div>
+      <div class="journey-line"><article><span class="journey-marker">NOW</span><div><h3>BCA studies</h3><p>Building a foundation in computing while developing practical software.</p></div></article><article><span class="journey-marker">BUILDING</span><div><h3>Thakronix</h3><p>Working across Flask, browser interfaces, utility workflows and responsive behavior.</p></div></article><article><span class="journey-marker">NEXT</span><div><h3>More proof, deeper practice</h3><p>Keep shipping focused projects, strengthen full-stack fundamentals and pursue developer opportunities.</p></div></article></div>
+    </section>
+
+    <section class="github-section section-wrap" id="github" aria-labelledby="githubTitle">
+      <div class="github-panel"><div><span class="section-kicker">07 / CODE &amp; ACTIVITY</span><h2 id="githubTitle">GitHub, without made-up stats</h2><p>A public profile URL has not been connected, so contribution counts, stars, pinned repositories and language charts are intentionally not displayed.</p><div class="github-state"><i class="bi bi-github" aria-hidden="true"></i><span>GitHub profile link<small>Not linked on this page</small></span></div></div><div class="github-side"><span class="github-side-label">REPOSITORY EVIDENCE</span><strong>Thakronix source</strong><p>The current workspace contains the Flask app, tool modules, templates and static assets.</p><a href="/developer/projects/thakronix">Read the case study <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div></div>
+    </section>
+
+    <section class="lab-section section-wrap" id="lab" aria-labelledby="labTitle">
+      <div class="section-heading"><div><span class="section-kicker">08 / THE WORKBENCH</span><h2 id="labTitle">Developer lab</h2></div><p>Active areas visible in the current build.</p></div>
+      <div class="lab-grid"><a href="/media-tools"><span>01 / IMAGE</span><strong>Browser-based media workflows</strong><small>Convert, resize and prepare images.</small><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/media-tools/pdf-tools"><span>02 / DOCUMENTS</span><strong>PDF task flows</strong><small>Focused pages for common document operations.</small><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/qr-studio"><span>03 / QR</span><strong>Creation, scanning and utility</strong><small>QR and barcode workspaces with distinct tasks.</small><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a><a href="/security-tools"><span>04 / PRIVACY</span><strong>Security-first utilities</strong><small>Local checks and purpose-built workflows.</small><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
+    </section>
+
+    <section class="learning-section section-wrap" id="learning" aria-labelledby="learningTitle">
+      <div class="section-heading"><div><span class="section-kicker">09 / CURRENT FOCUS</span><h2 id="learningTitle">What I’m working on</h2></div><p>No percentage bars; focus areas are more honest than subjective scores.</p></div>
+      <div class="focus-list"><div><span>01</span><strong>Responsive product interfaces</strong><small>Clear layouts from phone to desktop</small><b>ACTIVE</b></div><div><span>02</span><strong>Practical Flask applications</strong><small>Routes, APIs, templates and persistence</small><b>IN PRACTICE</b></div><div><span>03</span><strong>Better task handoffs</strong><small>Useful results that lead to the next action</small><b>BUILDING</b></div></div>
+    </section>
+
+    <section class="credentials-section section-wrap" id="credentials" aria-labelledby="credentialsTitle">
+      <div class="section-heading"><div><span class="section-kicker">10 / CREDENTIALS</span><h2 id="credentialsTitle">Achievements &amp; certificates</h2></div><p>Only verifiable credentials belong here.</p></div>
+      <div class="credentials-empty"><i class="bi bi-patch-check" aria-hidden="true"></i><div><strong>No certificates linked yet</strong><p>Certificate and achievement records can be added here when their source links or files are available.</p></div></div>
+    </section>
+
+    <section class="goals-section section-wrap" id="goals" aria-labelledby="goalsTitle">
+      <div class="goals-heading"><span class="section-kicker">11 / DIRECTION</span><h2 id="goalsTitle">What I’m looking for</h2><p>Internships, junior developer roles, freelance collaborations and opportunities to build useful software with a team.</p></div>
+      <div class="goal-tags"><span>Software development</span><span>Python / Flask</span><span>Web applications</span><span>Full-stack learning</span><span>Open-source collaboration</span></div>
+      <div class="availability-line"><span class="status-light"></span><strong>Open to opportunities</strong><small>Internship · Freelance · Full-time</small></div>
+    </section>
+
+    <section class="resume-section section-wrap" id="resume" aria-labelledby="resumeTitle">
+      <div><span class="section-kicker">12 / RESUME CENTER</span><h2 id="resumeTitle">A concise view of the work</h2><p>View or download my resume as a PDF.</p></div>
+      <div class="resume-actions"><a class="button-primary" href="{{ url_for('static', filename='developer/Uttam_Resume.pdf') }}" target="_blank" rel="noopener"><i class="bi bi-file-earmark-pdf" aria-hidden="true"></i> View resume</a><a class="button-quiet" href="{{ url_for('static', filename='developer/Uttam_Resume.pdf') }}" download><i class="bi bi-download" aria-hidden="true"></i> Download resume</a></div>
+    </section>
+
+    <section class="contact-section section-wrap" id="contact" aria-labelledby="contactTitle">
+      <div class="contact-copy"><span class="section-kicker">13 / START A CONVERSATION</span><h2 id="contactTitle">Let’s build something useful.</h2><p>Have a project, want to collaborate, or hiring for a developer role? Send a short message.</p><p class="contact-privacy">Messages are stored on this app server so they can be reviewed. Don’t include passwords or sensitive personal information.</p></div>
+      <form class="contact-form" id="developerContactForm">
+        <label>Name<input name="name" type="text" maxlength="80" autocomplete="name" required></label>
+        <label>Email<input name="email" type="email" maxlength="254" autocomplete="email" required></label>
+        <label class="honeypot" aria-hidden="true">Leave this field empty<input name="website" tabindex="-1" autocomplete="off"></label>
+        <label>Message<textarea name="message" rows="4" maxlength="1600" required></textarea></label>
+        <button class="button-primary" type="submit">Send message <i class="bi bi-arrow-up-right" aria-hidden="true"></i></button>
+        <p class="form-status" id="contactStatus" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="developer-footer"><a href="#identity">UT <span>Back to top ↑</span></a><span>Uttam Thakur · Developer profile</span><a href="/">Thakronix home</a></footer>
+
+  <div class="command-backdrop" id="developerCommand" hidden>
+    <section class="command-dialog" role="dialog" aria-modal="true" aria-labelledby="commandTitle">
+      <header><div><span class="section-kicker">UTTAM THAKUR / QUICK NAVIGATION</span><h2 id="commandTitle">Developer Command Center</h2></div><button id="commandClose" type="button" aria-label="Close command center"><i class="bi bi-x-lg" aria-hidden="true"></i></button></header>
+      <label class="command-search"><i class="bi bi-search" aria-hidden="true"></i><span class="visually-hidden">Search this profile</span><input id="commandInput" type="search" placeholder="Projects, skills, resume, contact…" autocomplete="off"><kbd>ESC</kbd></label>
+      <div class="command-results" id="commandResults" role="listbox" aria-label="Profile destinations"></div>
+      <footer><span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span><span><kbd>↵</kbd> Open</span><span><kbd>Esc</kbd> Close</span></footer>
+    </section>
+  </div>
+  <script src="{{ url_for('static', filename='js/developer_profile.js', v=1) }}"></script>
+</body>
+</html>

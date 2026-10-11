@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyword Generator | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>🔎 YouTube Keyword Generator</h1>
+            <p>Generate SEO-optimized keywords for YouTube SEO and research</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="mainKeyword">Main Keyword</label>
+                <input type="text" id="mainKeyword" placeholder="e.g., Python, Machine Learning, Fitness">
+            </div>
+
+            <div class="input-group">
+                <label for="keywordType">Keyword Type</label>
+                <select id="keywordType">
+                    <option value="all">All Types</option>
+                    <option value="longtail">Long-Tail Keywords</option>
+                    <option value="related">Related Keywords</option>
+                    <option value="questions">Question Keywords</option>
+                    <option value="trending">Trending Keywords</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="generateKeywords()">
+                    <i class="bi bi-lightning-charge"></i> Generate Keywords
+                </button>
+                <button class="btn btn-secondary" onclick="clearKeywords()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div class="result-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Keywords Generated</div>
+                    <div class="meta-value" id="keywordCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Search Volume</div>
+                    <div class="meta-value">Moderate</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Competition</div>
+                    <div class="meta-value">Medium</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">SEO Difficulty</div>
+                    <div class="meta-value">Moderate</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(event, 'keywordsTab')">All Keywords</button>
+                <button class="tab" onclick="switchTab(event, 'longtailTab')">Long-Tail</button>
+                <button class="tab" onclick="switchTab(event, 'questionsTab')">Questions</button>
+            </div>
+
+            <div id="keywordsTab" class="tab-content active">
+                <div id="keywordsList"></div>
+            </div>
+
+            <div id="longtailTab" class="tab-content">
+                <div id="longtailList"></div>
+            </div>
+
+            <div id="questionsTab" class="tab-content">
+                <div id="questionsList"></div>
+            </div>
+
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="copyAllKeywords()">
+                    <i class="bi bi-files"></i> Copy All
+                </button>
+                <button class="btn btn-secondary" onclick="downloadKeywordsCSV()">
+                    <i class="bi bi-download"></i> Download CSV
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    let allKeywords = [];
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function generateKeywords() {
+        const keyword = document.getElementById('mainKeyword').value;
+        
+        if (!keyword) {
+            showAlert('Please enter a keyword', 'warning');
+            return;
+        }
+
+        const keywords = [
+            `${keyword} tutorial`,
+            `learn ${keyword}`,
+            `${keyword} for beginners`,
+            `${keyword} advanced`,
+            `${keyword} tips and tricks`,
+            `${keyword} course`,
+            `best ${keyword}`,
+            `${keyword} explained`,
+            `${keyword} guide`,
+            `${keyword} 2024`,
+        ];
+
+        const longtail = [
+            `how to learn ${keyword} fast`,
+            `${keyword} for complete beginners`,
+            `best way to master ${keyword}`,
+            `${keyword} step by step guide`,
+            `learn ${keyword} in 30 days`,
+            `${keyword} projects for beginners`,
+            `advanced ${keyword} techniques`,
+            `${keyword} mistakes to avoid`,
+        ];
+
+        const questions = [
+            `What is ${keyword}?`,
+            `How to get started with ${keyword}?`,
+            `Best way to learn ${keyword}`,
+            `Is ${keyword} difficult to learn?`,
+            `${keyword} vs alternatives`,
+            `How long to master ${keyword}?`,
+            `Where to learn ${keyword}?`,
+            `${keyword} job opportunities`,
+        ];
+
+        allKeywords = keywords;
+        document.getElementById('keywordCount').textContent = keywords.length + longtail.length + questions.length;
+
+        const keywordHtml = keywords.map(kw => `
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>${kw}</span>
+                    <button class="copy-btn" onclick="copyKeyword('${kw.replace(/'/g, "\\'")}')">
+                        <i class="bi bi-files"></i> Copy
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        const longtailHtml = longtail.map(kw => `
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>🎯 ${kw}</span>
+                    <button class="copy-btn" onclick="copyKeyword('${kw.replace(/'/g, "\\'")}')">
+                        <i class="bi bi-files"></i> Copy
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        const questionsHtml = questions.map(q => `
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>❓ ${q}</span>
+                    <button class="copy-btn" onclick="copyKeyword('${q.replace(/'/g, "\\'")}')">
+                        <i class="bi bi-files"></i> Copy
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('keywordsList').innerHTML = keywordHtml;
+        document.getElementById('longtailList').innerHTML = longtailHtml;
+        document.getElementById('questionsList').innerHTML = questionsHtml;
+
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Keywords generated!', 'success');
+    }
+
+    function copyKeyword(keyword) {
+        navigator.clipboard.writeText(keyword).then(() => {
+            showAlert(`Copied: ${keyword}`, 'success');
+        });
+    }
+
+    function copyAllKeywords() {
+        const text = allKeywords.join('\n');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('All keywords copied!', 'success');
+        });
+    }
+
+    function downloadKeywordsCSV() {
+        let csv = 'Keyword,Type,SearchVolume\n';
+        allKeywords.forEach(kw => {
+            csv += `"${kw}","General","Moderate"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'keywords.csv';
+        a.click();
+        showAlert('Keywords downloaded!', 'success');
+    }
+
+    function switchTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function clearKeywords() {
+        document.getElementById('mainKeyword').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        allKeywords = [];
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Compressor | Thakronix</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Main Website CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Converter & Compressor CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/converter.css') }}">
+</head>
+
+<body>
+
+<!-- =====================================
+     BACKGROUND ANIMATION
+===================================== -->
+<div class="background">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+</div>
+
+<!-- =====================================
+     NAVBAR
+===================================== -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <!-- LOGO -->
+        <a class="navbar-brand" href="/">
+            <span class="logo-icon">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </span>
+            Thakro<span>nix</span>
+        </a>
+
+        <!-- MOBILE MENU -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <!-- NAVIGATION -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <i class="bi bi-house"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/image-compressor">
+                        <i class="bi bi-file-earmark-compress"></i> Image Compressor
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- =====================================
+     MAIN CONTENT
+===================================== -->
+<main class="converter-page">
+    <div class="container">
+
+        <!-- PAGE HEADER -->
+        <div class="converter-header">
+            <div class="tool-badge">
+                <i class="bi bi-file-earmark-compress"></i>
+                COMPRESSION TOOL
+            </div>
+            <h1>
+                Compress Your
+                <span>Images Online</span>
+            </h1>
+            <p>
+                Reduce image file size quickly without losing quality. Free, fast and secure.
+            </p>
+        </div>
+
+        <!-- COMPRESSOR CARD -->
+        <div class="converter-card">
+
+            <!-- UPLOAD AREA -->
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="bi bi-cloud-arrow-up"></i>
+                </div>
+                <h3>Drag & Drop Your Image Here</h3>
+                <p>or click the button below to browse from your device</p>
+                <span class="upload-info">
+                    Supported Formats: JPG • JPEG • PNG • WEBP
+                    <br>
+                    Maximum File Size: 20 MB
+                </span>
+
+                <!-- HIDDEN FILE INPUT -->
+                <input type="file" id="imageInput" accept="image/*" hidden>
+
+                <!-- BROWSE BUTTON -->
+                <button type="button" class="browse-btn" id="browseBtn">
+                    <i class="bi bi-folder2-open"></i> Choose Image
+                </button>
+            </div>
+
+            <!-- PREVIEW SECTION -->
+            <div class="preview-section" id="previewSection">
+
+                <!-- PREVIEW HEADER -->
+                <div class="preview-header">
+                    <h3>
+                        <i class="bi bi-image"></i> Image Preview
+                    </h3>
+                    <button type="button" class="remove-btn" id="removeBtn">
+                        <i class="bi bi-trash3"></i> Remove
+                    </button>
+                </div>
+
+                <!-- IMAGE PREVIEW -->
+                <div class="preview-container">
+                    <img id="previewImage" src="" alt="Selected Image Preview">
+                </div>
+
+                <!-- IMAGE INFORMATION -->
+                <div class="image-info">
+                    <div>
+                        <span>File Name</span>
+                        <strong id="fileName">-</strong>
+                    </div>
+                    <div>
+                        <span>Original Size</span>
+                        <strong id="originalSize">-</strong>
+                    </div>
+                    <div>
+                        <span>Format</span>
+                        <strong id="originalFormat">-</strong>
+                    </div>
+                </div>
+
+                <!-- COMPRESSION OPTIONS -->
+                <div class="options-panel">
+                    <div class="option-group">
+                        <label class="format-label">
+                            <i class="bi bi-card-list"></i> Output Format
+                        </label>
+                        <div class="format-buttons">
+                            <button type="button" class="format-btn active" data-format="JPEG">JPG</button>
+                            <button type="button" class="format-btn" data-format="PNG">PNG</button>
+                            <button type="button" class="format-btn" data-format="WEBP">WEBP</button>
+                        </div>
+                    </div>
+                    <div class="option-group">
+                        <label class="format-label">
+                            <i class="bi bi-arrows-expand"></i> Target Size (optional)
+                        </label>
+                        <input type="text" id="targetSizeInput" class="size-input" placeholder="e.g. 500 KB or 1.2 MB">
+                        <small>If you set a target size, the tool will try to meet it by adjusting quality.</small>
+                    </div>
+                    <div class="option-group">
+                        <div class="quality-header">
+                            <label>
+                                <i class="bi bi-sliders"></i> Compression Quality
+                            </label>
+                            <strong>
+                                <span id="qualityValue">80</span>%
+                            </strong>
+                        </div>
+                        <input type="range" id="qualitySlider" min="10" max="100" value="80">
+                    </div>
+                </div>
+
+                <!-- COMPRESS BUTTON -->
+                <button type="button" class="convert-btn" id="compressBtn">
+                    <i class="bi bi-file-earmark-compress"></i> Compress Image
+                </button>
+
+                <!-- PROCESSING -->
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <p>Compressing your image...</p>
+                    <span>Please wait a moment</span>
+                </div>
+
+                <!-- RESULT -->
+                <div class="result-box" id="resultBox">
+                    <div class="success-icon">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+                    <h3>Compression Complete!</h3>
+                    <p>Your image has been successfully optimized.</p>
+
+                    <div class="compression-stats">
+                        <div>
+                            <span>Original Size</span>
+                            <strong id="resultOriginal">-</strong>
+                        </div>
+                        <div>
+                            <span>Compressed Size</span>
+                            <strong id="resultCompressed">-</strong>
+                        </div>
+                        <div>
+                            <span>Size Reduced</span>
+                            <strong id="reduction">-</strong>
+                        </div>
+                    </div>
+
+                    <!-- DOWNLOAD -->
+                    <button type="button" class="download-btn" id="downloadBtn">
+                        <i class="bi bi-download"></i> Download Compressed Image
+                    </button>
+
+                    <!-- ANOTHER -->
+                    <button type="button" class="another-btn" id="anotherBtn">
+                        <i class="bi bi-arrow-repeat"></i> Compress Another Image
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</main>
+
+<!-- =====================================
+     BOOTSTRAP JS
+===================================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- =====================================
+     COMPRESSOR JS LOGIC
+===================================== -->
+<script src="{{ url_for('static', filename='js/compressor.js') }}"></script>
+
+</body>
+</html>

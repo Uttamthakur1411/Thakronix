@@ -1,0 +1,24 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Documents & File Hub{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/productivity_hubs.css') }}">{% endblock %}
+{% block content %}
+{% set tools = [
+('scanner','document-scanner','bi-camera','Document Scanner Pro','Capture/upload pages, enhance, OCR, reorder and export JPG, PNG or PDF.'),
+('redaction','pdf-redaction','bi-shield-x','PDF Redaction Studio','Find emails, phones, URLs and custom keywords before permanent redaction export.'),
+('signature','pdf-signature','bi-pen','PDF Signature Studio','Draw, type or upload a signature and save it locally for document placement.'),
+('forms','pdf-form-filler','bi-ui-checks','PDF Form Filler','Fill text, checkbox, date and signature fields, save drafts and print flattened output.'),
+('organizer','pdf-page-organizer','bi-layout-text-window-reverse','PDF Page Organizer','Reorder, duplicate, rotate, delete, extract and reverse page selections.'),
+('compare','document-compare','bi-file-diff','Document Compare Pro','Compare PDF/TXT/DOCX text with side-by-side changed, added and removed lines.'),
+('privacy','document-privacy','bi-incognito','Document Privacy Scanner','Scan text and metadata for emails, phones, URLs, author and privacy risk indicators.'),
+('renamer','file-renamer','bi-input-cursor-text','File Renamer Studio','Preview bulk prefix, suffix, replace, numbering and safe conflict handling.'),
+('organizer-files','smart-file-organizer','bi-folder2-open','Smart File Organizer','Group files by type, date and size, detect empty/large files and export a ZIP plan.'),
+('duplicates','duplicate-finder','bi-files','Duplicate File Finder','Hash local files, group exact duplicates and show recoverable space before confirmation.'),
+('zip','smart-zip-builder','bi-file-zip','Smart ZIP Builder','Choose local files, rename entries, preview size and download a ZIP archive.')
+] %}
+<section class="hub-page documents-hub" data-hub="documents">
+<header class="hub-hero"><div class="hub-eyebrow"><i class="bi bi-file-earmark-richtext"></i> LOCAL DOCUMENT WORKSPACE</div><h1>Documents & <span>File Hub</span></h1><p>Professional document utilities that run in your browser. Existing PDF, converter, compressor and metadata tools stay separate to avoid duplicates.</p><div class="hub-badges"><span>11 new tools</span><span>Local processing</span><span>No upload required</span></div></header>
+<section class="hub-catalog"><div class="hub-heading"><div><span class="hub-kicker">POPULAR TOOLS</span><h2>Protect, organize and finish files</h2></div><label class="hub-search"><i class="bi bi-search"></i><input id="hubSearch" placeholder="Search document tools"></label></div><div class="hub-grid">{% for key, slug, icon, title, desc in tools %}<button class="hub-card" data-tool="{{ key }}" data-slug="{{ slug }}"><span class="hub-icon"><i class="bi {{ icon }}"></i></span><strong>{{ title }}</strong><small>{{ desc }}</small><em>Open workspace ↗</em></button>{% endfor %}</div></section>
+<section class="hub-workspace" id="hubWorkspace" hidden><div class="workspace-head"><div><a href="/documents" class="hub-back"><i class="bi bi-arrow-left"></i> All document tools</a><span class="hub-kicker">FOCUSED WORKSPACE</span><h2 id="workspaceTitle">Choose a tool</h2></div><button class="hub-secondary" id="workspaceClose">Close</button></div><div id="workspaceBody"></div></section>
+<p class="hub-privacy"><i class="bi bi-shield-check"></i> Files are processed locally where browser APIs support it. Always inspect the final redacted/signed/exported file before sharing.</p></section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/productivity_hubs.js') }}"></script>{% endblock %}

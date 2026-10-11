@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Description Extractor | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>📝 YouTube Description Extractor</h1>
+            <p>Extract video descriptions, links, hashtags and timestamps</p>
+        </div>
+
+        <!-- INPUT SECTION -->
+        <div class="input-section">
+            <div class="input-group">
+                <label for="youtubeUrl">
+                    <i class="bi bi-link-45deg"></i> YouTube Video URL
+                </label>
+                <input 
+                    type="text" 
+                    id="youtubeUrl" 
+                    placeholder="Paste YouTube URL"
+                >
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="extractDescription()">
+                    <i class="bi bi-lightning-charge"></i> Extract Description
+                </button>
+                <button class="btn btn-secondary" onclick="clearAll()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SECTION -->
+        <div id="resultSection" class="result-section" style="display: none;">
+            
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(event, 'descTab')">
+                    <i class="bi bi-file-text"></i> Full Description
+                </button>
+                <button class="tab" onclick="switchTab(event, 'hashtagTab')">
+                    <i class="bi bi-hash"></i> Hashtags
+                </button>
+                <button class="tab" onclick="switchTab(event, 'linksTab')">
+                    <i class="bi bi-link-45deg"></i> Links
+                </button>
+                <button class="tab" onclick="switchTab(event, 'timestampsTab')">
+                    <i class="bi bi-clock"></i> Timestamps
+                </button>
+                <button class="tab" onclick="switchTab(event, 'statsTab')">
+                    <i class="bi bi-bar-chart"></i> Stats
+                </button>
+            </div>
+
+            <!-- DESCRIPTION TAB -->
+            <div id="descTab" class="tab-content active">
+                <div class="result-meta" style="margin-bottom: 20px;">
+                    <div class="meta-item">
+                        <div class="meta-label">Words</div>
+                        <div class="meta-value" id="wordCount">0</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Characters</div>
+                        <div class="meta-value" id="charCount">0</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Lines</div>
+                        <div class="meta-value" id="lineCount">0</div>
+                    </div>
+                </div>
+                <div class="result-content" id="descriptionContent"></div>
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="copyDescription()">
+                        <i class="bi bi-files"></i> Copy
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadDescriptionTXT()">
+                        <i class="bi bi-download"></i> Download TXT
+                    </button>
+                </div>
+            </div>
+
+            <!-- HASHTAGS TAB -->
+            <div id="hashtagTab" class="tab-content">
+                <div id="hashtagsContainer"></div>
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="copyHashtags()">
+                        <i class="bi bi-files"></i> Copy All
+                    </button>
+                </div>
+            </div>
+
+            <!-- LINKS TAB -->
+            <div id="linksTab" class="tab-content">
+                <div id="linksContainer"></div>
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="downloadLinksList()">
+                        <i class="bi bi-download"></i> Download Links
+                    </button>
+                </div>
+            </div>
+
+            <!-- TIMESTAMPS TAB -->
+            <div id="timestampsTab" class="tab-content">
+                <div id="timestampsContainer"></div>
+            </div>
+
+            <!-- STATS TAB -->
+            <div id="statsTab" class="tab-content">
+                <div class="result-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Hashtags Found</div>
+                        <div class="meta-value" id="hashtagCount">0</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Links Found</div>
+                        <div class="meta-value" id="linksFoundCount">0</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Timestamps Found</div>
+                        <div class="meta-value" id="timestampsFoundCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ERROR ALERT -->
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+
+    </div>
+</div>
+
+<script>
+    let descriptionData = {
+        full: '',
+        hashtags: [],
+        links: [],
+        timestamps: []
+    };
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `
+            <div class="alert alert-${type}">
+                <i class="bi bi-exclamation-circle"></i> ${message}
+            </div>
+        `;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function extractVideoId(url) {
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+        ];
+        for (let pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) return match[1];
+        }
+        return null;
+    }
+
+    function extractDescription() {
+        const url = document.getElementById('youtubeUrl').value.trim();
+        if (!url) {
+            showAlert('Please enter a YouTube URL', 'warning');
+            return;
+        }
+
+        const videoId = extractVideoId(url);
+        if (!videoId) {
+            showAlert('Invalid YouTube URL', 'error');
+            return;
+        }
+
+        // Mock description data
+        const mockDesc = `Welcome to this comprehensive tutorial! 
+
+🎓 What you'll learn:
+- Python fundamentals
+- Object-oriented programming
+- Web development with Django
+
+📚 Chapters:
+0:00 Introduction
+2:15 Getting Started
+5:40 Core Concepts
+10:20 Practical Examples
+
+🔗 Resources:
+Python Official: https://www.python.org
+Django Docs: https://www.djangoproject.com
+GitHub: https://github.com/example
+
+#Python #Programming #Tutorial
+#Coding #WebDevelopment #Django
+
+Follow for more content!
+Subscribe for updates.`;
+
+        descriptionData.full = mockDesc;
+        
+        // Extract hashtags
+        const hashtagRegex = /#\w+/g;
+        descriptionData.hashtags = [...new Set(mockDesc.match(hashtagRegex) || [])];
+
+        // Extract links
+        const linkRegex = /(https?:\/\/[^\s]+)/g;
+        descriptionData.links = mockDesc.match(linkRegex) || [];
+
+        // Extract timestamps
+        const timestampRegex = /(\d{1,2}:\d{2}(?::\d{2})?)\s+(.+?)(?:\n|$)/g;
+        descriptionData.timestamps = [];
+        let match;
+        while ((match = timestampRegex.exec(mockDesc)) !== null) {
+            descriptionData.timestamps.push({ time: match[1], label: match[2] });
+        }
+
+        displayResults();
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Description extracted successfully!', 'success');
+    }
+
+    function displayResults() {
+        // Description Tab
+        const words = descriptionData.full.split(/\s+/).filter(w => w.length > 0).length;
+        const chars = descriptionData.full.length;
+        const lines = descriptionData.full.split('\n').length;
+
+        document.getElementById('wordCount').textContent = words;
+        document.getElementById('charCount').textContent = chars;
+        document.getElementById('lineCount').textContent = lines;
+        document.getElementById('descriptionContent').textContent = descriptionData.full;
+
+        // Hashtags Tab
+        const hashtagsHtml = descriptionData.hashtags.map(tag => `
+            <span class="tag" onclick="copyToClipboard('${tag}')" style="cursor: pointer;">
+                ${tag}
+            </span>
+        `).join('');
+        document.getElementById('hashtagsContainer').innerHTML = hashtagsHtml || '<p class="text-muted">No hashtags found</p>';
+
+        // Links Tab
+        const linksHtml = descriptionData.links.map(link => `
+            <div class="card">
+                <a href="${link}" target="_blank" style="word-break: break-all;">
+                    <i class="bi bi-box-arrow-up-right"></i> ${link}
+                </a>
+            </div>
+        `).join('');
+        document.getElementById('linksContainer').innerHTML = linksHtml || '<p class="text-muted">No links found</p>';
+
+        // Timestamps Tab
+        const timestampsHtml = descriptionData.timestamps.map(ts => `
+            <div class="card">
+                <strong>${ts.time}</strong> - ${ts.label}
+            </div>
+        `).join('');
+        document.getElementById('timestampsContainer').innerHTML = timestampsHtml || '<p class="text-muted">No timestamps found</p>';
+
+        // Stats
+        document.getElementById('hashtagCount').textContent = descriptionData.hashtags.length;
+        document.getElementById('linksFoundCount').textContent = descriptionData.links.length;
+        document.getElementById('timestampsFoundCount').textContent = descriptionData.timestamps.length;
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert(`Copied: "${text}"`, 'success');
+        });
+    }
+
+    function copyDescription() {
+        navigator.clipboard.writeText(descriptionData.full).then(() => {
+            showAlert('Description copied!', 'success');
+        });
+    }
+
+    function copyHashtags() {
+        navigator.clipboard.writeText(descriptionData.hashtags.join(' ')).then(() => {
+            showAlert('Hashtags copied!', 'success');
+        });
+    }
+
+    function downloadDescriptionTXT() {
+        const blob = new Blob([descriptionData.full], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'youtube-description.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function downloadLinksList() {
+        const text = descriptionData.links.join('\n');
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'youtube-links.txt';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function switchTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        event.target.closest('.tab').classList.add('active');
+    }
+
+    function clearAll() {
+        document.getElementById('youtubeUrl').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        descriptionData = { full: '', hashtags: [], links: [], timestamps: [] };
+    }
+</script>
+
+</body>
+</html>

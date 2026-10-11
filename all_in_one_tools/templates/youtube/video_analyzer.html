@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Analyzer | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>📊 YouTube Video Analyzer</h1>
+            <p>Analyze your video title, description, and tags for SEO optimization</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="videoTitle">Video Title</label>
+                <textarea id="videoTitle" placeholder="Enter your video title" style="min-height: 60px;"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="videoDescription">Video Description</label>
+                <textarea id="videoDescription" placeholder="Enter your video description" style="min-height: 100px;"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="videoTags">Tags (comma-separated)</label>
+                <textarea id="videoTags" placeholder="tag1, tag2, tag3" style="min-height: 60px;"></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="analyzeVideo()">
+                    <i class="bi bi-lightning-charge"></i> Analyze Video
+                </button>
+                <button class="btn btn-secondary" onclick="clearAnalyzer()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.9rem; opacity: 0.9;">SEO Score</div>
+                    <div style="font-size: 2.5rem; font-weight: 700; margin: 10px 0;" id="seoScore">0/100</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;" id="scoreMessage">Poor</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(event, 'titleTab')">Title Analysis</button>
+                <button class="tab" onclick="switchTab(event, 'descTab')">Description</button>
+                <button class="tab" onclick="switchTab(event, 'tagsTab')">Tags</button>
+                <button class="tab" onclick="switchTab(event, 'recommendTab')">Recommendations</button>
+            </div>
+
+            <div id="titleTab" class="tab-content active">
+                <div id="titleAnalysis"></div>
+            </div>
+
+            <div id="descTab" class="tab-content">
+                <div id="descAnalysis"></div>
+            </div>
+
+            <div id="tagsTab" class="tab-content">
+                <div id="tagsAnalysis"></div>
+            </div>
+
+            <div id="recommendTab" class="tab-content">
+                <div id="recommendations"></div>
+            </div>
+
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="downloadAnalysis()">
+                    <i class="bi bi-download"></i> Download Report
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    const powerWords = ['Amazing', 'Incredible', 'Secret', 'Proven', 'Ultimate', 'Easy', 'Free', 'Best', 'Top', 'Quick', 'Essential', 'Complete', 'Full', 'Powerful', 'Stunning'];
+
+    function analyzeVideo() {
+        const title = document.getElementById('videoTitle').value.trim();
+        const desc = document.getElementById('videoDescription').value.trim();
+        const tags = document.getElementById('videoTags').value.trim();
+
+        if (!title || !desc || !tags) {
+            showAlert('Please fill all fields', 'warning');
+            return;
+        }
+
+        let score = 0;
+
+        // Title Analysis
+        const titleLength = title.length;
+        const titleWords = title.split(/\s+/).length;
+        const hasPowerWord = powerWords.some(word => title.toLowerCase().includes(word.toLowerCase()));
+        const hasNumbers = /\d+/.test(title);
+
+        let titleHtml = `
+            <div class="card">
+                <div><strong>Length:</strong> ${titleLength} characters (${titleWords} words)</div>
+            </div>
+            <div class="card">
+                <div><strong>Optimal Length:</strong> ${titleLength >= 50 && titleLength <= 60 ? '✓ Good (50-60)' : '⚠️ Consider 50-60 characters'}</div>
+            </div>
+            <div class="card">
+                <div><strong>Power Words:</strong> ${hasPowerWord ? '✓ Found "' + powerWords.find(w => title.toLowerCase().includes(w.toLowerCase())) + '"' : '⚠️ Consider adding power words'}</div>
+            </div>
+            <div class="card">
+                <div><strong>Numbers:</strong> ${hasNumbers ? '✓ Contains numbers' : '⚠️ Consider adding numbers'}</div>
+            </div>
+        `;
+
+        score += titleLength >= 50 && titleLength <= 60 ? 20 : 10;
+        score += hasPowerWord ? 15 : 0;
+        score += hasNumbers ? 10 : 0;
+
+        // Description Analysis
+        const descLength = desc.length;
+        const descWords = desc.split(/\s+/).length;
+        const hasLinks = /https?:\/\//.test(desc);
+        const hasTimestamps = /\d{1,2}:\d{2}/.test(desc);
+
+        let descHtml = `
+            <div class="card">
+                <div><strong>Length:</strong> ${descLength} characters (${descWords} words)</div>
+            </div>
+            <div class="card">
+                <div><strong>Optimal Length:</strong> ${descLength >= 250 ? '✓ Good (250+)' : '⚠️ Extend to 250+ characters'}</div>
+            </div>
+            <div class="card">
+                <div><strong>Links:</strong> ${hasLinks ? '✓ Contains links' : '⚠️ Consider adding links'}</div>
+            </div>
+            <div class="card">
+                <div><strong>Timestamps:</strong> ${hasTimestamps ? '✓ Has timestamps' : '⚠️ Consider adding chapters'}</div>
+            </div>
+        `;
+
+        score += descLength >= 250 ? 20 : 10;
+        score += hasLinks ? 10 : 0;
+        score += hasTimestamps ? 10 : 0;
+
+        // Tags Analysis
+        const tagArray = tags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+        const avgTagLength = tagArray.reduce((sum, t) => sum + t.length, 0) / tagArray.length;
+
+        let tagsHtml = `
+            <div class="card">
+                <div><strong>Number of Tags:</strong> ${tagArray.length} tags (${tagArray.length >= 5 ? '✓ Good' : '⚠️ Add more tags (5-15 recommended)'})</div>
+            </div>
+            <div class="card">
+                <div><strong>Average Tag Length:</strong> ${avgTagLength.toFixed(1)} characters</div>
+            </div>
+            <div class="card">
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px;">
+                    ${tagArray.map(tag => `<div style="background: #e8f0fe; padding: 8px; border-radius: 4px; font-size: 0.85rem;">${tag}</div>`).join('')}
+                </div>
+            </div>
+        `;
+
+        score += tagArray.length >= 5 && tagArray.length <= 15 ? 15 : 5;
+
+        // Recommendations
+        let recommendations = [];
+        if (titleLength < 50 || titleLength > 60) recommendations.push('Optimize title length to 50-60 characters');
+        if (!hasPowerWord) recommendations.push('Add power words like "Best", "Ultimate", "Top" to title');
+        if (!hasNumbers) recommendations.push('Include numbers in your title (e.g., "5 Tips", "2024")');
+        if (descLength < 250) recommendations.push('Extend description to at least 250 characters');
+        if (!hasLinks) recommendations.push('Add relevant links in description');
+        if (!hasTimestamps) recommendations.push('Add timestamps/chapters in description');
+        if (tagArray.length < 5) recommendations.push('Add more tags (minimum 5 recommended)');
+        if (tagArray.length > 15) recommendations.push('Reduce to 15 or fewer tags');
+
+        let recommendHtml = recommendations.map((rec, idx) => `
+            <div class="card">
+                <div style="display: flex; gap: 12px; align-items: start;">
+                    <div style="color: #fa709a; font-weight: 700;">💡</div>
+                    <div>${idx + 1}. ${rec}</div>
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('titleAnalysis').innerHTML = titleHtml;
+        document.getElementById('descAnalysis').innerHTML = descHtml;
+        document.getElementById('tagsAnalysis').innerHTML = tagsHtml;
+        document.getElementById('recommendations').innerHTML = recommendHtml || '<div class="card">✓ No recommendations - Your video is well optimized!</div>';
+
+        // Set score
+        const finalScore = Math.min(100, score);
+        const message = finalScore >= 80 ? 'Excellent' : finalScore >= 60 ? 'Good' : finalScore >= 40 ? 'Fair' : 'Poor';
+        document.getElementById('seoScore').textContent = finalScore + '/100';
+        document.getElementById('scoreMessage').textContent = message;
+
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Video analyzed!', 'success');
+    }
+
+    function downloadAnalysis() {
+        const title = document.getElementById('videoTitle').value;
+        const score = document.getElementById('seoScore').textContent;
+        const message = document.getElementById('scoreMessage').textContent;
+
+        let report = `YouTube Video Analysis Report
+===================================================
+
+Video Information:
+Title: ${title}
+SEO Score: ${score} (${message})
+
+Generated on: ${new Date().toLocaleString()}
+
+Recommendations:
+${Array.from(document.querySelectorAll('#recommendTab .card')).map(card => '- ' + card.textContent.trim()).join('\n')}
+`;
+
+        const blob = new Blob([report], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'video-analysis-report.txt';
+        a.click();
+        showAlert('Report downloaded!', 'success');
+    }
+
+    function switchTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function clearAnalyzer() {
+        document.getElementById('videoTitle').value = '';
+        document.getElementById('videoDescription').value = '';
+        document.getElementById('videoTags').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

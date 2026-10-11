@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Titles Generator & Analyzer | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>🎬 YouTube Video Titles</h1>
+            <p>Generate and analyze effective YouTube video titles</p>
+        </div>
+
+        <div class="tabs" style="margin-bottom: 30px;">
+            <button class="tab active" onclick="switchTab(event, 'generatorTab')">
+                <i class="bi bi-magic"></i> Title Generator
+            </button>
+            <button class="tab" onclick="switchTab(event, 'analyzerTab')">
+                <i class="bi bi-bar-chart"></i> Title Analyzer
+            </button>
+        </div>
+
+        <!-- GENERATOR TAB -->
+        <div id="generatorTab" class="tab-content active">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="videoTopic">Video Topic</label>
+                    <input type="text" id="videoTopic" placeholder="e.g., Learn Python in 30 Days">
+                </div>
+
+                <div class="input-group">
+                    <label for="niche">Niche/Category</label>
+                    <select id="niche">
+                        <option>Programming</option>
+                        <option>Education</option>
+                        <option>Gaming</option>
+                        <option>Entertainment</option>
+                        <option>Music</option>
+                        <option>Business</option>
+                        <option>Tech</option>
+                        <option>Lifestyle</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="tone">Tone/Style</label>
+                    <select id="tone">
+                        <option>Professional</option>
+                        <option>Casual</option>
+                        <option>Clickbait</option>
+                        <option>SEO-Optimized</option>
+                        <option>Educational</option>
+                        <option>Funny</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="count">Number of Titles</label>
+                    <select id="count">
+                        <option value="10">10 Titles</option>
+                        <option value="20" selected>20 Titles</option>
+                        <option value="50">50 Titles</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateTitles()">
+                        <i class="bi bi-lightning-charge"></i> Generate Titles
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearGenerator()">
+                        <i class="bi bi-arrow-clockwise"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <div id="generatedTitlesSection" class="result-section" style="display: none;">
+                <div id="titlesContainer"></div>
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn btn-success" onclick="downloadTitlesTXT()">
+                        <i class="bi bi-download"></i> Download TXT
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadTitlesCSV()">
+                        <i class="bi bi-download"></i> Download CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALYZER TAB -->
+        <div id="analyzerTab" class="tab-content">
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="titleToAnalyze">Paste Your Title</label>
+                    <input type="text" id="titleToAnalyze" placeholder="Paste your YouTube title here">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="analyzeTitle()">
+                        <i class="bi bi-bar-chart"></i> Analyze Title
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAnalyzer()">
+                        <i class="bi bi-arrow-clockwise"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <div id="analysisSection" class="result-section" style="display: none;">
+                <div class="result-meta" style="margin-bottom: 20px;">
+                    <div class="meta-item">
+                        <div class="meta-label">SEO Score</div>
+                        <div class="meta-value" id="seoScore">0/100</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">CTR Potential</div>
+                        <div class="meta-value" id="ctrPotential">Medium</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Length</div>
+                        <div class="meta-value" id="titleLength">0</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Character Count</div>
+                        <div class="meta-value" id="charLength">0</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Analysis Details</div>
+                    <div id="analysisDetails"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">SEO Recommendations</div>
+                    <div id="recommendations"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+
+    </div>
+</div>
+
+<script>
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `
+            <div class="alert alert-${type}">
+                <i class="bi bi-exclamation-circle"></i> ${message}
+            </div>
+        `;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function generateTitles() {
+        const topic = document.getElementById('videoTopic').value;
+        const count = parseInt(document.getElementById('count').value);
+        const tone = document.getElementById('tone').value;
+
+        if (!topic) {
+            showAlert('Please enter a video topic', 'warning');
+            return;
+        }
+
+        const templates = [
+            `${topic} - Complete Guide 2024`,
+            `How to ${topic} in 10 Minutes`,
+            `${topic} For Beginners (Easy)`,
+            `I Tried ${topic} and Here's What Happened`,
+            `${topic}: The COMPLETE Tutorial`,
+            `The Ultimate ${topic} Guide`,
+            `${topic} Explained in 5 Minutes`,
+            `${topic} Tutorial - Step by Step`,
+            `Best ${topic} Methods (TESTED)`,
+            `${topic} - Everything You Need to Know`,
+            `Master ${topic} Today`,
+            `${topic} Tips and Tricks`,
+            `Learn ${topic} FAST`,
+            `The Truth About ${topic}`,
+            `${topic} Challenge!`,
+            `Why Everyone is Learning ${topic}`,
+            `${topic} in 2024 - Updated Guide`,
+            `Advanced ${topic} Techniques`,
+            `${topic} vs ${topic}: Which is Better?`,
+            `The Easiest Way to ${topic}`,
+        ];
+
+        const titles = templates.slice(0, count);
+        
+        const titlesHtml = titles.map((title, idx) => `
+            <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>${idx + 1}. ${title}</span>
+                <button class="copy-btn" onclick="copyTitle('${title.replace(/'/g, "\\'")}')">
+                    <i class="bi bi-files"></i> Copy
+                </button>
+            </div>
+        `).join('');
+
+        document.getElementById('titlesContainer').innerHTML = titlesHtml;
+        document.getElementById('generatedTitlesSection').style.display = 'block';
+        showAlert('Titles generated successfully!', 'success');
+    }
+
+    function copyTitle(title) {
+        navigator.clipboard.writeText(title).then(() => {
+            showAlert('Title copied!', 'success');
+        });
+    }
+
+    function analyzeTitle() {
+        const title = document.getElementById('titleToAnalyze').value;
+
+        if (!title) {
+            showAlert('Please enter a title to analyze', 'warning');
+            return;
+        }
+
+        const length = title.split(' ').length;
+        const chars = title.length;
+        const hasNumbers = /\d+/.test(title);
+        const hasPower = /[!?*]/.test(title);
+        const hasKeywords = /[Aa]nd|[Tt]he|[Hh]ow|[Ww]hy|[Ww]hat/.test(title);
+
+        let score = 50;
+        score += hasNumbers ? 15 : 0;
+        score += hasPower ? 10 : 0;
+        score += hasKeywords ? 15 : 0;
+        score += (chars >= 40 && chars <= 60) ? 10 : -5;
+
+        const recommendations = `
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>${hasNumbers ? '✓ Contains numbers (good)' : '✗ Add numbers for better CTR'}</li>
+                <li>${hasPower ? '✓ Has power words (good)' : '✗ Add power words like !, ?, *'}</li>
+                <li>${(chars >= 40 && chars <= 60) ? '✓ Optimal length' : `✗ Title is ${chars > 60 ? 'too long' : 'too short'} (${chars} chars)`}</li>
+                <li>${hasKeywords ? '✓ Contains important keywords' : '✗ Add relevant keywords'}</li>
+            </ul>
+        `;
+
+        const details = `
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>Word Count: ${length}</li>
+                <li>Character Count: ${chars}</li>
+                <li>Est. Views/1K Subs: ${Math.floor(score / 10)}% CTR</li>
+            </ul>
+        `;
+
+        document.getElementById('seoScore').textContent = `${score}/100`;
+        document.getElementById('ctrPotential').textContent = score > 70 ? 'Excellent' : score > 50 ? 'Good' : 'Average';
+        document.getElementById('titleLength').textContent = length;
+        document.getElementById('charLength').textContent = chars;
+        document.getElementById('analysisDetails').innerHTML = details;
+        document.getElementById('recommendations').innerHTML = recommendations;
+
+        document.getElementById('analysisSection').style.display = 'block';
+        showAlert('Title analyzed!', 'success');
+    }
+
+    function downloadTitlesTXT() {
+        const titles = document.querySelectorAll('#titlesContainer .card');
+        let text = 'YouTube Video Titles\n\n';
+        titles.forEach((card, idx) => {
+            const title = card.querySelector('span').textContent.replace(/^\d+\.\s/, '');
+            text += title + '\n';
+        });
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'youtube-titles.txt';
+        a.click();
+    }
+
+    function downloadTitlesCSV() {
+        const titles = document.querySelectorAll('#titlesContainer .card');
+        let csv = 'Title,Length\n';
+        titles.forEach((card) => {
+            const title = card.querySelector('span').textContent.replace(/^\d+\.\s/, '');
+            csv += `"${title}",${title.length}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'youtube-titles.csv';
+        a.click();
+    }
+
+    function switchTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        event.target.closest('.tab').classList.add('active');
+    }
+
+    function clearGenerator() {
+        document.getElementById('videoTopic').value = '';
+        document.getElementById('generatedTitlesSection').style.display = 'none';
+    }
+
+    function clearAnalyzer() {
+        document.getElementById('titleToAnalyze').value = '';
+        document.getElementById('analysisSection').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

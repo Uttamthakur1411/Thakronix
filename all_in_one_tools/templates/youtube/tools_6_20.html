@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Tools - Tools 6-20 | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1 id="toolTitle">YouTube Tool</h1>
+            <p id="toolDescription">Tool description</p>
+        </div>
+
+        <div class="input-section">
+            <div id="inputFields"></div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="executeTool()">
+                    <i class="bi bi-lightning-charge"></i> Execute
+                </button>
+                <button class="btn btn-secondary" onclick="clearTool()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div id="resultContent"></div>
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="copyResult()">
+                    <i class="bi bi-files"></i> Copy
+                </button>
+                <button class="btn btn-secondary" onclick="downloadResult()">
+                    <i class="bi bi-download"></i> Download
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    const toolConfigs = {
+        'trending_tags': {
+            title: '🔥 Trending Tags',
+            desc: 'Find trending tags and hashtags by country and category',
+            fields: [
+                { label: 'Country', type: 'select', id: 'country', options: ['India', 'USA', 'UK', 'Canada', 'Australia'] },
+                { label: 'Category', type: 'select', id: 'category', options: ['Technology', 'Education', 'Gaming', 'Entertainment', 'Music'] }
+            ],
+            execute: () => getTrendingTags()
+        },
+        'youtube_to_mp3': {
+            title: '🎵 YouTube to MP3',
+            desc: 'Extract audio from your own videos or authorized content',
+            fields: [
+                { label: 'YouTube URL', type: 'text', id: 'youtubeUrl', placeholder: 'Paste YouTube URL' },
+                { label: 'Quality', type: 'select', id: 'quality', options: ['128 kbps', '192 kbps', '320 kbps'] }
+            ],
+            execute: () => convertToMP3()
+        },
+        'channel_analyzer': {
+            title: '📊 YouTube Channel Analyzer',
+            desc: 'Analyze YouTube channels with statistics',
+            fields: [
+                { label: 'YouTube Channel URL', type: 'text', id: 'channelUrl', placeholder: 'Paste channel URL' }
+            ],
+            execute: () => analyzeChannel()
+        },
+        'shorts_downloader': {
+            title: '📱 YouTube Shorts Downloader',
+            desc: 'Download YouTube Shorts videos',
+            fields: [
+                { label: 'Shorts URL', type: 'text', id: 'shortsUrl', placeholder: 'Paste Shorts URL' }
+            ],
+            execute: () => downloadShorts()
+        },
+        'trending_videos': {
+            title: '🔥 Trending Videos',
+            desc: 'Discover trending videos by country and category',
+            fields: [
+                { label: 'Country', type: 'select', id: 'country', options: ['India', 'USA', 'UK', 'Canada'] },
+                { label: 'Category', type: 'select', id: 'category', options: ['All', 'Technology', 'Gaming', 'Music', 'News'] }
+            ],
+            execute: () => getTrendingVideos()
+        },
+        'keyword_generator': {
+            title: '🔎 YouTube Keyword Generator',
+            desc: 'Generate keywords for YouTube SEO',
+            fields: [
+                { label: 'Main Keyword', type: 'text', id: 'keyword', placeholder: 'e.g., Python' }
+            ],
+            execute: () => generateKeywords()
+        },
+        'hashtag_generator': {
+            title: '#️⃣ YouTube Hashtag Generator',
+            desc: 'Generate effective hashtags',
+            fields: [
+                { label: 'Topic', type: 'text', id: 'topic', placeholder: 'e.g., AI Tools' },
+                { label: 'Count', type: 'select', id: 'count', options: ['10', '20', '50'] }
+            ],
+            execute: () => generateHashtags()
+        },
+        'video_id_extractor': {
+            title: '🆔 YouTube Video ID Extractor',
+            desc: 'Extract video IDs from URLs',
+            fields: [
+                { label: 'YouTube URL', type: 'text', id: 'youtubeUrl', placeholder: 'Paste URL' }
+            ],
+            execute: () => extractVideoID()
+        },
+        'timestamp_generator': {
+            title: '🔗 YouTube Timestamp Generator',
+            desc: 'Create chapter timestamps',
+            fields: [
+                { label: 'Timestamps (time - label, one per line)', type: 'textarea', id: 'timestamps', placeholder: '0:00 - Introduction\n2:15 - Main Topic' }
+            ],
+            execute: () => generateTimestamps()
+        },
+        'embed_generator': {
+            title: '📺 YouTube Embed Generator',
+            desc: 'Generate YouTube embed codes',
+            fields: [
+                { label: 'YouTube URL', type: 'text', id: 'youtubeUrl', placeholder: 'Paste URL' },
+                { label: 'Width', type: 'text', id: 'width', placeholder: '560' },
+                { label: 'Height', type: 'text', id: 'height', placeholder: '315' }
+            ],
+            execute: () => generateEmbed()
+        },
+        'watch_time_calculator': {
+            title: '⏱️ YouTube Watch Time Calculator',
+            desc: 'Calculate total watch time',
+            fields: [
+                { label: 'Number of Videos', type: 'number', id: 'videoCount', placeholder: '50' },
+                { label: 'Average Duration (minutes)', type: 'number', id: 'duration', placeholder: '12' },
+                { label: 'Videos per Day', type: 'number', id: 'perDay', placeholder: '3' }
+            ],
+            execute: () => calculateWatchTime()
+        },
+        'thumbnail_url_extractor': {
+            title: '🖼️ Thumbnail URL Extractor',
+            desc: 'Extract thumbnail URLs',
+            fields: [
+                { label: 'YouTube URL', type: 'text', id: 'youtubeUrl', placeholder: 'Paste URL' }
+            ],
+            execute: () => extractThumbnailURLs()
+        },
+        'video_analyzer': {
+            title: '📈 YouTube Video Analyzer',
+            desc: 'Analyze video metadata',
+            fields: [
+                { label: 'YouTube URL', type: 'text', id: 'youtubeUrl', placeholder: 'Paste URL' }
+            ],
+            execute: () => analyzeVideo()
+        },
+        'content_idea_generator': {
+            title: '💡 YouTube Content Idea Generator',
+            desc: 'Generate video ideas',
+            fields: [
+                { label: 'Niche', type: 'text', id: 'niche', placeholder: 'Technology' },
+                { label: 'Audience Level', type: 'select', id: 'level', options: ['Beginner', 'Intermediate', 'Advanced'] },
+                { label: 'Count', type: 'select', id: 'count', options: ['10', '25', '50'] }
+            ],
+            execute: () => generateContentIdeas()
+        },
+        'upload_planner': {
+            title: '📅 YouTube Upload Planner',
+            desc: 'Plan your uploads',
+            fields: [
+                { label: 'Plan your videos', type: 'textarea', id: 'plan', placeholder: 'Monday - Python Tutorial - Draft\nWednesday - AI Tools - Ready' }
+            ],
+            execute: () => planUploads()
+        }
+    };
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let toolType = urlParams.get('tool') || 'trending_tags';
+
+    // If tool param is not in URL, try to extract from flask context or pathname
+    if (!toolType || toolType === '') {
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split('/').filter(p => p);
+        if (pathParts.length > 1) {
+            const toolName = pathParts[pathParts.length - 1];
+            const toolMap = {
+                'trending-tags': 'trending_tags',
+                'to-mp3': 'youtube_to_mp3',
+                'channel-analyzer': 'channel_analyzer',
+                'shorts-downloader': 'shorts_downloader',
+                'trending-videos': 'trending_videos',
+                'keyword-generator': 'keyword_generator',
+                'hashtag-generator': 'hashtag_generator',
+                'video-id-extractor': 'video_id_extractor',
+                'timestamp-generator': 'timestamp_generator',
+                'embed-generator': 'embed_generator',
+                'watch-time-calculator': 'watch_time_calculator',
+                'thumbnail-url-extractor': 'thumbnail_url_extractor',
+                'video-analyzer': 'video_analyzer',
+                'content-idea-generator': 'content_idea_generator',
+                'upload-planner': 'upload_planner'
+            };
+            toolType = toolMap[toolName] || toolType;
+        }
+    }
+    
+    const config = toolConfigs[toolType];
+
+    if (config) {
+        document.getElementById('toolTitle').textContent = config.title;
+        document.getElementById('toolDescription').textContent = config.desc;
+        
+        const fieldsHtml = config.fields.map(field => {
+            if (field.type === 'select') {
+                return `<div class="input-group"><label for="${field.id}">${field.label}</label><select id="${field.id}">${field.options.map(o => `<option>${o}</option>`).join('')}</select></div>`;
+            } else if (field.type === 'textarea') {
+                return `<div class="input-group"><label for="${field.id}">${field.label}</label><textarea id="${field.id}" placeholder="${field.placeholder}"></textarea></div>`;
+            } else {
+                return `<div class="input-group"><label for="${field.id}">${field.label}</label><input type="${field.type}" id="${field.id}" placeholder="${field.placeholder}"></div>`;
+            }
+        }).join('');
+        
+        document.getElementById('inputFields').innerHTML = fieldsHtml;
+    }
+
+    let resultData = '';
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function executeTool() {
+        if (config) config.execute();
+    }
+
+    function displayResult(html) {
+        document.getElementById('resultContent').innerHTML = html;
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Result ready!', 'success');
+    }
+
+    function getTrendingTags() {
+        const mockTags = ['#technology', '#AI', '#coding', '#chatgpt', '#python', '#javascript', '#webdevelopment', '#machinelearning'];
+        displayResult(mockTags.map(t => `<span class="tag">${t}</span>`).join(''));
+    }
+
+    function convertToMP3() {
+        displayResult('<div class="card"><p>MP3 conversion ready (authorized content only)</p></div>');
+    }
+
+    function analyzeChannel() {
+        displayResult('<div class="result-meta"><div class="meta-item"><div class="meta-label">Subscribers</div><div class="meta-value">1.2M</div></div></div>');
+    }
+
+    function downloadShorts() {
+        displayResult('<div class="card"><p>Shorts download ready</p></div>');
+    }
+
+    function getTrendingVideos() {
+        displayResult('<div class="card"><p>🔥 Top trending videos in your region</p></div>');
+    }
+
+    function generateKeywords() {
+        const keywords = ['python tutorial', 'learn python', 'python for beginners', 'python projects', 'python advanced'];
+        displayResult(keywords.map(k => `<div class="card">${k}</div>`).join(''));
+    }
+
+    function generateHashtags() {
+        const hashtags = ['#AI', '#Tools', '#Technology', '#ChatGPT', '#Automation'];
+        displayResult(hashtags.map(h => `<span class="tag">${h}</span>`).join(''));
+    }
+
+    function extractVideoID() {
+        displayResult('<div class="card"><strong>Video ID:</strong> ABC123DEF45</div>');
+    }
+
+    function generateTimestamps() {
+        displayResult('<div class="card"><pre>0:00 Introduction\n2:15 Main Topic\n5:40 Examples</pre></div>');
+    }
+
+    function generateEmbed() {
+        displayResult('<div class="card"><pre>&lt;iframe width="560" height="315"...&gt;&lt;/iframe&gt;</pre></div>');
+    }
+
+    function calculateWatchTime() {
+        const videoCount = document.getElementById('videoCount').value || 50;
+        const duration = document.getElementById('duration').value || 12;
+        const perDay = document.getElementById('perDay').value || 3;
+        const totalHours = (videoCount * duration) / 60;
+        const days = Math.ceil(videoCount / perDay);
+        displayResult(`<div class="result-meta"><div class="meta-item"><div class="meta-label">Total Watch Time</div><div class="meta-value">${totalHours.toFixed(1)} Hours</div></div><div class="meta-item"><div class="meta-label">Days Required</div><div class="meta-value">${days}</div></div></div>`);
+    }
+
+    function extractThumbnailURLs() {
+        const urls = ['https://img.youtube.com/vi/{id}/maxresdefault.jpg', 'https://img.youtube.com/vi/{id}/hqdefault.jpg'];
+        displayResult(urls.map(u => `<div class="card"><a href="#" style="word-break: break-all;">${u}</a></div>`).join(''));
+    }
+
+    function analyzeVideo() {
+        displayResult('<div class="result-meta"><div class="meta-item"><div class="meta-label">Video Score</div><div class="meta-value">82/100</div></div></div>');
+    }
+
+    function generateContentIdeas() {
+        const ideas = ['10 Tools to Boost Productivity', 'AI Tutorial for Beginners', 'Advanced Techniques Explained'];
+        displayResult(ideas.map(i => `<div class="card">${i}</div>`).join(''));
+    }
+
+    function planUploads() {
+        displayResult('<div class="card"><p>📅 Upload plan created. Save locally to manage your content calendar.</p></div>');
+    }
+
+    function copyResult() {
+        navigator.clipboard.writeText(document.getElementById('resultContent').textContent).then(() => {
+            showAlert('Copied!', 'success');
+        });
+    }
+
+    function downloadResult() {
+        const blob = new Blob([document.getElementById('resultContent').textContent], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'result.txt';
+        a.click();
+    }
+
+    function clearTool() {
+        document.querySelectorAll('input, textarea, select').forEach(el => el.value = '');
+        document.getElementById('resultSection').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

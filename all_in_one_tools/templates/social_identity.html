@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101713">
+  <title>Social Profile &amp; Identity Studio | Thakronix</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=9) }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/social_identity_page.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="tools-section social-identity-page">
+    <div class="container">
+      <a class="social-home-link" href="/"><i class="bi bi-arrow-left" aria-hidden="true"></i> All tools</a>
+      <div class="section-heading">
+        <div>
+          <span class="section-label">12 DEDICATED TOOLS</span>
+          <h1>Social Profile &amp; <span>Identity Studio</span></h1>
+          <p>Profile images, creator identity, gaming avatars, feed planning and brand exports.</p>
+        </div>
+      </div>
+      <div class="tools-grid tool-directory-grid social-identity-grid">
+        {% for tool in social_tools %}
+        <article class="tool-card directory-tool-card" style="--card-index: {{ loop.index0 }}; --tool-tint: {{ ['#f07862', '#45b8a6', '#e6ae4e', '#61a9d5'][loop.index0 % 4] }}">
+          <span class="tool-icon directory-tool-icon"><i class="bi {{ tool[3] }}" aria-hidden="true"></i></span>
+          <h3>{{ tool[1] }}</h3>
+          <p>{{ tool[2] }}</p>
+          <a class="tool-link" href="{{ url_for('social_identity_tool', tool_id=tool[0]) }}" aria-label="Open {{ tool[1] }}">Open tool <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+        </article>
+        {% endfor %}
+      </div>
+    </div>
+  </main>
+</body>
+</html>

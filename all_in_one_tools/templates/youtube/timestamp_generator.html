@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timestamp Generator | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>⏱️ YouTube Timestamp Generator</h1>
+            <p>Create chapter timestamps for YouTube video descriptions</p>
+        </div>
+
+        <div class="input-section">
+            <div id="timestampInputs">
+                <div class="timestamp-row">
+                    <div class="input-group">
+                        <label>Hours</label>
+                        <input type="number" class="timestamp-hours" min="0" max="23" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Minutes</label>
+                        <input type="number" class="timestamp-minutes" min="0" max="59" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Seconds</label>
+                        <input type="number" class="timestamp-seconds" min="0" max="59" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>Chapter Label</label>
+                        <input type="text" class="timestamp-label" placeholder="e.g., Introduction">
+                    </div>
+                    <button class="btn btn-danger btn-sm" onclick="removeTimestamp(this)">
+                        <i class="bi bi-trash"></i> Remove
+                    </button>
+                </div>
+            </div>
+
+            <div class="button-group" style="margin-top: 15px;">
+                <button class="btn btn-secondary" onclick="addTimestampRow()">
+                    <i class="bi bi-plus"></i> Add Another Chapter
+                </button>
+            </div>
+
+            <div class="button-group" style="margin-top: 15px;">
+                <button class="btn btn-primary" onclick="generateTimestamps()">
+                    <i class="bi bi-lightning-charge"></i> Generate Timestamps
+                </button>
+                <button class="btn btn-secondary" onclick="clearTimestamps()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear All
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div class="result-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Chapters</div>
+                    <div class="meta-value" id="chapterCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Total Duration</div>
+                    <div class="meta-value" id="totalDuration">00:00</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h3>📋 Formatted Timestamps</h3>
+                <div style="background: #f5f5f5; padding: 15px; border-radius: 8px; font-family: monospace;">
+                    <div id="formattedOutput"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <h3>🎬 Timestamp Cards</h3>
+                <div id="timestampCards"></div>
+            </div>
+
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="copyFormatted()">
+                    <i class="bi bi-files"></i> Copy Formatted
+                </button>
+                <button class="btn btn-secondary" onclick="downloadTimestamps()">
+                    <i class="bi bi-download"></i> Download TXT
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<style>
+    .timestamp-row {
+        display: grid;
+        grid-template-columns: 80px 80px 80px 1fr 40px;
+        gap: 10px;
+        margin-bottom: 12px;
+        align-items: flex-end;
+    }
+
+    @media (max-width: 768px) {
+        .timestamp-row {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .timestamp-row input {
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+    }
+</style>
+
+<script>
+    let timestamps = [];
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function addTimestampRow() {
+        const container = document.getElementById('timestampInputs');
+        const newRow = document.createElement('div');
+        newRow.className = 'timestamp-row';
+        newRow.innerHTML = `
+            <div class="input-group">
+                <label>Hours</label>
+                <input type="number" class="timestamp-hours" min="0" max="23" value="0">
+            </div>
+            <div class="input-group">
+                <label>Minutes</label>
+                <input type="number" class="timestamp-minutes" min="0" max="59" value="0">
+            </div>
+            <div class="input-group">
+                <label>Seconds</label>
+                <input type="number" class="timestamp-seconds" min="0" max="59" value="0">
+            </div>
+            <div class="input-group">
+                <label>Chapter Label</label>
+                <input type="text" class="timestamp-label" placeholder="e.g., Section Name">
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="removeTimestamp(this)">
+                <i class="bi bi-trash"></i> Remove
+            </button>
+        `;
+        container.appendChild(newRow);
+    }
+
+    function removeTimestamp(button) {
+        button.parentElement.remove();
+    }
+
+    function generateTimestamps() {
+        const rows = document.querySelectorAll('.timestamp-row');
+        timestamps = [];
+        let maxSeconds = 0;
+
+        rows.forEach(row => {
+            const h = parseInt(row.querySelector('.timestamp-hours').value) || 0;
+            const m = parseInt(row.querySelector('.timestamp-minutes').value) || 0;
+            const s = parseInt(row.querySelector('.timestamp-seconds').value) || 0;
+            const label = row.querySelector('.timestamp-label').value.trim();
+
+            if (!label) {
+                showAlert('Please enter chapter labels for all timestamps', 'warning');
+                return;
+            }
+
+            const totalSeconds = h * 3600 + m * 60 + s;
+            maxSeconds = Math.max(maxSeconds, totalSeconds);
+
+            timestamps.push({
+                time: `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`,
+                label: label,
+                seconds: totalSeconds
+            });
+        });
+
+        if (timestamps.length === 0) return;
+
+        document.getElementById('chapterCount').textContent = timestamps.length;
+        const hours = Math.floor(maxSeconds / 3600);
+        const minutes = Math.floor((maxSeconds % 3600) / 60);
+        const seconds = maxSeconds % 60;
+        document.getElementById('totalDuration').textContent = 
+            `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+        // Formatted output
+        let formatted = timestamps.map(ts => `${ts.time} - ${ts.label}`).join('\n');
+        document.getElementById('formattedOutput').textContent = formatted;
+
+        // Cards
+        const cardsHtml = timestamps.map((ts, idx) => `
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 1.1rem; color: #667eea;">${ts.time}</div>
+                        <div style="color: #666; margin-top: 5px;">${ts.label}</div>
+                    </div>
+                    <button class="copy-btn" onclick="copyTimestamp('${ts.time} - ${ts.label}')">
+                        <i class="bi bi-files"></i> Copy
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        document.getElementById('timestampCards').innerHTML = cardsHtml;
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Timestamps generated!', 'success');
+    }
+
+    function copyTimestamp(ts) {
+        navigator.clipboard.writeText(ts).then(() => {
+            showAlert(`Copied: ${ts}`, 'success');
+        });
+    }
+
+    function copyFormatted() {
+        const formatted = timestamps.map(ts => `${ts.time} - ${ts.label}`).join('\n');
+        navigator.clipboard.writeText(formatted).then(() => {
+            showAlert('Timestamps copied!', 'success');
+        });
+    }
+
+    function downloadTimestamps() {
+        let text = 'YouTube Timestamps/Chapters\n' + '='.repeat(50) + '\n\n';
+        timestamps.forEach((ts, idx) => {
+            text += `${ts.time} - ${ts.label}\n`;
+        });
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'timestamps.txt';
+        a.click();
+        showAlert('Timestamps downloaded!', 'success');
+    }
+
+    function clearTimestamps() {
+        document.getElementById('timestampInputs').innerHTML = `
+            <div class="timestamp-row">
+                <div class="input-group">
+                    <label>Hours</label>
+                    <input type="number" class="timestamp-hours" min="0" max="23" value="0">
+                </div>
+                <div class="input-group">
+                    <label>Minutes</label>
+                    <input type="number" class="timestamp-minutes" min="0" max="59" value="0">
+                </div>
+                <div class="input-group">
+                    <label>Seconds</label>
+                    <input type="number" class="timestamp-seconds" min="0" max="59" value="0">
+                </div>
+                <div class="input-group">
+                    <label>Chapter Label</label>
+                    <input type="text" class="timestamp-label" placeholder="e.g., Introduction">
+                </div>
+                <button class="btn btn-danger btn-sm" onclick="removeTimestamp(this)">
+                    <i class="bi bi-trash"></i> Remove
+                </button>
+            </div>
+        `;
+        document.getElementById('resultSection').style.display = 'none';
+        timestamps = [];
+    }
+</script>
+
+</body>
+</html>

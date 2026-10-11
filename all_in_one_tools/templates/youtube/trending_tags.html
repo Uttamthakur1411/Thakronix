@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trending Tags | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>🔥 Trending Tags</h1>
+            <p>Find trending tags and hashtags by country and category</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="country">Select Country</label>
+                <select id="country">
+                    <option value="india">🇮🇳 India</option>
+                    <option value="usa">🇺🇸 USA</option>
+                    <option value="uk">🇬🇧 United Kingdom</option>
+                    <option value="canada">🇨🇦 Canada</option>
+                    <option value="australia">🇦🇺 Australia</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="category">Select Category</label>
+                <select id="category">
+                    <option value="all">All Categories</option>
+                    <option value="tech">Technology</option>
+                    <option value="education">Education</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="music">Music</option>
+                    <option value="sports">Sports</option>
+                    <option value="news">News</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="travel">Travel</option>
+                    <option value="food">Food</option>
+                    <option value="fitness">Fitness</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="getTrendingTags()">
+                    <i class="bi bi-fire"></i> Find Trending Tags
+                </button>
+                <button class="btn btn-secondary" onclick="clearTrending()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div class="result-header">
+                <i class="bi bi-fire"></i> Trending Tags
+            </div>
+
+            <div class="result-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Country</div>
+                    <div class="meta-value" id="selectedCountry">-</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Category</div>
+                    <div class="meta-value" id="selectedCategory">-</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Tags Found</div>
+                    <div class="meta-value" id="tagCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Last Updated</div>
+                    <div class="meta-value" id="lastUpdated">Now</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px; margin-bottom: 15px;">
+                <input type="text" id="searchTags" placeholder="Filter tags..." style="width: 100%; padding: 10px; border: 1px solid var(--border-light); border-radius: 8px;" onkeyup="filterTrendingTags()">
+            </div>
+
+            <div id="tagsGridContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; margin-bottom: 25px;"></div>
+
+            <div class="button-group">
+                <button class="btn btn-success" onclick="copyAllTrendingTags()">
+                    <i class="bi bi-files"></i> Copy All Tags
+                </button>
+                <button class="btn btn-secondary" onclick="copyAsHashtags()">
+                    <i class="bi bi-hash"></i> Copy As Hashtags
+                </button>
+                <button class="btn btn-secondary" onclick="downloadTagsList()">
+                    <i class="bi bi-download"></i> Download List
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    const trendingData = {
+        india: {
+            tech: ['#AI', '#ChatGPT', '#Python', '#WebDevelopment', '#MachineLearning', '#Coding', '#Programming', '#JavaScript', '#ReactJS', '#NodeJS', '#Blockchain', '#Cybersecurity'],
+            education: ['#Learning', '#OnlineEducation', '#Skills', '#Course', '#Tutorial', '#StudyWithMe', '#ExamPrep', '#Education', '#Knowledge', '#Certification'],
+            gaming: ['#Gaming', '#GamingSetup', '#VideoGames', '#PC', '#Console', '#FPS', '#RPG', '#EsportsIndia', '#Streamer', '#GamingCommunity'],
+            entertainment: ['#Trending', '#Viral', '#Funny', '#Comedy', '#Entertainment', '#Meme', '#Bollywood', '#YouTube', '#TikTok', '#WebSeries'],
+            music: ['#Music', '#IndieMusic', '#Bollywood', '#BollyBeat', '#IndianMusic', '#SingerSongwriter', '#MusicProduction', '#MusicVideo', '#PlayList', '#HipHop'],
+            sports: ['#Sports', '#Cricket', '#Football', '#Tennis', '#Basketball', '#FitnessMotivation', '#Gym', '#Yoga', '#Marathon', '#Athlete'],
+            news: ['#News', '#Breaking', '#India', '#Politics', '#Latest', '#Current', '#Trending', '#NewsToday', '#Headlines', '#InvestigativeJournalism'],
+            fashion: ['#Fashion', '#Style', '#OutfitOfTheDay', '#Styling', '#FashionBlogger', '#IndianFashion', '#Beauty', '#Makeup', '#AestheticFashion', '#Trendsetter'],
+            travel: ['#Travel', '#India', '#Tourism', '#Adventure', '#VlogTravel', '#Wanderlust', '#ExploreMore', '#TravelVlog', '#Backpacking', '#NatureLovers'],
+            food: ['#Food', '#Foodie', '#Cooking', '#Recipe', '#IndianFood', '#StreetFood', '#MumbaiFoodie', '#FoodReview', '#HomeCooking', '#FoodBlog'],
+            fitness: ['#Fitness', '#FitnessMotivation', '#Gym', '#Workout', '#GymLife', '#HealthyLifestyle', '#Yoga', '#Transformation', '#FitnessTips', '#MuscleGain'],
+            all: ['#Trending', '#Viral', '#YouTube', '#Creator', '#Content', '#India', '#Subscribe', '#Like', '#Share', '#Comment', '#NewVideo', '#BestContent']
+        },
+        usa: {
+            tech: ['#Tech', '#AI', '#Startup', '#SoftwareDevelopment', '#WebDeveloper', '#CodingLife', '#TechNews', '#Innovation', '#DevCommunity', '#FullStack'],
+            education: ['#Education', '#OnlineLearning', '#StudentLife', '#University', '#Scholarship', '#EducationMatters', '#CareerTips', '#Mentor', '#Learning', '#Success'],
+            gaming: ['#Gaming', '#Twitch', '#GamerLife', '#VideoGames', '#PC', '#Xbox', '#PlayStation', '#StreamersOnYouTube', '#GamingCommunity', '#EsportsUSA'],
+            entertainment: ['#Entertainment', '#Viral', '#Trending', '#Comedy', '#FunnyVideos', '#Hollywood', '#Celebrity', '#Meme', '#MemeReview', '#EntertainmentNews'],
+            music: ['#Music', '#Singer', '#NewMusic', '#HipHop', '#Pop', '#Rock', '#MusicProduction', '#BeatMaker', '#MusicVideo', '#ArtistLife'],
+            sports: ['#Sports', '#Basketball', '#Football', '#Baseball', '#Hockey', '#Soccer', '#MLS', '#NFL', '#NBA', '#AthleteLife'],
+            news: ['#News', '#Breaking', '#Politics', '#USA', '#CurrentEvents', '#Journalism', '#NewsChannel', '#TruthMatters', '#NewsNow', '#WorldNews'],
+            fashion: ['#Fashion', '#Style', '#Fashionista', '#AestheticFashion', '#Trend', '#FashionBlogger', '#Designer', '#LuxuryBrands', '#StreetStyle', '#FashionShow'],
+            travel: ['#Travel', '#Wanderlust', '#Adventure', '#Explore', '#TravelVlog', '#USATravel', '#TravelBlogger', '#NatureLovers', '#Backpacking', '#TravelDiaries'],
+            food: ['#Food', '#Foodie', '#Cooking', '#Recipe', '#Foodblog', '#Restaurants', '#FoodReview', '#ChefLife', '#HomemadeFood', '#FoodArt'],
+            fitness: ['#Fitness', '#Gym', '#Workout', '#FitnessMotivation', '#HealthyLifestyle', '#Transformation', '#Bodybuilding', '#Yoga', '#Wellness', '#FitLife'],
+            all: ['#YouTube', '#YouTuber', '#Trending', '#Viral', '#Subscribe', '#NewVideo', '#Content', '#Creator', '#Vlog', '#BestContent']
+        }
+    };
+
+    let currentTags = [];
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function getTrendingTags() {
+        const country = document.getElementById('country').value;
+        const category = document.getElementById('category').value;
+
+        const countryName = document.getElementById('country').options[document.getElementById('country').selectedIndex].text;
+        const categoryName = document.getElementById('category').options[document.getElementById('category').selectedIndex].text;
+
+        const tags = trendingData[country][category] || trendingData[country]['all'];
+        currentTags = tags;
+
+        document.getElementById('selectedCountry').textContent = countryName;
+        document.getElementById('selectedCategory').textContent = categoryName;
+        document.getElementById('tagCount').textContent = tags.length;
+        document.getElementById('lastUpdated').textContent = 'Just now';
+
+        const html = tags.map(tag => `
+            <div class="tag clickable" onclick="copyTag('${tag}')" title="Click to copy" style="font-size: 0.9rem; text-align: center; padding: 10px 8px;">
+                ${tag}
+            </div>
+        `).join('');
+
+        document.getElementById('tagsGridContainer').innerHTML = html;
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Trending tags loaded!', 'success');
+    }
+
+    function filterTrendingTags() {
+        const searchTerm = document.getElementById('searchTags').value.toLowerCase();
+        const filtered = currentTags.filter(tag => tag.toLowerCase().includes(searchTerm));
+
+        const html = filtered.map(tag => `
+            <div class="tag clickable" onclick="copyTag('${tag}')" style="font-size: 0.9rem; text-align: center; padding: 10px 8px;">
+                ${tag}
+            </div>
+        `).join('');
+
+        document.getElementById('tagsGridContainer').innerHTML = html || '<p class="text-muted">No tags found</p>';
+    }
+
+    function copyTag(tag) {
+        navigator.clipboard.writeText(tag).then(() => {
+            showAlert(`Copied: ${tag}`, 'success');
+        });
+    }
+
+    function copyAllTrendingTags() {
+        const text = currentTags.join(', ');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('All tags copied!', 'success');
+        });
+    }
+
+    function copyAsHashtags() {
+        const text = currentTags.join(' ');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('Hashtags copied!', 'success');
+        });
+    }
+
+    function downloadTagsList() {
+        let csv = 'Tag,Hashtag\n';
+        currentTags.forEach(tag => {
+            csv += `"${tag}","${tag}"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'trending-tags.csv';
+        a.click();
+        showAlert('Tags downloaded!', 'success');
+    }
+
+    function clearTrending() {
+        document.getElementById('searchTags').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        currentTags = [];
+    }
+</script>
+
+</body>
+</html>

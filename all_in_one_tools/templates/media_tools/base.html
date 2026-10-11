@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Image & Media Tools{% endblock %} | Thakronix</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/media_tools/media-tools.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+{% if request.endpoint == 'youtube_to_mp3' %}
+{% include 'youtube/_tool_brand.html' %}
+{% else %}
+<header class="media-topbar"><a class="media-brand" href="{{ url_for('image_tools') }}">Thakro<span>nix</span></a><nav><a href="{{ url_for('media_tools_index') }}">All Media Tools</a><a href="{{ url_for('home') }}">Home</a></nav></header>
+{% endif %}
+<main class="media-shell">
+    <div class="media-privacy"><i class="bi bi-shield-check"></i> Processed locally in your browser where possible</div>
+    <div class="media-toolbar" aria-label="Tool controls">
+        <button class="media-btn light" id="mediaTheme"><i class="bi bi-moon-stars"></i> Dark mode</button>
+        <button class="media-btn light" id="mediaFavorite"><i class="bi bi-star"></i> Favorite</button>
+        <button class="media-btn light" id="mediaShare"><i class="bi bi-share"></i> Share</button>
+        <button class="media-btn light" id="mediaHelp"><i class="bi bi-question-circle"></i> How to use</button>
+        <button class="media-btn light" id="mediaHistory"><i class="bi bi-clock-history"></i> History</button>
+    </div>
+    <div class="media-history" id="mediaHistoryPanel" hidden></div>
+    {% block content %}{% endblock %}
+    <div class="media-global-actions" aria-label="Common actions">
+        <button class="media-btn light" id="mediaCopy"><i class="bi bi-copy"></i> Copy result</button>
+        <button class="media-btn primary" id="mediaDownload"><i class="bi bi-download"></i> Download</button>
+        <button class="media-btn light" id="mediaStartOver"><i class="bi bi-arrow-counterclockwise"></i> Start over</button>
+    </div>
+    <div class="media-status" id="mediaActionStatus" role="status" aria-live="polite"></div>
+</main>
+<script src="{{ url_for('static', filename='js/media_tools/media-tools.js') }}"></script>
+<script src="{{ url_for('static', filename='js/media_tools/media-download.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

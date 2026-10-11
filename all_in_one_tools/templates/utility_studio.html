@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Utility Studio | Thakronix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/utility.css', v=6) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tool_responsive_overrides.css') }}">
+</head>
+<body>
+<header class="topbar"><a href="/" class="brand"><span class="brand-mark">+</span> Thakronix</a><div class="top-actions"><a href="/" class="back-link">Back to tools</a><button class="icon-btn" id="utilityTheme" type="button" aria-label="Switch to light mode" title="Switch to light mode"><span class="theme-icon" aria-hidden="true">☼</span><span class="theme-label">Light</span></button></div></header>
+<main class="utility-shell">
+<aside class="utility-sidebar">
+  <div class="eyebrow">UTILITY STUDIO</div><h1>Make useful<br><em>things faster.</em></h1>
+  <p>Twenty-two focused utilities for files, writing, creativity, data, time and research.</p>
+  <div class="utility-search"><span>⌕</span><input id="utilitySearch" placeholder="Search tools..." aria-label="Search utility tools"></div>
+  <nav class="utility-nav" aria-label="Utility tools">
+    <button class="utility-nav-item active" data-utility-tool="upload"><span>01</span><b>Multi File Upload</b><small>Queue, sort and organize</small></button>
+    <button class="utility-nav-item" data-utility-tool="notepad"><span>02</span><b>Advanced Notepad</b><small>Write, count and export</small></button>
+    <button class="utility-nav-item" data-utility-tool="apk"><span>03</span><b>APK to ZIP</b><small>Inspect package contents</small></button>
+    <button class="utility-nav-item" data-utility-tool="color"><span>04</span><b>Color Converter</b><small>HEX, RGB, HSL, CMYK</small></button>
+    <button class="utility-nav-item" data-utility-tool="printer"><span>05</span><b>Printer Color Test</b><small>Print diagnostics sheet</small></button>
+    <button class="utility-nav-item" data-utility-tool="fancy"><span>06</span><b>Fancy Text</b><small>Social-ready text styles</small></button>
+    <button class="utility-nav-item" data-utility-tool="graffiti"><span>07</span><b>Graffiti Text</b><small>Creative text canvas</small></button>
+    <button class="utility-nav-item" data-utility-tool="slang"><span>08</span><b>Slang Collection</b><small>Context and formal wording</small></button>
+    <button class="utility-nav-item" data-utility-tool="names"><span>09</span><b>Name Generator</b><small>Names with meanings</small></button>
+    <button class="utility-nav-item" data-utility-tool="users"><span>10</span><b>Random User</b><small>Synthetic demo data</small></button>
+    <button class="utility-nav-item" data-utility-tool="cards"><span>11</span><b>Test Card Generator</b><small>Development-only values</small></button>
+    <button class="utility-nav-item" data-utility-tool="stopwatch"><span>12</span><b>Stopwatch</b><small>Laps and split timing</small></button>
+    <button class="utility-nav-item" data-utility-tool="countdown"><span>13</span><b>Countdown Timer</b><small>Presets and event timing</small></button>
+    <button class="utility-nav-item" data-utility-tool="typing"><span>14</span><b>Typing Test</b><small>WPM and accuracy</small></button>
+    <button class="utility-nav-item" data-utility-tool="aqi"><span>15</span><b>Live AQI Monitor</b><small>Pollutants and guidance</small></button>
+    <button class="utility-nav-item" data-utility-tool="keywords"><span>16</span><b>Keyword Assistant</b><small>Clusters and intent</small></button>
+    <button class="utility-nav-item" data-utility-tool="trends"><span>17</span><b>Trend Comparison</b><small>Freshness-aware reports</small></button>
+    <button class="utility-nav-item" data-utility-tool="wikipedia"><span>18</span><b>Wikipedia Research</b><small>Summaries and references</small></button>
+    <button class="utility-nav-item" data-utility-tool="xtrends"><span>19</span><b>X Trends</b><small>Authorized data only</small></button>
+    <button class="utility-nav-item" data-utility-tool="jobs"><span>20</span><b>Job Finder</b><small>Skills and match notes</small></button>
+    <button class="utility-nav-item" data-utility-tool="visitors"><span>21</span><b>Visitor Counter</b><small>Privacy-first analytics</small></button>
+    <button class="utility-nav-item" data-utility-tool="clock"><span>22</span><b>World Clock</b><small>Meeting planner</small></button>
+  </nav>
+  <div class="privacy-note"><span>●</span><div><strong>Local-first workspace</strong><br><small>Network features show source and freshness.</small></div></div>
+</aside>
+<section class="utility-workspace">
+  <div class="workspace-head"><div><span class="eyebrow" id="utilityKicker">FILE WORKFLOW</span><h2 id="utilityTitle">Multi File Upload</h2><p id="utilityDescription">Organize files before processing.</p></div><button class="soft-btn" id="utilityReset">Reset</button></div>
+  <div id="utilityPanel" class="utility-panel"></div>
+</section>
+</main>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="{{ url_for('static', filename='js/typing_test.js', v=4) }}"></script>
+  <script src="{{ url_for('static', filename='js/utility.js', v=6) }}"></script>
+</body>
+</html>

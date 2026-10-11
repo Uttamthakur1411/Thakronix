@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channel Analyzer | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>📊 YouTube Channel Analyzer</h1>
+            <p>Analyze your channel performance and growth metrics</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="channelUrl">Channel URL or Handle</label>
+                <input type="text" id="channelUrl" placeholder="e.g., @YourChannelName or https://youtube.com/@YourChannel">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="analyzeChannel()">
+                    <i class="bi bi-lightning-charge"></i> Analyze Channel
+                </button>
+                <button class="btn btn-secondary" onclick="clearAnalysis()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="font-size: 3rem;">👤</div>
+                    <div>
+                        <div style="font-size: 1.3rem; font-weight: 700;" id="channelName">Channel Name</div>
+                        <div style="opacity: 0.9;" id="channelHandle">@channelhandle</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Subscribers</div>
+                    <div class="meta-value" id="subscribersCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Total Videos</div>
+                    <div class="meta-value" id="videoCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Total Views</div>
+                    <div class="meta-value" id="viewsCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Avg. Video Views</div>
+                    <div class="meta-value" id="avgViews">0</div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(event, 'statsTab')">Statistics</button>
+                <button class="tab" onclick="switchTab(event, 'metricsTab')">Metrics</button>
+                <button class="tab" onclick="switchTab(event, 'recommendTab')">Recommendations</button>
+            </div>
+
+            <div id="statsTab" class="tab-content active">
+                <div id="statsContent"></div>
+            </div>
+
+            <div id="metricsTab" class="tab-content">
+                <div id="metricsContent"></div>
+            </div>
+
+            <div id="recommendTab" class="tab-content">
+                <div id="recommendContent"></div>
+            </div>
+
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="downloadReport()">
+                    <i class="bi bi-download"></i> Download Report
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function analyzeChannel() {
+        const channelInput = document.getElementById('channelUrl').value.trim();
+        
+        if (!channelInput) {
+            showAlert('Please enter a channel URL or handle', 'warning');
+            return;
+        }
+
+        // Mock data for demonstration
+        const channelName = 'Tech Tutorials';
+        const subscribers = 250000;
+        const videos = 345;
+        const totalViews = 15600000;
+        const avgViews = Math.round(totalViews / videos);
+        const engagementRate = 4.2;
+        const uploadsPerMonth = 8;
+        const avgVideoLength = 12;
+
+        document.getElementById('channelName').textContent = channelName;
+        document.getElementById('channelHandle').textContent = '@techtutorials';
+        document.getElementById('subscribersCount').textContent = (subscribers / 1000).toFixed(0) + 'K';
+        document.getElementById('videoCount').textContent = videos.toLocaleString();
+        document.getElementById('viewsCount').textContent = (totalViews / 1000000).toFixed(1) + 'M';
+        document.getElementById('avgViews').textContent = avgViews.toLocaleString();
+
+        // Stats
+        const statsHtml = `
+            <div class="card">
+                <div><strong>Upload Frequency:</strong> ${uploadsPerMonth} videos/month</div>
+            </div>
+            <div class="card">
+                <div><strong>Engagement Rate:</strong> ${engagementRate}%</div>
+            </div>
+            <div class="card">
+                <div><strong>Average Video Length:</strong> ${avgVideoLength} minutes</div>
+            </div>
+            <div class="card">
+                <div><strong>Channel Created:</strong> 5 years ago</div>
+            </div>
+        `;
+
+        // Metrics
+        const metricsHtml = `
+            <div class="card">
+                <div style="margin-bottom: 8px;">
+                    <strong>Growth Rate (Yearly)</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1; background: #e0e0e0; height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 35%;"></div>
+                    </div>
+                    <div style="margin-left: 10px; font-weight: 700;">35%</div>
+                </div>
+            </div>
+            <div class="card">
+                <div style="margin-bottom: 8px;">
+                    <strong>Audience Retention</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="flex: 1; background: #e0e0e0; height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: 62%;"></div>
+                    </div>
+                    <div style="margin-left: 10px; font-weight: 700;">62%</div>
+                </div>
+            </div>
+        `;
+
+        // Recommendations
+        const recommendHtml = `
+            <div class="card">
+                <div style="display: flex; gap: 12px;">
+                    <div style="color: #fa709a; font-weight: 700; font-size: 1.2rem;">💡</div>
+                    <div>Focus on consistency - upload 2-3 times per week for better algorithm coverage</div>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display: flex; gap: 12px;">
+                    <div style="color: #fa709a; font-weight: 700; font-size: 1.2rem;">💡</div>
+                    <div>Improve thumbnails and titles - A/B test different styles to increase CTR</div>
+                </div>
+            </div>
+            <div class="card">
+                <div style="display: flex; gap: 12px;">
+                    <div style="color: #fa709a; font-weight: 700; font-size: 1.2rem;">💡</div>
+                    <div>Engage with community - respond to comments to boost engagement metrics</div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('statsContent').innerHTML = statsHtml;
+        document.getElementById('metricsContent').innerHTML = metricsHtml;
+        document.getElementById('recommendContent').innerHTML = recommendHtml;
+
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Channel analyzed!', 'success');
+    }
+
+    function downloadReport() {
+        const report = `YouTube Channel Analysis Report
+===================================================
+
+Channel: ${document.getElementById('channelName').textContent}
+Handle: ${document.getElementById('channelHandle').textContent}
+
+Subscribers: ${document.getElementById('subscribersCount').textContent}
+Total Videos: ${document.getElementById('videoCount').textContent}
+Total Views: ${document.getElementById('viewsCount').textContent}
+Avg Views per Video: ${document.getElementById('avgViews').textContent}
+
+Generated on: ${new Date().toLocaleString()}
+`;
+        const blob = new Blob([report], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'channel-analysis-report.txt';
+        a.click();
+        showAlert('Report downloaded!', 'success');
+    }
+
+    function switchTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function clearAnalysis() {
+        document.getElementById('channelUrl').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

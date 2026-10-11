@@ -1,0 +1,2 @@
+/* GST calculator feature styles. Shared calculator layout remains in calculators.css. */
+[data-panel="gst"] .invoice-table { contain: layout; }

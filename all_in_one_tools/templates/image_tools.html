@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Studio Pro | Thakronix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #07111f;
+            color: #eef2ff;
+        }
+        .tool-shell {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .page-badge {
+            display: inline-block;
+            padding: 0.45rem 1rem;
+            border-radius: 50px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: #9bd1ff;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .page-header h1 {
+            font-size: clamp(2.2rem, 4vw, 4rem);
+            font-weight: 800;
+        }
+        .page-header h1 span {
+            background: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 50%, #f9a8d4 100%);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .page-header p {
+            color: rgba(226, 232, 240, 0.7);
+            max-width: 760px;
+            margin: 0 auto;
+            font-size: 1.06rem;
+        }
+        .studio-grid {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+        .tool-panel {
+            grid-column: span 6;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 22px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.30);
+            padding: 1.4rem;
+            backdrop-filter: blur(12px);
+        }
+        .tool-panel h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+        .tool-panel p {
+            color: rgba(191, 219, 254, 0.75);
+            margin-bottom: 1rem;
+        }
+        .upload-box {
+            border: 2px dashed rgba(96, 165, 250, 0.6);
+            background: rgba(15, 23, 42, 0.65);
+            border-radius: 18px;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .upload-box:hover {
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+        }
+        .upload-box i {
+            font-size: 2.8rem;
+            color: #7dd3fc;
+            margin-bottom: 0.8rem;
+        }
+        .upload-box h4 {
+            font-size: 1.15rem;
+            margin-bottom: 0.35rem;
+        }
+        .upload-box small {
+            color: rgba(148, 163, 184, 0.8);
+        }
+        .hidden-input {
+            display: none;
+        }
+        .tool-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .primary-btn, .secondary-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+        .primary-btn {
+            background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+            color: white;
+        }
+        .secondary-btn {
+            background: rgba(148, 163, 184, 0.1);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+        .preview-wrap {
+            margin-top: 1rem;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 18px;
+            overflow: hidden;
+            min-height: 200px;
+        }
+        .preview-wrap img {
+            width: 100%;
+            height: 280px;
+            object-fit: contain;
+            display: block;
+            background: linear-gradient(45deg, rgba(15, 23, 42, 0.7), rgba(30, 41, 59, 0.7));
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.82rem;
+            margin-bottom: 0.45rem;
+            color: #cbd5e1;
+        }
+        .slider {
+            width: 100%;
+        }
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(14, 165, 233, 0.1);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            color: #bae6fd;
+            border-radius: 999px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.78rem;
+            margin-right: 0.5rem;
+        }
+        @media (max-width: 991px) {
+            .tool-panel { grid-column: span 12; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+                Thakro<span>nix</span>
+            </a>
+            <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-house-door me-1"></i>Home</a>
+        </div>
+    </nav>
+
+    <main class="tool-shell">
+      <div class="container">
+        <div class="page-header">
+            <div class="page-badge">Image Studio Pro</div>
+            <h1>Professional <span>Image Editing Suite</span></h1>
+            <p>Crop, rotate, flip, convert to and from Base64, pick colors, remove backgrounds, blur, build memes, create favicons, and prepare passport-ready photos in one responsive studio.</p>
+        </div>
+
+        <div class="studio-grid">
+            <section class="tool-panel">
+                <h3><i class="bi bi-crop me-2"></i>Image Cropper</h3>
+                <p>Trim the exact area from any image.</p>
+                <div class="upload-box" data-upload="crop"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="input-group mt-3">
+                    <label for="cropX">Crop X</label>
+                    <input id="cropX" type="number" class="form-control" value="0" min="0">
+                </div>
+                <div class="input-group mt-2">
+                    <label for="cropY">Crop Y</label>
+                    <input id="cropY" type="number" class="form-control" value="0" min="0">
+                </div>
+                <div class="input-group mt-2">
+                    <label for="cropW">Width</label>
+                    <input id="cropW" type="number" class="form-control" value="200" min="10">
+                </div>
+                <div class="input-group mt-2">
+                    <label for="cropH">Height</label>
+                    <input id="cropH" type="number" class="form-control" value="200" min="10">
+                </div>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="crop">Apply Crop</button>
+                    <a class="secondary-btn text-decoration-none" id="cropDownload" download="cropped.png" style="display:none;">Download</a>
+                </div>
+                <div class="preview-wrap"><img id="cropPreview" alt="Crop preview"></div>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-arrow-repeat me-2"></i>Image Rotator / Flip</h3>
+                <p>Rotate or mirror images instantly.</p>
+                <div class="upload-box" data-upload="rotate"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="input-group mt-3">
+                    <label for="rotateAngle">Rotation Angle</label>
+                    <input id="rotateAngle" type="number" class="form-control" value="90" min="-360" max="360">
+                </div>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="rotate">Rotate</button>
+                    <button class="secondary-btn" data-action="flipH">Flip Horizontal</button>
+                    <button class="secondary-btn" data-action="flipV">Flip Vertical</button>
+                </div>
+                <div class="preview-wrap"><img id="rotatePreview" alt="Rotate preview"></div>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-braces me-2"></i>Image to Base64</h3>
+                <p>Generate a ready-to-use data URL.</p>
+                <div class="upload-box" data-upload="base64"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="toBase64">Generate Base64</button>
+                </div>
+                <textarea id="base64Output" class="form-control mt-3" rows="6" placeholder="Base64 output will appear here..."></textarea>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-file-earmark-image me-2"></i>Base64 to Image</h3>
+                <p>Paste Base64 and instantly preview the image.</p>
+                <textarea id="base64Input" class="form-control" rows="6" placeholder="Paste image data URL or Base64 text..."></textarea>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="fromBase64">Convert to Image</button>
+                </div>
+                <div class="preview-wrap"><img id="base64Preview" alt="Decoded preview"></div>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-eyedropper me-2"></i>Image Color Picker</h3>
+                <p>Click the image to capture the exact HEX color.</p>
+                <div class="upload-box" data-upload="color"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="preview-wrap" style="position:relative;">
+                    <img id="colorPreview" alt="Color preview">
+                    <div id="colorMarker" style="position:absolute; width:16px; height:16px; border:2px solid white; border-radius:50%; display:none; box-shadow:0 0 0 2px rgba(15,23,42,0.6); pointer-events:none;"></div>
+                </div>
+                <div class="tool-actions mt-3">
+                    <span class="pill" id="pickedHex">#000000</span>
+                    <span class="pill" id="pickedRgb">RGB(0, 0, 0)</span>
+                </div>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-stars me-2"></i>Background Remover</h3>
+                <p>Remove white or nearly-white backgrounds cleanly.</p>
+                <div class="upload-box" data-upload="bgremove"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="input-group mt-3">
+                    <label for="bgThreshold">Background Threshold</label>
+                    <input id="bgThreshold" type="range" class="slider" min="180" max="255" value="245">
+                </div>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="removeBg">Remove Background</button>
+                </div>
+                <div class="preview-wrap"><img id="bgPreview" alt="Background preview"></div>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-funnel me-2"></i>Image Blur Tool</h3>
+                <p>Apply a professional Gaussian blur effect.</p>
+                <div class="upload-box" data-upload="blur"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="input-group mt-3">
+                    <label for="blurRadius">Blur Radius</label>
+                    <input id="blurRadius" type="range" class="slider" min="1" max="20" value="8">
+                </div>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="blurImage">Apply Blur</button>
+                </div>
+                <div class="preview-wrap"><img id="blurPreview" alt="Blur preview"></div>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-emoji-smile me-2"></i>Meme Generator</h3>
+                <p>Create classic meme text overlays in seconds.</p>
+                <div class="upload-box" data-upload="meme"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="input-group mt-3">
+                    <label for="memeTop">Top Text</label>
+                    <input id="memeTop" class="form-control" value="WHEN THE CODE WORKS">
+                </div>
+                <div class="input-group mt-2">
+                    <label for="memeBottom">Bottom Text</label>
+                    <input id="memeBottom" class="form-control" value="WHEN IT DOESN'T">
+                </div>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="generateMeme">Generate Meme</button>
+                </div>
+                <div class="preview-wrap"><img id="memePreview" alt="Meme preview"></div>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-gem me-2"></i>Favicon Generator</h3>
+                <p>Convert an existing image into a crisp square favicon.</p>
+                <div class="upload-box" data-upload="favicon"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="makeFavicon">Create Favicon</button>
+                </div>
+                <div class="preview-wrap"><img id="faviconPreview" alt="Favicon preview"></div>
+            </section>
+
+            <section class="tool-panel">
+                <h3><i class="bi bi-person-vcard me-2"></i>Passport Photo Maker</h3>
+                <p>Prepare a visa/passport-ready square crop with neutral background styling.</p>
+                <div class="upload-box" data-upload="passport"><i class="bi bi-cloud-arrow-up"></i><h4>Upload image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                <div class="tool-actions">
+                    <button class="primary-btn" data-action="makePassport">Create Passport Photo</button>
+                </div>
+                <div class="preview-wrap"><img id="passportPreview" alt="Passport photo preview"></div>
+            </section>
+        </div>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const imageState = {};
+        const TOOL_LABELS = {
+            crop: 'cropPreview',
+            rotate: 'rotatePreview',
+            base64: 'base64Output',
+            color: 'colorPreview',
+            bgremove: 'bgPreview',
+            blur: 'blurPreview',
+            meme: 'memePreview',
+            favicon: 'faviconPreview',
+            passport: 'passportPreview'
+        };
+
+        function readFileAsDataURL(file, callback) {
+            const reader = new FileReader();
+            reader.onload = e => callback(e.target.result);
+            reader.readAsDataURL(file);
+        }
+
+        function setPreviewAndState(key, file) {
+            imageState[key] = file;
+            if (file) {
+                readFileAsDataURL(file, data => {
+                    const preview = document.getElementById(TOOL_LABELS[key]);
+                    if (preview && preview.tagName === 'IMG') {
+                        preview.src = data;
+                    }
+                });
+            }
+        }
+
+        document.querySelectorAll('[data-upload]').forEach(box => {
+            const key = box.dataset.upload;
+            const input = box.querySelector('input');
+            box.addEventListener('click', () => input.click());
+            input.addEventListener('change', event => {
+                const file = event.target.files[0];
+                if (file) setPreviewAndState(key, file);
+            });
+        });
+
+        function createImageFromDataUrl(dataUrl) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = dataUrl;
+            });
+        }
+
+        function canvasFromImage(img) {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth || img.width;
+            canvas.height = img.naturalHeight || img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            return canvas;
+        }
+
+        function renderCanvasToPreview(canvas, targetId) {
+            const dataUrl = canvas.toDataURL('image/png');
+            const img = document.getElementById(targetId);
+            if (img) img.src = dataUrl;
+            return dataUrl;
+        }
+
+        document.querySelector('[data-action="crop"]').addEventListener('click', async () => {
+            const file = imageState.crop;
+            if (!file) return alert('Please upload an image first.');
+            const dataUrl = await fileToDataUrl(file);
+            const img = await createImageFromDataUrl(dataUrl);
+            const canvas = canvasFromImage(img);
+            const ctx = canvas.getContext('2d');
+            const x = Number(document.getElementById('cropX').value) || 0;
+            const y = Number(document.getElementById('cropY').value) || 0;
+            const w = Number(document.getElementById('cropW').value) || 200;
+            const h = Number(document.getElementById('cropH').value) || 200;
+            const target = document.createElement('canvas');
+            target.width = w;
+            target.height = h;
+            const tctx = target.getContext('2d');
+            tctx.drawImage(canvas, x, y, w, h, 0, 0, w, h);
+            renderCanvasToPreview(target, 'cropPreview');
+            const link = document.getElementById('cropDownload');
+            link.href = target.toDataURL('image/png');
+            link.style.display = 'inline-flex';
+        });
+
+        document.querySelector('[data-action="rotate"]').addEventListener('click', async () => {
+            const file = imageState.rotate;
+            if (!file) return alert('Please upload an image first.');
+            const dataUrl = await fileToDataUrl(file);
+            const img = await createImageFromDataUrl(dataUrl);
+            const angle = Number(document.getElementById('rotateAngle').value) || 90;
+            const canvas = document.createElement('canvas');
+            const radians = angle * Math.PI / 180;
+            const sin = Math.abs(Math.sin(radians));
+            const cos = Math.abs(Math.cos(radians));
+            canvas.width = Math.floor(img.width * cos + img.height * sin);
+            canvas.height = Math.floor(img.width * sin + img.height * cos);
+            const ctx = canvas.getContext('2d');
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(radians);
+            ctx.drawImage(img, -img.width / 2, -img.height / 2);
+            renderCanvasToPreview(canvas, 'rotatePreview');
+        });
+
+        document.querySelector('[data-action="flipH"]').addEventListener('click', async () => {
+            const file = imageState.rotate;
+            if (!file) return alert('Please upload an image first.');
+            const img = await createImageFromDataUrl(await fileToDataUrl(file));
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.translate(img.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(img, 0, 0);
+            renderCanvasToPreview(canvas, 'rotatePreview');
+        });
+
+        document.querySelector('[data-action="flipV"]').addEventListener('click', async () => {
+            const file = imageState.rotate;
+            if (!file) return alert('Please upload an image first.');
+            const img = await createImageFromDataUrl(await fileToDataUrl(file));
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.translate(0, img.height);
+            ctx.scale(1, -1);
+            ctx.drawImage(img, 0, 0);
+            renderCanvasToPreview(canvas, 'rotatePreview');
+        });
+
+        document.querySelector('[data-action="toBase64"]').addEventListener('click', async () => {
+            const file = imageState.base64;
+            if (!file) return alert('Please upload an image first.');
+            const dataUrl = await fileToDataUrl(file);
+            document.getElementById('base64Output').value = dataUrl;
+        });
+
+        document.querySelector('[data-action="fromBase64"]').addEventListener('click', () => {
+            const value = document.getElementById('base64Input').value.trim();
+            if (!value) return alert('Paste a Base64 string or data URL first.');
+            document.getElementById('base64Preview').src = value;
+        });
+
+        document.getElementById('colorPreview').addEventListener('click', function(event) {
+            const file = imageState.color;
+            if (!file) return alert('Please upload an image first.');
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const rect = event.target.getBoundingClientRect();
+                const x = Math.floor((event.clientX - rect.left) * (img.width / rect.width));
+                const y = Math.floor((event.clientY - rect.top) * (img.height / rect.height));
+                const pixel = ctx.getImageData(x, y, 1, 1).data;
+                const hex = rgbToHex(pixel[0], pixel[1], pixel[2]);
+                document.getElementById('pickedHex').textContent = hex;
+                document.getElementById('pickedRgb').textContent = `RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+                const marker = document.getElementById('colorMarker');
+                marker.style.display = 'block';
+                marker.style.left = (event.clientX - rect.left - 8) + 'px';
+                marker.style.top = (event.clientY - rect.top - 8) + 'px';
+            };
+            img.src = URL.createObjectURL(file);
+        });
+
+        document.querySelector('[data-action="removeBg"]').addEventListener('click', async () => {
+            const file = imageState.bgremove;
+            if (!file) return alert('Please upload an image first.');
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('threshold', document.getElementById('bgThreshold').value);
+            const response = await fetch('/api/background-remove', { method: 'POST', body: formData });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Background removal failed.');
+            }
+            const blob = await response.blob();
+            document.getElementById('bgPreview').src = URL.createObjectURL(blob);
+        });
+
+        document.querySelector('[data-action="blurImage"]').addEventListener('click', async () => {
+            const file = imageState.blur;
+            if (!file) return alert('Please upload an image first.');
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('radius', document.getElementById('blurRadius').value);
+            const response = await fetch('/api/image-blur', { method: 'POST', body: formData });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Blur failed.');
+            }
+            const blob = await response.blob();
+            document.getElementById('blurPreview').src = URL.createObjectURL(blob);
+        });
+
+        document.querySelector('[data-action="generateMeme"]').addEventListener('click', async () => {
+            const file = imageState.meme;
+            if (!file) return alert('Please upload an image first.');
+            const img = await createImageFromDataUrl(await fileToDataUrl(file));
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            ctx.fillStyle = 'rgba(0,0,0,0.45)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.font = `bold ${Math.max(24, canvas.width / 12)}px Impact`;
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 5;
+            const topText = document.getElementById('memeTop').value.toUpperCase();
+            const bottomText = document.getElementById('memeBottom').value.toUpperCase();
+            wrapText(ctx, topText, canvas.width * 0.8, 60, canvas.width, 1);
+            wrapText(ctx, bottomText, canvas.width * 0.8, canvas.height - 40, canvas.width, 1);
+            renderCanvasToPreview(canvas, 'memePreview');
+        });
+
+        function wrapText(ctx, text, maxWidth, yStart, canvasWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let y = yStart;
+            for (let i = 0; i < words.length; i++) {
+                const testLine = line + words[i] + ' ';
+                const measure = ctx.measureText(testLine);
+                if (measure.width > maxWidth && i > 0) {
+                    ctx.strokeText(line, canvasWidth / 2, y);
+                    ctx.fillText(line, canvasWidth / 2, y);
+                    line = words[i] + ' ';
+                    y += lineHeight * 30;
+                } else {
+                    line = testLine;
+                }
+            }
+            ctx.strokeText(line, canvasWidth / 2, y);
+            ctx.fillText(line, canvasWidth / 2, y);
+        }
+
+        document.querySelector('[data-action="makeFavicon"]').addEventListener('click', async () => {
+            const file = imageState.favicon;
+            if (!file) return alert('Please upload an image first.');
+            const img = await createImageFromDataUrl(await fileToDataUrl(file));
+            const canvas = document.createElement('canvas');
+            const size = 64;
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            const scale = Math.min(size / img.width, size / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            const x = (size - w) / 2;
+            const y = (size - h) / 2;
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, size, size);
+            ctx.drawImage(img, x, y, w, h);
+            renderCanvasToPreview(canvas, 'faviconPreview');
+        });
+
+        document.querySelector('[data-action="makePassport"]').addEventListener('click', async () => {
+            const file = imageState.passport;
+            if (!file) return alert('Please upload an image first.');
+            const img = await createImageFromDataUrl(await fileToDataUrl(file));
+            const canvas = document.createElement('canvas');
+            canvas.width = 413;
+            canvas.height = 531;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#f8f8f8';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const size = 330;
+            const scale = Math.min(size / img.width, size / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            const x = (canvas.width - w) / 2;
+            const y = (canvas.height - h) / 2;
+            ctx.drawImage(img, x, y, w, h);
+            renderCanvasToPreview(canvas, 'passportPreview');
+        });
+
+        function fileToDataUrl(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Generator | Thakronix</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/qr_generator.css') }}">
+</head>
+
+<body>
+    <div class="background">
+        <span class="orb orb-1"></span>
+        <span class="orb orb-2"></span>
+        <span class="orb orb-3"></span>
+    </div>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="logo-icon">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                </span>
+                Thakro<span>nix</span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/qr-generator">
+                            <i class="bi bi-qr-code"></i> QR Generator
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="converter-page qr-page">
+        <div class="container">
+            <div class="qr-header">
+                <div class="tool-badge">
+                    <i class="bi bi-qr-code"></i>
+                    QR TOOL
+                </div>
+                <h1>QR Code Generator</h1>
+                <p class="qr-subtitle">Generate professional QR codes for free. Create scannable codes for URLs, text, phone numbers, or email in seconds.</p>
+            </div>
+
+            <div class="qr-main-grid">
+                <section class="qr-config-card">
+                    <div class="qr-section-heading">
+                        <div>
+                            <h2>QR Settings</h2>
+                            <p>Enter your content and fine-tune the look of your QR code.</p>
+                        </div>
+                    </div>
+
+                    <div class="qr-field">
+                        <label class="qr-label" for="qrInputText">QR Content</label>
+                        <textarea id="qrInputText" class="qr-textarea" placeholder="Enter URL or text" spellcheck="false"></textarea>
+                        <span id="qrStatusMessage" class="qr-status-message" aria-live="polite"></span>
+                    </div>
+
+                    <div class="qr-options-grid">
+                        <div class="qr-field">
+                            <label class="qr-label" for="qrForegroundColor">Foreground Color</label>
+                            <input id="qrForegroundColor" class="qr-color-input" type="color" value="#0e172c">
+                        </div>
+                        <div class="qr-field">
+                            <label class="qr-label" for="qrBackgroundColor">Background Color</label>
+                            <input id="qrBackgroundColor" class="qr-color-input" type="color" value="#ffffff">
+                        </div>
+                        <div class="qr-field">
+                            <label class="qr-label" for="qrSizeSelect">Size</label>
+                            <select id="qrSizeSelect" class="qr-select">
+                                <option value="280">280 x 280</option>
+                                <option value="360" selected>360 x 360</option>
+                                <option value="480">480 x 480</option>
+                                <option value="560">560 x 560</option>
+                                <option value="640">640 x 640</option>
+                            </select>
+                        </div>
+                        <div class="qr-field">
+                            <label class="qr-label" for="qrStyleSelect">Style</label>
+                            <select id="qrStyleSelect" class="qr-select">
+                                <option value="square" selected>Square modules</option>
+                                <option value="rounded">Rounded modules</option>
+                            </select>
+                        </div>
+                        <div class="qr-field">
+                            <label class="qr-label" for="qrErrorCorrection">Error Correction</label>
+                            <select id="qrErrorCorrection" class="qr-select">
+                                <option value="L">Low - 7%</option>
+                                <option value="M">Medium - 15%</option>
+                                <option value="Q" selected>Quality - 25%</option>
+                                <option value="H">High - 30%</option>
+                            </select>
+                        </div>
+                        <div class="qr-field qr-file-input-wrap">
+                            <label class="qr-label" for="qrLogoInput">Center Logo (optional)</label>
+                            <input id="qrLogoInput" class="qr-file-input" type="file" accept="image/*">
+                            <div class="qr-file-status">
+                                <span id="qrLogoName">No logo selected</span>
+                                <button id="qrLogoClearBtn" type="button" class="qr-link-button">Clear logo</button>
+                            </div>
+                            <p class="qr-small-text">PNG or SVG logos under 2 MB work best for scannable results.</p>
+                        </div>
+                    </div>
+
+                    <div class="qr-actions-row">
+                        <button id="qrGenerateBtn" type="button" class="qr-button">Generate QR Code</button>
+                        <button id="qrClearBtn" type="button" class="qr-secondary-button">Clear all</button>
+                    </div>
+                </section>
+
+                <section class="qr-preview-card">
+                    <div class="qr-section-heading">
+                        <div>
+                            <h2>Live Preview</h2>
+                            <p>Preview your QR code instantly and download it in your preferred format.</p>
+                        </div>
+                    </div>
+
+                    <div class="qr-preview-box">
+                        <div class="qr-preview-frame" id="qrPreviewFrame">
+                            <div class="qr-empty-state active" id="qrEmptyState">
+                                <i class="bi bi-qr-code"></i>
+                                <h3>Your QR code preview will appear here</h3>
+                                <p>Fill in the content above and click generate to see a live preview.</p>
+                            </div>
+                            <canvas id="qrPreviewCanvas" width="360" height="360" aria-label="QR code preview"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="qr-meta-grid">
+                        <div class="qr-meta-item">
+                            <span>Generated content</span>
+                            <strong id="qrOutputText">-</strong>
+                        </div>
+                    </div>
+
+                    <div class="qr-action-footer">
+                        <div class="qr-download-grid">
+                            <button id="qrDownloadPngBtn" type="button" class="qr-button" disabled>Download PNG</button>
+                            <button id="qrDownloadJpgBtn" type="button" class="qr-secondary-button" disabled>Download JPG</button>
+                            <button id="qrDownloadSvgBtn" type="button" class="qr-secondary-button" disabled>Download SVG</button>
+                        </div>
+                        <div class="qr-copy-group">
+                            <button id="qrCopyBtn" type="button" class="qr-link-button" disabled>Copy text</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/qr_generator.js') }}"></script>
+</body>
+
+</html>

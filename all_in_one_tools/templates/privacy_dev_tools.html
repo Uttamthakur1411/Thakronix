@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f3">
+  <title>Privacy & Developer Tools | Thakronix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/privacy_dev_tools.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/privacy_dev_tools_polish.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/privacy_dev_tools_mobile.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/privacy_dev_catalog.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/link_bio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/social_identity_studio.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/social_identity_workspace.css') }}">
+</head>
+<body data-tool-page="{{ tool_id or '' }}" data-social-only="{{ 'true' if social_only else 'false' }}">
+  <header class="topbar">
+    <a class="brand" href="{{ '/social-identity' if social_only else '/' }}"><span class="brand-mark">+</span> Thakronix</a>
+    <div class="top-actions"><span class="local-indicator"><i></i> Browser processing</span><a class="back-link" href="{{ '/social-identity' if social_only else '/' }}">{{ 'Social Identity' if social_only else 'All tools' }}</a></div>
+  </header>
+  <main class="app-shell">
+    <aside class="tool-rail">
+      <div class="rail-heading"><span class="eyebrow">{{ 'SOCIAL IDENTITY' if social_only else 'LOCAL TOOLBOX' }}</span><h1>{% if social_only %}Create your<br><em>profile identity.</em>{% else %}Private work.<br><em>Clear results.</em>{% endif %}</h1><p>{{ 'Twelve dedicated profile and identity tools. Images stay in this browser.' if social_only else 'Privacy, developer, and digital creation utilities. File processing stays on this device.' }}</p></div>
+      <label class="search-box"><span aria-hidden="true">⌕</span><input id="toolSearch" type="search" placeholder="Find a tool" autocomplete="off"><kbd>/</kbd></label>
+      <div class="category-tabs" role="tablist" aria-label="Tool categories">
+        {% if social_only %}
+        <button class="category-tab active" data-category="social" role="tab" aria-selected="true">Social identity <span id="allToolCount">12</span></button>
+        {% else %}
+        <button class="category-tab active" data-category="all" role="tab" aria-selected="true">All <span id="allToolCount">43</span></button>
+        <button class="category-tab" data-category="privacy" role="tab" aria-selected="false">Privacy</button>
+        <button class="category-tab" data-category="developer" role="tab" aria-selected="false">Developer</button>
+        <button class="category-tab" data-category="digital" role="tab" aria-selected="false">Digital</button>
+        <button class="category-tab" data-category="social" role="tab" aria-selected="false">Social identity</button>
+        {% endif %}
+      </div>
+      <nav id="toolList" class="tool-list" aria-label="Available tools"></nav>
+      <div class="rail-foot"><span class="privacy-dot"></span><span>{{ 'Local by default' if social_only else 'Local by default' }}</span><small>{{ 'Choose a profile tool to start creating.' if social_only else 'Keep a separate backup of important vault data.' }}</small></div>
+    </aside>
+    <section class="workspace" aria-live="polite">
+      <div class="workspace-heading"><div><span class="eyebrow" id="toolCategory">TOOL WORKSPACE</span><h2 id="toolTitle">Choose a tool</h2><p id="toolDescription">Search or browse the catalog to begin.</p></div><button id="resetTool" class="icon-button" type="button" title="Reset current tool" aria-label="Reset current tool">↺</button></div>
+      <div id="toolPanel" class="tool-panel"><div class="welcome-state"><div class="welcome-mark" id="welcomeCount">43</div><h3>One focused workspace</h3><p>Choose a tool from the left. Existing tools open in their original studios; new operations run locally in this page.</p><div class="privacy-callout"><strong>Storage note</strong><span>This browser vault is not hardware-backed. Export regular encrypted backups and store them separately.</span></div></div></div>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='js/privacy_dev_tools.js') }}"></script>
+</body>
+</html>

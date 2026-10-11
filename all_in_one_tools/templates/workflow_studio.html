@@ -1,0 +1,63 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Everyday Workflow Studio{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/productivity_hubs.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/workflow_studio.css') }}">
+{% endblock %}
+{% block content %}
+{% set workflows = [
+('analyze','96','bi-receipt','Smart Receipt & Bill Analyzer','OCR and receipt creation are available in separate document and finance tools; structured extraction and duplicate review are planned.','Related tools','/documents?tool=scanner'),
+('documents','98','bi-file-diff','Document Comparison Studio','Compare PDF, TXT and DOCX text with changed, added and removed lines.','Available','/documents?tool=compare'),
+('protect','99','bi-shield-exclamation','Sensitive Document Scanner','Inspect text and metadata for common sensitive patterns, then redact supported PDF content.','Available','/documents?tool=privacy'),
+('organize','100','bi-folder2-open','Universal File Organizer','Group local files by type, date and size; inspect large, empty and duplicate files.','Available','/documents?tool=organizer-files'),
+('organize','101','bi-trash3','Downloads Folder Cleaner','Review duplicate and large-file candidates in the Documents Hub; automatic downloads cleanup is not provided.','Related tools','/documents?tool=duplicates'),
+('money','102','bi-sliders','Everyday Decision Calculator','Use finance and trip scenario tools to compare transparent costs without declaring a winner.','Available','/finance?tool=scenario'),
+('develop','103','bi-brush','Universal Data Cleaner','CSV diff and data-formatting tools exist; one-click dataset cleaning is not implemented yet.','Planned',''),
+('develop','104','bi-person-vcard','Form Data Generator','The secure random generator creates basic values; schema-based datasets and typed exports are not implemented.','Related tools','/privacy-dev-tools/random'),
+('develop','105','bi-braces','API Mock Response Generator','API response formatting is available; mock scenarios and endpoint simulation are planned.','Planned',''),
+('protect','106','bi-person-bounding-box','Screenshot Privacy Studio','Manually select and blur, pixelate or cover screenshot regions, then annotate and export.','Available','/privacy-dev-tools/face-blur'),
+('protect','107','bi-shield-check','Website Security Header Inspector','Paste response headers to analyze common browser security policies; remote URL fetching is not included.','Available','/privacy-dev-tools/headers'),
+('analyze','108','bi-globe2','Website Health Checker','Website status, redirects and link crawling are not implemented yet.','Planned',''),
+('plan','109','bi-calendar-check','Deadline & Renewal Tracker','Use the assignment planner for student deadlines; finance, home and vehicle renewal trackers remain separate.','Related tools','/student-tools?tool=assignment'),
+('money','110','bi-receipt-cutoff','Quote → Invoice → Receipt','Create quotations, invoices and receipts and track local finance records.','Available','/finance'),
+('organize','111','bi-box-seam','Personal Asset Tracker','Record home assets, value, serials, warranty dates, service history and insurance reports.','Available','/home-tools?tool=inventory'),
+('plan','112','bi-battery-half','Battery & Device Health Tracker','Battery cycle and degradation history is not implemented yet.','Planned',''),
+('organize','113','bi-luggage','Travel Document Organizer','Trip-specific folders, expiry tracking and encrypted offline document storage are not implemented yet.','Planned',''),
+('plan','114','bi-house-heart','Home Emergency Information Card','Printable household emergency sheets are not implemented yet.','Planned',''),
+('organize','115','bi-patch-check','Warranty & Service Document Manager','Basic asset and warranty tracking exists; attaching invoice, warranty and repair documents is not implemented yet.','Planned',''),
+('organize','116','bi-journal-bookmark','Personal Knowledge Organizer','Use the local utility workspace for notes; linked-document search and backlinks are planned.','Related tools','/utility-studio'),
+('documents','117','bi-clock-history','File Version Manager','Version groups, change history and restore actions are not implemented; document comparison is available separately.','Planned',''),
+('money','118','bi-arrow-left-right','Expense-to-Document Workflow','Add and review expense entries in the finance tracker; receipt-to-expense extraction is not included.','Related tools','/finance?tool=expenses')
+] %}
+<section class="hub-page workflow-studio">
+  <header class="hub-hero">
+    <div class="hub-eyebrow"><i class="bi bi-kanban"></i> POPULAR WORKFLOWS</div>
+    <h1>Everyday <span>Workflow Studio</span></h1>
+    <p>One starting point for receipts, documents, files, money, privacy, planning and developer workflows. Existing tools open in their own focused studios.</p>
+    <div class="hub-badges"><span>22 workflow ideas</span><span>14 existing or related paths</span><span>8 clearly marked planned</span></div>
+  </header>
+  <section class="hub-catalog" aria-labelledby="workflowTitle">
+    <div class="hub-heading"><div><span class="hub-kicker">WORKFLOW LIBRARY</span><h2 id="workflowTitle">Find a workflow</h2></div><label class="hub-search"><i class="bi bi-search" aria-hidden="true"></i><input id="workflowSearch" type="search" placeholder="Search workflows" aria-label="Search workflows"></label></div>
+    <div class="workflow-filters" role="group" aria-label="Filter workflows">
+      <button type="button" class="workflow-filter active" data-filter="all" aria-pressed="true">All <span>22</span></button>
+      <button type="button" class="workflow-filter" data-filter="documents" aria-pressed="false">Documents</button>
+      <button type="button" class="workflow-filter" data-filter="money" aria-pressed="false">Money</button>
+      <button type="button" class="workflow-filter" data-filter="organize" aria-pressed="false">Organize</button>
+      <button type="button" class="workflow-filter" data-filter="protect" aria-pressed="false">Protect</button>
+      <button type="button" class="workflow-filter" data-filter="develop" aria-pressed="false">Develop</button>
+      <button type="button" class="workflow-filter" data-filter="plan" aria-pressed="false">Plan</button>
+      <button type="button" class="workflow-filter" data-filter="analyze" aria-pressed="false">Analyze</button>
+    </div>
+    <p class="workflow-count" id="workflowCount" aria-live="polite">23 workflows</p>
+    <div class="hub-grid workflow-grid" id="workflowGrid">
+      {% for category, number, icon, title, description, status, href in workflows %}
+      {% if href %}<a class="hub-card workflow-card" href="{{ href }}" data-workflow data-category="{{ category }}" data-status="{{ status|lower|replace(' ', '-') }}" data-search="{{ number }} {{ title }} {{ description }} {{ category }}"><span class="hub-icon"><i class="bi {{ icon }}" aria-hidden="true"></i></span><span class="workflow-meta"><span class="workflow-number">{{ number }}</span><span class="workflow-status {{ status|lower|replace(' ', '-') }}">{{ status }}</span></span><strong>{{ title }}</strong><small>{{ description }}</small><em>Open related tools <i class="bi bi-arrow-up-right" aria-hidden="true"></i></em></a>
+      {% else %}<article class="hub-card workflow-card planned-card" data-workflow data-category="{{ category }}" data-status="planned" data-search="{{ number }} {{ title }} {{ description }} {{ category }}"><span class="hub-icon"><i class="bi {{ icon }}" aria-hidden="true"></i></span><span class="workflow-meta"><span class="workflow-number">{{ number }}</span><span class="workflow-status planned">Planned</span></span><strong>{{ title }}</strong><small>{{ description }}</small><em>Not available yet</em></article>{% endif %}
+      {% endfor %}
+    </div>
+    <p class="workflow-empty" id="workflowEmpty" hidden>No workflows match that search.</p>
+  </section>
+  <p class="hub-privacy"><i class="bi bi-shield-check"></i> “Available” and “Related tools” link to current functionality. Planned entries are not presented as finished tools.</p>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/workflow_studio.js') }}"></script>{% endblock %}

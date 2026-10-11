@@ -1,0 +1,1 @@
+[data-security-panel="entropy"] .score-ring[data-level="weak"]{border-color:var(--coral)}[data-security-panel="entropy"] .score-ring[data-level="strong"]{border-color:var(--green)}

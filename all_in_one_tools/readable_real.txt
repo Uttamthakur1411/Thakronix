@@ -1,0 +1,27 @@
+py : test_emergency_qr (unittest.loader._FailedTest.test_emergency_qr) ... 
+ERROR
+At line:1 char:1
++ py -X utf8 -m unittest tests.test_emergency_qr -v > verification_utf8 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_emergency_...y_qr) ... ERROR 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+======================================================================
+ERROR: test_emergency_qr (unittest.loader._FailedTest.test_emergency_qr)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_emergency_qr
+Traceback (most recent call last):
+  File 
+"C:\Users\pc\AppData\Local\Programs\Python\Python311\Lib\unittest\loader.py", 
+line 154, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'tests.test_emergency_qr'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

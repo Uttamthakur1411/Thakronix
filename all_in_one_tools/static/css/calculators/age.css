@@ -1,0 +1,4 @@
+/* Age calculator feature styles. Shared calculator layout remains in calculators.css. */
+[data-panel="age"] .timeline,
+[data-panel="age"] .next-milestone,
+[data-panel="age"] #ageMetrics { contain: layout; }

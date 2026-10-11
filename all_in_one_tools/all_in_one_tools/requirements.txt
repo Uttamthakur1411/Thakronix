@@ -1,0 +1,8 @@
+Flask
+Pillow
+qrcode
+PyMuPDF
+pypdf
+opencv-python
+requests
+yt-dlp

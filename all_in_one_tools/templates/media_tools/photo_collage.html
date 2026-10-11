@@ -1,0 +1,77 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Photo Collage Maker{% endblock %}
+{% block head %}<style>
+.collage-workspace{min-width:0;overflow:hidden}
+.collage-workspace .media-grid{min-width:0;align-items:start}
+.collage-workspace .media-preview{width:100%;min-width:0;overflow:hidden;padding:12px}
+.collage-workspace #collageCanvas{display:block;width:100%;height:auto;max-width:100%;max-height:none}
+.collage-workspace .media-col-4,.collage-workspace .media-col-8{min-width:0}
+.collage-workspace #collageQueue{min-width:0;overflow:hidden}
+@media(max-width:700px){.collage-workspace .media-col-4,.collage-workspace .media-col-8{grid-column:1/-1}.collage-workspace .media-grid{grid-template-columns:minmax(0,1fr)}.collage-workspace .media-col-6{grid-column:span 6}}
+</style>{% endblock %}
+{% block content %}
+<section class="media-page collage-workspace">
+  <div class="media-eyebrow">Tool 03</div>
+  <h1>Photo Collage Maker</h1>
+  <p>Arrange 1 to 45 photos. Drag cards to reorder, choose an automatic balanced grid, and export a clean HD collage.</p>
+  <div class="media-panel">
+    <div class="media-grid">
+      <div class="media-col-4">
+        <div class="media-upload" data-input="collageFiles" id="collageDropZone">
+          <i class="bi bi-grid-3x3-gap"></i>
+          <strong>Drop multiple photos</strong>
+          <small>Choose or drop up to 45 images</small>
+          <input id="collageFiles" type="file" accept="image/*" multiple>
+        </div>
+        <div class="media-field">
+          <label for="collageLayout">Photo count / layout</label>
+          <select id="collageLayout">
+            <option value="auto">Auto balanced layout</option>
+            {% for count in range(1, 46) %}<option value="{{ count }}">{{ count }} photos</option>{% endfor %}
+          </select>
+        </div>
+        <div class="media-field">
+          <label for="collageCanvasSize">Canvas preset</label>
+          <select id="collageCanvasSize">
+            <option value="1080,1080">Instagram square</option>
+            <option value="1080,1920">Story portrait</option>
+            <option value="1280,720">YouTube thumbnail</option>
+            <option value="1600,900">Landscape</option>
+            <option value="custom">Custom canvas</option>
+          </select>
+        </div>
+        <div class="media-grid">
+          <div class="media-col-6 media-field"><label for="collageWidth">Custom width</label><input id="collageWidth" value="1080" type="number" min="200"></div>
+          <div class="media-col-6 media-field"><label for="collageHeight">Custom height</label><input id="collageHeight" value="1080" type="number" min="200"></div>
+        </div>
+        <div class="media-field"><label for="collageGap">Spacing</label><input id="collageGap" type="range" min="0" max="60" value="16"></div>
+        <div class="media-field"><label for="collageRadius">Cell radius</label><input id="collageRadius" type="range" min="0" max="70" value="0"></div>
+        <div class="media-field"><label for="collageBg">Background</label><input id="collageBg" type="color" value="#ffffff"></div>
+        <div class="media-field"><label for="collageFormat">Export format</label><select id="collageFormat"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WEBP</option></select></div>
+        <div class="media-actions"><button class="media-btn primary" id="collageRun">Build collage</button><button class="media-btn light" id="collageReset">Reset</button></div>
+        <div class="media-status" id="collageStatus"></div>
+      </div>
+      <div class="media-col-8">
+        <div class="media-preview"><canvas id="collageCanvas" width="1080" height="1080"></canvas></div>
+        <div class="media-output">
+          <strong id="collageCount">0 photos selected</strong>
+          <p style="color:var(--muted);margin:6px 0">Drag the photo cards below to change their order.</p>
+          <div id="collageQueue" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px"></div>
+          <div class="media-actions"><button class="media-btn primary" id="collageDownload" disabled>Download HD collage</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+let collageFiles=[];let draggedIndex=null;
+function renderCollageQueue(){const queue=document.getElementById('collageQueue');document.getElementById('collageCount').textContent=`${collageFiles.length} photos selected`;queue.innerHTML=collageFiles.length?collageFiles.map((file,index)=>`<article draggable="true" data-index="${index}" style="border:1px solid var(--line);border-radius:8px;padding:5px;background:var(--panel);cursor:grab"><img src="${URL.createObjectURL(file)}" alt="Photo ${index+1}" style="width:100%;height:70px;object-fit:cover;border-radius:5px"><small style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${index+1}. ${file.name}</small><button type="button" class="media-btn light" style="padding:4px 7px;margin-top:4px" onclick="removeCollageFile(${index})"><i class="bi bi-x"></i></button></article>`).join(''):'<span style="color:var(--muted)">Add photos to arrange them here.</span>';queue.querySelectorAll('[draggable]').forEach(card=>{card.ondragstart=()=>{draggedIndex=+card.dataset.index};card.ondragover=event=>event.preventDefault();card.ondrop=()=>{const target=+card.dataset.index;if(draggedIndex===null||draggedIndex===target)return;const moved=collageFiles.splice(draggedIndex,1)[0];collageFiles.splice(target,0,moved);draggedIndex=null;renderCollageQueue()}})}
+function removeCollageFile(index){collageFiles.splice(index,1);renderCollageQueue()}
+mediaTools.setupUpload('collageFiles',files=>{collageFiles=[...collageFiles,...files].slice(0,45);renderCollageQueue()});
+document.getElementById('collageCanvasSize').onchange=event=>{if(event.target.value!=='custom'){const [width,height]=event.target.value.split(',');document.getElementById('collageWidth').value=width;document.getElementById('collageHeight').value=height}};
+document.getElementById('collageRun').onclick=async()=>{if(!collageFiles.length)return mediaTools.status('collageStatus','Add at least one photo.');let width=+document.getElementById('collageWidth').value||1080,height=+document.getElementById('collageHeight').value||1080;const preset=document.getElementById('collageCanvasSize').value;if(preset!=='custom')[width,height]=preset.split(',').map(Number);let requested=document.getElementById('collageLayout').value;let count=requested==='auto'?collageFiles.length:Math.min(collageFiles.length,+requested);if(!count)return mediaTools.status('collageStatus','Add at least one photo.');const columns=count===1?1:Math.ceil(Math.sqrt(count));const rows=Math.ceil(count/columns);const gap=+document.getElementById('collageGap').value;const radius=+document.getElementById('collageRadius').value;const canvas=document.getElementById('collageCanvas');canvas.width=width;canvas.height=height;const ctx=canvas.getContext('2d');ctx.fillStyle=document.getElementById('collageBg').value;ctx.fillRect(0,0,width,height);const cellWidth=(width-gap*(columns+1))/columns;const cellHeight=(height-gap*(rows+1))/rows;for(let index=0;index<count;index++){const image=await mediaTools.image(await mediaTools.read(collageFiles[index]));const scale=Math.max(cellWidth/image.width,cellHeight/image.height);const drawWidth=image.width*scale,drawHeight=image.height*scale;const cellX=gap+(index%columns)*(cellWidth+gap),cellY=gap+Math.floor(index/columns)*(cellHeight+gap);ctx.save();ctx.beginPath();if(radius>0)ctx.roundRect(cellX,cellY,cellWidth,cellHeight,radius);else ctx.rect(cellX,cellY,cellWidth,cellHeight);ctx.clip();ctx.drawImage(image,cellX+(cellWidth-drawWidth)/2,cellY+(cellHeight-drawHeight)/2,drawWidth,drawHeight);ctx.restore()}const format=document.getElementById('collageFormat').value;const extension=format.split('/')[1].replace('jpeg','jpg');const download=document.getElementById('collageDownload');download.disabled=false;download.onclick=()=>mediaTools.download(canvas.toDataURL(format,.95),`collage-hd.${extension}`);mediaTools.status('collageStatus',`Balanced ${columns} × ${rows} layout created with ${count} photos.`)};
+document.getElementById('collageReset').onclick=()=>location.reload();renderCollageQueue();
+</script>
+{% endblock %}

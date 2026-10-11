@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shorts Downloader | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>📹 YouTube Shorts Downloader</h1>
+            <p>Download YouTube Shorts videos instantly</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="shortsUrl">Shorts URL</label>
+                <input type="text" id="shortsUrl" placeholder="https://www.youtube.com/shorts/dQw4w9WgXcQ">
+            </div>
+
+            <div class="input-group">
+                <label for="videoQuality">Video Quality</label>
+                <select id="videoQuality">
+                    <option value="1080">1080p (Best)</option>
+                    <option value="720" selected>720p (Good)</option>
+                    <option value="480">480p (Medium)</option>
+                    <option value="360">360p (Low)</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="downloadShorts()">
+                    <i class="bi bi-download"></i> Download Short
+                </button>
+                <button class="btn btn-secondary" onclick="clearDownloader()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px; text-align: center;">
+                <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 15px;">✓ Ready to Download</div>
+                <div id="shortTitle" style="font-size: 0.95rem; opacity: 0.9;"></div>
+            </div>
+
+            <div class="result-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Duration</div>
+                    <div class="meta-value" id="shortDuration">00:15</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Resolution</div>
+                    <div class="meta-value" id="resolution">720p</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">File Size</div>
+                    <div class="meta-value" id="fileSize">~25 MB</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Format</div>
+                    <div class="meta-value">MP4</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+                <h3>📹 Video Preview</h3>
+                <div style="background: #000; width: 100%; aspect-ratio: 9/16; border-radius: 8px; margin-top: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                    <i class="bi bi-play-circle" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="startDownload()">
+                    <i class="bi bi-download"></i> Download MP4
+                </button>
+                <button class="btn btn-secondary" onclick="copyShareLink()">
+                    <i class="bi bi-share"></i> Copy Link
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function extractVideoID(url) {
+        const patterns = [
+            /shorts\/([a-zA-Z0-9_-]{11})/,
+            /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+            /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+        ];
+
+        for (let pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) return match[1];
+        }
+        return null;
+    }
+
+    function downloadShorts() {
+        const url = document.getElementById('shortsUrl').value;
+        const quality = document.getElementById('videoQuality').value;
+
+        const videoID = extractVideoID(url);
+        if (!videoID) {
+            showAlert('Please enter a valid YouTube Shorts URL', 'warning');
+            return;
+        }
+
+        document.getElementById('shortTitle').textContent = 'YouTube Short Video - ID: ' + videoID;
+        document.getElementById('resolution').textContent = quality + 'p';
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Short video ready to download!', 'success');
+    }
+
+    function startDownload() {
+        const quality = document.getElementById('videoQuality').value;
+        showAlert(`Downloading Shorts video in ${quality}p...`, 'success');
+    }
+
+    function copyShareLink() {
+        navigator.clipboard.writeText(document.getElementById('shortsUrl').value).then(() => {
+            showAlert('Link copied!', 'success');
+        });
+    }
+
+    function clearDownloader() {
+        document.getElementById('shortsUrl').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

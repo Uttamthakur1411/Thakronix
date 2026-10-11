@@ -1,0 +1,25 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}{{ tool_title }}{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/media_tools/advanced-image-tools.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/media_tools/processing-animation.css') }}">{% endblock %}
+{% block content %}
+<section class="media-page advanced-image-page" data-tool="{{ tool_key }}">
+  <div class="media-eyebrow">IMAGE TOOL {{ '%02d'|format(tool_number) }}</div>
+  <h1>{{ tool_title }}</h1><p>{{ tool_description }}</p>
+  <div class="media-panel advanced-image-panel">
+    <div class="media-grid">
+      <div class="media-col-5">
+        <div class="media-upload" id="advancedUpload"><i class="bi bi-cloud-arrow-up"></i><strong>Upload image(s)</strong><small>PNG, JPG, WebP up to 25 MB</small><input id="advancedFile" type="file" accept="image/*"></div>
+        <div class="advanced-controls" id="advancedControls"></div>
+        <button class="media-btn primary" id="advancedRun"><i class="bi bi-play-fill"></i> Process</button>
+        <p class="advanced-note" id="advancedNote">Browser-local processing where possible. Generative AI services are not claimed when no model is connected.</p>
+      </div>
+      <div class="media-col-7">
+        <div class="advanced-canvas-wrap"><canvas id="advancedCanvas" aria-label="Image preview"></canvas><div id="advancedEmpty">Upload an image to begin.</div><div class="processing-overlay" id="processingOverlay" aria-live="polite"><div class="processing-orbit"><span></span><span></span><span></span></div><strong id="processingTitle">Processing image</strong><small id="processingStatus">Preparing your workspace...</small><div class="processing-track"><i id="processingProgress"></i></div></div></div>
+        <div class="media-output" id="advancedResult"></div>
+      </div>
+    </div>
+  </div>
+  <div class="advanced-tools" id="advancedToolActions"><button class="media-btn light" id="advancedUndo">Undo</button><button class="media-btn light" id="advancedRedo">Redo</button><button class="media-btn light" id="advancedReset">Reset</button></div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/media_tools/advanced-image-tools.js') }}"></script>{% endblock %}

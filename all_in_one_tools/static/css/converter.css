@@ -1,0 +1,552 @@
+/* =====================================
+   CONVERTER & COMPRESSOR STYLING
+===================================== */
+.converter-page {
+    padding: 120px 0 60px;
+    min-height: 100vh;
+}
+
+.converter-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.tool-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    border: 1px solid rgba(13, 110, 253, 0.2);
+}
+
+.converter-header h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+}
+
+.converter-header h1 span {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.converter-header p {
+    color: #a0aec0;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.converter-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+.upload-area {
+    background: #1e1e2f !important;
+    border: 2px dashed #4f46e5 !important;
+    border-radius: 16px;
+    padding: 50px 20px;
+    text-align: center;
+    color: #ffffff !important;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.upload-area h3 {
+    color: #ffffff !important;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.upload-area p {
+    color: #94a3b8 !important;
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.upload-info {
+    color: #64748b !important;
+    font-size: 0.85rem;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.browse-btn {
+    margin-top: 15px;
+    background-color: #0d6efd;
+    color: #ffffff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.browse-btn:hover {
+    background-color: #0b5ed7;
+}
+
+.preview-section {
+    margin-top: 20px;
+    display: none;
+}
+
+.preview-section.show {
+    display: block;
+}
+
+.processing {
+    text-align: center;
+    padding: 30px;
+    display: none;
+}
+
+.processing.show {
+    display: block;
+}
+
+.result-box {
+    text-align: center;
+    padding: 20px;
+    display: none;
+}
+
+.result-box.show {
+    display: block;
+}
+
+.format-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.format-btn {
+    flex: 1 1 30%;
+    background: rgba(255, 255, 255, 0.05);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 90px;
+}
+
+.format-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.format-btn.active {
+    background: #0d6efd;
+    color: #ffffff;
+    border-color: #0d6efd;
+}
+
+.compression-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.compression-stats span {
+    display: block;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.compression-stats strong {
+    color: #ffffff;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.preview-header h3 {
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin: 0;
+}
+
+.remove-btn {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.remove-btn:hover {
+    background: #dc3545;
+    color: #ffffff;
+}
+
+.preview-container {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    max-height: 300px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.preview-container img {
+    max-width: 100%;
+    max-height: 270px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.image-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.image-info span {
+    display: block;
+    font-size: 0.75rem;
+    color: #718096;
+    margin-bottom: 4px;
+}
+
+.image-info strong {
+    font-size: 0.9rem;
+    color: #ffffff;
+}
+
+.options-panel {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.size-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.size-input::placeholder {
+    color: #94a3b8;
+}
+
+.options-panel small {
+    color: #94a3b8;
+    display: block;
+    margin-top: 6px;
+}
+
+.quality-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.quality-header label {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}
+
+.quality-header strong {
+    color: #0d6efd;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: #0d6efd;
+}
+
+.convert-btn, .download-btn {
+    width: 100%;
+    background: #0d6efd;
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.convert-btn:hover, .download-btn:hover {
+    background: #0b5ed7;
+}
+
+.processing {
+    text-align: center;
+    padding: 30px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(13, 110, 253, 0.1);
+    border-top-color: #0d6efd;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.processing p {
+    color: #ffffff;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.processing span {
+    color: #718096;
+    font-size: 0.85rem;
+}
+
+.result-box {
+    text-align: center;
+    padding: 20px;
+}
+
+.success-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(25, 135, 84, 0.15);
+    color: #198754;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+}
+
+.result-box h3 {
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.result-box p {
+    color: #a0aec0;
+    margin-bottom: 20px;
+}
+
+.another-btn {
+    background: transparent;
+    color: #a0aec0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.another-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+}
+
+.converter-page {
+    width: 100%;
+    overflow-x: clip;
+    padding: 48px 0 56px;
+}
+
+.converter-page > .container {
+    width: 100%;
+    max-width: 960px;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+.converter-page,
+.converter-page * {
+    box-sizing: border-box;
+}
+
+.converter-card {
+    width: 100%;
+    max-width: 760px;
+    min-width: 0;
+    padding: 24px;
+}
+
+.image-info,
+.compression-stats {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+}
+
+.image-info > div,
+.compression-stats > div {
+    min-width: 0;
+}
+
+.image-info strong,
+.compression-stats strong,
+.result-box h3,
+.result-box p {
+    overflow-wrap: anywhere;
+}
+
+.preview-container {
+    width: 100%;
+    min-width: 0;
+}
+
+.preview-container img {
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.result-box {
+    width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.download-btn,
+.another-btn {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 760px) {
+    .converter-page {
+        padding: 32px 0 40px;
+    }
+
+    .converter-page > .container {
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+
+    .converter-header {
+        margin-bottom: 24px;
+    }
+
+    .converter-header h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+    }
+
+    .converter-header p {
+        padding: 0 4px;
+        font-size: 1rem;
+    }
+
+    .converter-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .upload-area {
+        padding: 34px 14px;
+    }
+
+    .upload-area h3 {
+        font-size: 1.2rem;
+        overflow-wrap: anywhere;
+    }
+
+    .preview-container {
+        max-height: 55vh;
+        padding: 10px;
+    }
+
+    .preview-container img {
+        max-height: 50vh;
+    }
+
+    .preview-header {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .format-btn {
+        min-width: 0;
+        flex-basis: 0;
+    }
+}
+
+@media (max-width: 560px) {
+    .image-info,
+    .compression-stats {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    .image-info {
+        text-align: left;
+    }
+
+    .image-info > div,
+    .compression-stats > div {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 380px) {
+    .converter-page > .container {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .converter-card {
+        padding: 12px;
+    }
+
+    .download-btn,
+    .another-btn {
+        padding: 11px 8px;
+        font-size: .92rem;
+    }
+}

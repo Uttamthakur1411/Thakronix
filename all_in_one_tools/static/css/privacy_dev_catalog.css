@@ -1,0 +1,9 @@
+#toolList .tool-item{color:var(--ink);text-decoration:none}.tool-list a:hover strong{color:var(--green)}.tool-list a:focus-visible{outline:3px solid #55a47f;outline-offset:1px}.tool-list a .tool-state{color:var(--green)}
+.tool-list{gap:5px;max-height:calc(100vh - 270px)}
+.tool-item{height:auto;min-height:54px;grid-template-columns:26px minmax(0,1fr) auto;align-items:start;gap:8px;padding:8px;border-radius:6px;line-height:1.35}
+.tool-item>span:nth-child(2){min-width:0}
+.tool-item strong,.tool-item small{display:block;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.tool-item strong{line-height:1.3}
+.tool-item small{line-height:1.35}
+.tool-state{white-space:nowrap;align-self:start}
+@media(max-width:650px){.tool-list{grid-template-columns:minmax(0,1fr);grid-auto-rows:minmax(54px,auto);max-height:min(52vh,360px)}}

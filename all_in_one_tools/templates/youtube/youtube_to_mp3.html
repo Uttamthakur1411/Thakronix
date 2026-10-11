@@ -1,0 +1,237 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}YouTube to MP3{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-to-mp3.css') }}">{% endblock %}
+{% block content %}
+<section class="media-page youtube-mp3-page">
+        <a href="{{ url_for('youtube_tools') }}" class="youtube-back">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <header class="media-hero youtube-mp3-header">
+            <div class="media-eyebrow">YOUTUBE CREATOR TOOLS</div>
+            <h1><i class="bi bi-music-note-beamed"></i> YouTube to MP3 Converter</h1>
+            <p>Convert YouTube videos to MP3 audio files</p>
+        </header>
+
+        <div class="youtube-rights-note">
+            <i class="bi bi-exclamation-triangle"></i>
+            <div>
+                <strong>Note:</strong> Always ensure you have rights to download and use the content. Respect copyright and intellectual property.
+            </div>
+        </div>
+
+        <div class="input-section youtube-input-card">
+            <div class="input-group">
+                <label for="videoUrl">YouTube Video URL</label>
+                <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+            </div>
+
+            <div class="input-group">
+                <label for="audioQuality">Audio Quality</label>
+                <select id="audioQuality">
+                    <option value="320">320 kbps (Highest Quality)</option>
+                    <option value="256">256 kbps (High Quality)</option>
+                    <option value="192" selected>192 kbps (Good Quality)</option>
+                    <option value="128">128 kbps (Low Bandwidth)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="format">Audio Format</label>
+                <select id="format">
+                    <option value="mp3" selected>MP3</option>
+                    <option value="m4a">M4A</option>
+                    <option value="wav">WAV</option>
+                </select>
+            </div>
+
+            <div class="youtube-checks">
+                <label>
+                    <input type="checkbox" id="trimAudio">
+                    Trim Duration
+                </label>
+                <label>
+                    <input type="checkbox" id="normalizeAudio" checked>
+                    Normalize Audio
+                </label>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="convertToMP3()">
+                    <i class="bi bi-download"></i> Convert to MP3
+                </button>
+                <button class="btn btn-secondary" onclick="clearConverter()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div id="conversionProgress" class="youtube-progress" style="display: none;">
+                <h3>⏳ Converting...</h3>
+                <div class="youtube-progress-track">
+                    <div id="progressBar"></div>
+                </div>
+                <div id="progressText" style="text-align: center; font-size: 0.9rem; color: #666;">0%</div>
+            </div>
+
+            <div id="conversionResult" style="display: none;">
+                <div class="youtube-complete-banner">
+                    <div style="font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;">✓ Conversion Complete!</div>
+                    <div id="audioTitle"></div>
+                </div>
+
+                <div class="result-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">File Size</div>
+                        <div class="meta-value" id="fileSize">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Duration</div>
+                        <div class="meta-value" id="duration">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Quality</div>
+                        <div class="meta-value" id="quality">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Format</div>
+                        <div class="meta-value" id="formatDisplay">-</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px;">
+                    <h3>🎧 Audio Preview</h3>
+                    <audio id="audioPlayer" controls>
+                        <source src="" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="button-group youtube-result-actions">
+                    <button class="btn btn-success" onclick="downloadAudio()">
+                        <i class="bi bi-download"></i> Download MP3
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyAudioURL()">
+                        <i class="bi bi-link-45deg"></i> Copy Link
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </section>
+{% endblock %}
+{% block scripts %}<script>
+    let convertedAudioData = null;
+    let convertedAudioUrl = null;
+    let convertedFileName = 'youtube-audio.mp3';
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function extractVideoID(url) {
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+            /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/,
+            /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+        ];
+
+        for (let pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) return match[1];
+        }
+        return null;
+    }
+
+    async function convertToMP3() {
+        const url = document.getElementById('videoUrl').value.trim();
+        const quality = document.getElementById('audioQuality').value;
+        const format = document.getElementById('format').value;
+
+        const videoID = extractVideoID(url);
+        if (!videoID) {
+            showAlert('Please enter a valid YouTube URL', 'warning');
+            return;
+        }
+
+        document.getElementById('resultSection').style.display = 'block';
+        document.getElementById('conversionProgress').style.display = 'block';
+        document.getElementById('conversionResult').style.display = 'none';
+
+        try {
+            const response = await fetch(`/api/youtube-audio?url=${encodeURIComponent(url)}&quality=${quality}&format=${format}`);
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({ message: 'Audio conversion failed.' }));
+                throw new Error(error.message || 'Audio conversion failed.');
+            }
+
+            const audioBlob = await response.blob();
+            if (!audioBlob.size) throw new Error('The server returned an empty audio file.');
+
+            if (convertedAudioUrl) URL.revokeObjectURL(convertedAudioUrl);
+            convertedAudioData = audioBlob;
+            convertedAudioUrl = URL.createObjectURL(audioBlob);
+            convertedFileName = `${videoID}.${format}`;
+
+            document.getElementById('conversionProgress').style.display = 'none';
+            document.getElementById('conversionResult').style.display = 'block';
+            document.getElementById('audioTitle').textContent = 'Audio converted successfully';
+            document.getElementById('fileSize').textContent = formatBytes(audioBlob.size);
+            document.getElementById('duration').textContent = 'Ready to play';
+            document.getElementById('quality').textContent = quality + ' kbps';
+            document.getElementById('formatDisplay').textContent = format.toUpperCase();
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = convertedAudioUrl;
+            audioPlayer.load();
+            showAlert('Conversion complete. You can play or download the audio now.', 'success');
+        } catch (error) {
+            document.getElementById('conversionProgress').style.display = 'none';
+            document.getElementById('conversionResult').style.display = 'none';
+            showAlert(error.message, 'error');
+        }
+    }
+
+    function downloadAudio() {
+        if (!convertedAudioUrl) {
+            showAlert('Convert the video first.', 'warning');
+            return;
+        }
+        const link = document.createElement('a');
+        link.href = convertedAudioUrl;
+        link.download = convertedFileName;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        showAlert('Audio download started.', 'success');
+    }
+
+    function copyAudioURL() {
+        if (!convertedAudioUrl) {
+            showAlert('Convert the video first.', 'warning');
+            return;
+        }
+        navigator.clipboard.writeText(convertedAudioUrl).then(() => {
+            showAlert('Audio URL copied!', 'success');
+        });
+    }
+
+    function formatBytes(bytes) {
+        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
+    function clearConverter() {
+        document.getElementById('videoUrl').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        document.getElementById('conversionProgress').style.display = 'none';
+        document.getElementById('conversionResult').style.display = 'none';
+        if (convertedAudioUrl) URL.revokeObjectURL(convertedAudioUrl);
+        convertedAudioUrl = null;
+        convertedAudioData = null;
+    }
+</script>{% endblock %}

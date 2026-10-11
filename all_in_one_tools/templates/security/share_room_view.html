@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Secure Share Room</title>
+  <style>
+    :root { --bg:#f4f7ff; --panel:#ffffff; --text:#171f2a; --muted:#5f6f87; --line:rgba(87,101,136,.2); --brand:#5f6cff; --good:#198754; --warn:#b54545; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Inter,Segoe UI,sans-serif; background:linear-gradient(180deg,#eef2ff,#f9fafc); color:var(--text); }
+    .room-view-shell { min-height:100vh; display:grid; place-items:center; padding:32px 18px; }
+    .room-view-card { width:min(980px,100%); background:rgba(255,255,255,.9); border:1px solid var(--line); border-radius:24px; box-shadow:0 25px 60px rgba(17,24,39,.12); padding:24px; }
+    .room-view-header { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+    .eyebrow { font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--brand); font-weight:700; }
+    h1 { margin:8px 0 0; font-size:clamp(2rem,3vw,2.5rem); }
+    .status-pill { display:inline-flex; align-items:center; padding:8px 12px; border-radius:999px; background:rgba(25,135,84,.12); border:1px solid rgba(25,135,84,.25); color:var(--good); font-size:11px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; }
+    .status-box { border:1px solid var(--line); border-radius:18px; padding:16px; background:rgba(95,108,255,.04); color:var(--muted); }
+    .status-box.error { border-color:rgba(181,69,69,.2); background:rgba(181,69,69,.05); color:var(--warn); }
+    .room-meta { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin:18px 0; }
+    .room-meta-card { border:1px solid var(--line); border-radius:16px; background:#fafbff; padding:14px; }
+    .room-meta-card span { display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+    .room-meta-card strong { font-size:1rem; }
+    .room-doc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; margin-top:20px; }
+    .room-doc-card { border:1px solid var(--line); border-radius:18px; background:#fff; padding:14px; display:grid; gap:10px; }
+    .room-doc-card.preview img, .room-doc-card.preview embed { width:100%; min-height:170px; object-fit:cover; border-radius:12px; background:#f6f7fb; }
+    .room-doc-card .doc-name { font-weight:700; }
+    .room-doc-card .doc-meta { color:var(--muted); font-size:0.86rem; }
+    .room-doc-card pre { margin:0; white-space:pre-wrap; word-break:break-word; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; background:#f6f7fb; padding:12px; border-radius:12px; }
+    .room-doc-card .download-btn { display:inline-block; border:1px solid var(--line); border-radius:10px; padding:9px 12px; text-decoration:none; color:var(--text); background:#fff; }
+    @media (max-width: 640px) { .room-view-header { flex-direction:column; align-items:flex-start; } }
+  </style>
+</head>
+<body>
+  <main class="room-view-shell">
+    <div class="room-view-card">
+      <div class="room-view-header">
+        <div>
+          <div class="eyebrow">Temporary share room</div>
+          <h1>Secure share room</h1>
+        </div>
+        <div id="roomViewBadge" class="status-pill">Loading…</div>
+      </div>
+      <div id="roomViewStatus" class="status-box">Checking room access…</div>
+      <div id="roomMeta" class="room-meta"></div>
+      <div id="roomDocuments" class="room-doc-grid"></div>
+    </div>
+  </main>
+
+  <script>
+    const roomToken = '{{ room_token }}';
+    const b64 = (bytes) => {
+      let binary = '';
+      bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+      return btoa(binary);
+    };
+    const fromB64 = (value) => Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+    async function decryptRoomBundle(payload, key) {
+      const packet = JSON.parse(payload);
+      const keyMaterial = await crypto.subtle.importKey('raw', new TextEncoder().encode(key), 'PBKDF2', false, ['deriveKey']);
+      const derivedKey = await crypto.subtle.deriveKey({
+        name: 'PBKDF2',
+        salt: fromB64(packet.salt),
+        iterations: 120000,
+        hash: 'SHA-256'
+      }, keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+      const clear = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(packet.iv) }, derivedKey, fromB64(packet.ciphertext));
+      return JSON.parse(new TextDecoder().decode(clear));
+    }
+
+    const statusBox = document.getElementById('roomViewStatus');
+    const metaPanel = document.getElementById('roomMeta');
+    const roomDocuments = document.getElementById('roomDocuments');
+    const badge = document.getElementById('roomViewBadge');
+
+    function formatBytes(size) {
+      if (!size && size !== 0) return 'Unknown size';
+      if (size < 1024) return `${size} B`;
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+      return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    function renderDocument(documentItem) {
+      const fileType = (documentItem.type || '').toLowerCase();
+      const isText = fileType.startsWith('text/') || fileType === 'application/json' || fileType === 'application/xml';
+      const isImage = fileType.startsWith('image/');
+      const safeName = documentItem.name || 'Document';
+      const base = `<div class="room-doc-card ${isImage || isText ? 'preview' : ''}">
+        <div class="doc-name">${safeName}</div>
+        <div class="doc-meta">${formatBytes(documentItem.size)} · ${documentItem.type || 'File'}</div>`;
+
+      let content = '';
+      if (isImage) {
+        content = `<img src="data:${documentItem.type};base64,${documentItem.data}" alt="${safeName}">`;
+      } else if (isText) {
+        content = `<pre>${documentItem.data ? atob(documentItem.data).replace(/[<>]/g, (match) => ({'<':'&lt;','>':'&gt;'}[match])) : 'No readable preview available.'}</pre>`;
+      } else {
+        content = `<div class="status-box">Document preview unavailable for this file type. ${documentItem.data ? 'Use download to open the original file.' : 'No file payload was attached.'}</div>`;
+      }
+
+      if (documentItem.data && !isImage && !isText && documentItem.type && !documentItem.type.includes('pdf')) {
+        content = `<pre>${String.fromCharCode(...Uint8Array.from(atob(documentItem.data), (char) => char.charCodeAt(0))).slice(0, 800)}</pre>`;
+      }
+
+      const download = documentItem.data ? `<a class="download-btn" href="data:${documentItem.type || 'application/octet-stream'};base64,${documentItem.data}" download="${safeName}">Download original</a>` : '';
+      return base + content + download + '</div>';
+    }
+
+    async function loadRoom() {
+      const params = new URLSearchParams(window.location.hash.slice(1));
+      const key = params.get('key');
+      if (!key) {
+        badge.textContent = 'UNLOCKED';
+        statusBox.classList.add('error');
+        statusBox.textContent = 'This link is missing the room key. Ask the sender for the secure link with the embedded key.';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/security/rooms/${roomToken}`);
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Access failed.');
+        }
+
+        const bundle = await decryptRoomBundle(data.payload, key);
+        badge.textContent = 'ACCESS OK';
+        statusBox.textContent = 'This room is readable in-browser and remains read-only while active.';
+        statusBox.classList.remove('error');
+
+        const purpose = bundle.purpose || data.purpose || 'Shared room';
+        const recipient = bundle.recipient || data.recipient || 'Recipient';
+        const watermark = bundle.watermarkText || data.watermarkText || 'View only';
+
+        metaPanel.innerHTML = `
+          <div class="room-meta-card"><span>Purpose</span><strong>${purpose}</strong></div>
+          <div class="room-meta-card"><span>Recipient</span><strong>${recipient}</strong></div>
+          <div class="room-meta-card"><span>Expiry</span><strong>${new Date(data.expiresAt).toLocaleString()}</strong></div>
+          <div class="room-meta-card"><span>Watermark</span><strong>${watermark}</strong></div>
+        `;
+
+        const docs = Array.isArray(bundle.documents) ? bundle.documents : [];
+        roomDocuments.innerHTML = docs.length ? docs.map(renderDocument).join('') : '<div class="status-box">No documents were included in this room.</div>';
+      } catch (error) {
+        badge.textContent = 'ACCESS BLOCKED';
+        statusBox.classList.add('error');
+        statusBox.textContent = error.message || 'This room is unavailable or the decryption key is invalid.';
+      }
+    }
+
+    loadRoom();
+  </script>
+</body>
+</html>

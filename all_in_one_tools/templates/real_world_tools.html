@@ -1,0 +1,53 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Real-World Tools{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/productivity_hubs.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/real_world_tools.css') }}">
+{% endblock %}
+{% block content %}
+<section class="hub-page real-world-page" data-tool-id="{{ tool_id or '' }}">
+    {% if not tool_id %}
+    <header class="hub-hero">
+        <div class="hub-eyebrow"><i class="bi bi-broadcast"></i> REAL-WORLD UTILITY SUITE</div>
+        <h1>Advanced Internet, Device, Security, and <span>Media Tools</span></h1>
+        <p>Professional browser-first utilities for performance checks, privacy analysis, file diagnostics, network health, and everyday decision-making.</p>
+        <div class="hub-badges">
+            <span>40 tools</span>
+            <span>Browser-based</span>
+            <span>Responsive</span>
+            <span>Privacy-first</span>
+        </div>
+    </header>
+
+    <section class="hub-catalog" aria-labelledby="realWorldToolsTitle">
+        <div class="hub-heading">
+            <div>
+                <span class="hub-kicker">ALL TOOLS</span>
+                <h2 id="realWorldToolsTitle">Real-world workspaces built for everyday use</h2>
+            </div>
+            <label class="hub-search" aria-label="Search real-world tools">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <input id="realToolSearch" type="search" placeholder="Search tools..." aria-label="Search real-world tools">
+            </label>
+        </div>
+
+        <div id="tool-grid" class="hub-grid"></div>
+    </section>
+    {% else %}
+    <section id="tool-panel" class="hub-workspace" aria-live="polite">
+        <div class="workspace-head">
+            <div>
+                <a href="/real-world-tools" class="hub-back"><i class="bi bi-arrow-left"></i> All real-world tools</a>
+                <span class="hub-kicker">FOCUSED WORKSPACE</span>
+                <h2 id="panel-title">Loading tool...</h2>
+            </div>
+        </div>
+        <div id="tool-view" class="tool-view"></div>
+    </section>
+    {% endif %}
+
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/real_world_tools.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,1 @@
+document.querySelectorAll('option[value="webm"]').forEach(option => option.remove());

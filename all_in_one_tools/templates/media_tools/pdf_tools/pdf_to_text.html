@@ -1,0 +1,39 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}PDF Text Extractor{% endblock %}
+{% block content %}
+<section class="media-page">
+	<div class="media-eyebrow">PDF Tool</div>
+	<h1>Extract PDF Text</h1>
+	<p>Pull readable text from a PDF and copy it.</p>
+	<div class="media-panel">
+		<div class="media-upload" data-input="file">
+			<i class="bi bi-text-paragraph"></i>
+			<strong>Upload PDF</strong>
+			<input id="file" type="file" accept="application/pdf">
+		</div>
+		<button class="media-btn primary" id="run" type="button">Extract text</button>
+		<textarea id="output" class="media-field" rows="12" style="width:100%;margin-top:14px" placeholder="Extracted text appears here"></textarea>
+		<div class="media-actions"><button class="media-btn light" id="copy" type="button">Copy text</button></div>
+		<div class="media-status" id="status"></div>
+	</div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+let selectedPdf;
+mediaTools.setupUpload('file', (files) => { selectedPdf = files[0]; });
+document.getElementById('run').addEventListener('click', async () => {
+	if (!selectedPdf) return mediaTools.status('status', 'Upload a PDF first.');
+	const formData = new FormData();
+	formData.append('pdf', selectedPdf);
+	const response = await fetch('/api/pdf-to-text', { method: 'POST', body: formData });
+	const result = await response.json();
+	if (!response.ok) return mediaTools.status('status', result.message || 'Extraction failed.');
+	document.getElementById('output').value = result.text || '';
+	mediaTools.status('status', 'Text extracted.');
+});
+document.getElementById('copy').addEventListener('click', () =>
+	navigator.clipboard.writeText(document.getElementById('output').value)
+);
+</script>
+{% endblock %}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video ID Extractor | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>🆔 YouTube Video ID Extractor</h1>
+            <p>Extract video IDs from YouTube URLs instantly</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="youtubeUrl">Paste YouTube URL</label>
+                <textarea id="youtubeUrl" placeholder="Paste one or multiple YouTube URLs (one per line)&#10;Examples:&#10;https://www.youtube.com/watch?v=dQw4w9WgXcQ&#10;https://youtu.be/dQw4w9WgXcQ&#10;https://www.youtube.com/embed/dQw4w9WgXcQ" style="min-height: 120px;"></textarea>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="extractIDs()">
+                    <i class="bi bi-lightning-charge"></i> Extract IDs
+                </button>
+                <button class="btn btn-secondary" onclick="clearExtractor()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div class="result-meta">
+                <div class="meta-item">
+                    <div class="meta-label">URLs Processed</div>
+                    <div class="meta-value" id="processedCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">IDs Found</div>
+                    <div class="meta-value" id="foundCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Invalid URLs</div>
+                    <div class="meta-value" id="invalidCount">0</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <h3 style="font-size: 1.2rem; margin-bottom: 15px;">📋 Extracted Video IDs</h3>
+                <div id="idsContainer"></div>
+            </div>
+
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="copyAllIDs()">
+                    <i class="bi bi-files"></i> Copy All IDs
+                </button>
+                <button class="btn btn-secondary" onclick="downloadIDs()">
+                    <i class="bi bi-download"></i> Download TXT
+                </button>
+                <button class="btn btn-secondary" onclick="generatePlaylistURL()">
+                    <i class="bi bi-play-circle"></i> Generate Playlist URL
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    let extractedIDs = [];
+    let failedURLs = [];
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function extractVideoID(url) {
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+            /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/,
+            /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+            /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+        ];
+
+        for (let pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) return match[1];
+        }
+        return null;
+    }
+
+    function extractIDs() {
+        const input = document.getElementById('youtubeUrl').value.trim();
+        
+        if (!input) {
+            showAlert('Please paste at least one YouTube URL', 'warning');
+            return;
+        }
+
+        const urls = input.split('\n').map(u => u.trim()).filter(u => u.length > 0);
+        extractedIDs = [];
+        failedURLs = [];
+
+        urls.forEach(url => {
+            const id = extractVideoID(url);
+            if (id) {
+                extractedIDs.push(id);
+            } else {
+                failedURLs.push(url);
+            }
+        });
+
+        document.getElementById('processedCount').textContent = urls.length;
+        document.getElementById('foundCount').textContent = extractedIDs.length;
+        document.getElementById('invalidCount').textContent = failedURLs.length;
+
+        // Display extracted IDs
+        const idsHtml = extractedIDs.map((id, idx) => `
+            <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>#${idx + 1}</strong><br>
+                    <code style="font-family: monospace; color: #667eea;">${id}</code>
+                </div>
+                <button class="copy-btn" onclick="copyID('${id}')">
+                    <i class="bi bi-files"></i> Copy
+                </button>
+            </div>
+        `).join('');
+
+        let html = idsHtml;
+        if (failedURLs.length > 0) {
+            html += '<div style="margin-top: 20px;"><strong style="color: #fa709a;">❌ Invalid URLs:</strong>';
+            failedURLs.forEach(url => {
+                html += `<div class="card" style="border-color: #fa709a; background: rgba(245, 87, 108, 0.05);">
+                    <small>${url}</small>
+                </div>`;
+            });
+            html += '</div>';
+        }
+
+        document.getElementById('idsContainer').innerHTML = html;
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert(`Successfully extracted ${extractedIDs.length} video IDs!`, 'success');
+    }
+
+    function copyID(id) {
+        navigator.clipboard.writeText(id).then(() => {
+            showAlert(`Copied: ${id}`, 'success');
+        });
+    }
+
+    function copyAllIDs() {
+        const text = extractedIDs.join('\n');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('All IDs copied!', 'success');
+        });
+    }
+
+    function downloadIDs() {
+        let text = 'YouTube Video IDs\n' + '='.repeat(50) + '\n\n';
+        extractedIDs.forEach((id, idx) => {
+            text += `${idx + 1}. ${id}\n`;
+        });
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'youtube-video-ids.txt';
+        a.click();
+        showAlert('IDs downloaded!', 'success');
+    }
+
+    function generatePlaylistURL() {
+        if (extractedIDs.length < 2) {
+            showAlert('You need at least 2 video IDs to create a playlist', 'warning');
+            return;
+        }
+
+        const playlistURL = `https://www.youtube.com/playlist?list=${extractedIDs.join('&v=')}`;
+        navigator.clipboard.writeText(playlistURL).then(() => {
+            showAlert('Playlist URL copied!', 'success');
+        });
+    }
+
+    function clearExtractor() {
+        document.getElementById('youtubeUrl').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        extractedIDs = [];
+        failedURLs = [];
+    }
+</script>
+
+</body>
+</html>

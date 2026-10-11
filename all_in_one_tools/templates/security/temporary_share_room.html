@@ -1,0 +1,27 @@
+<section class="security-panel" data-security-panel="room">
+  <div class="security-grid room-grid">
+    <div class="security-card room-builder">
+      <div class="card-head"><div><span class="eyebrow">PURPOSE-BOUND TEMPORARY ACCESS</span><h3>Create Secure Share Room</h3></div><span class="shield">⌁</span></div>
+      <label class="room-dropzone" id="roomDrop"><input type="file" id="roomFiles" accept="application/pdf,image/jpeg,image/png,image/webp,text/plain,.pdf,.txt" multiple><i class="bi bi-folder2-open" aria-hidden="true"></i><strong>Select documents</strong><small>PDF, JPG, PNG, WEBP, TXT · encrypted in this browser</small><span class="room-choose">Browse files</span></label>
+      <div id="roomDocumentList" class="room-document-list"><p class="empty-state">Your selected documents will appear here.</p></div>
+      <div class="field-grid room-fields">
+        <label>Purpose<input id="roomPurpose" maxlength="160" placeholder="Insurance claim review" required></label>
+        <label>Recipient<input id="roomRecipient" maxlength="120" placeholder="Service Center" required></label>
+        <label>Room expires<select id="roomTtl"><option value="3600">1 hour</option><option value="86400" selected>24 hours</option><option value="604800">7 days</option><option value="2592000">30 days</option></select></label>
+        <label>Watermark text<input id="roomWatermarkText" maxlength="100" value="Service Center · View only"></label>
+      </div>
+      <label class="check-row"><input type="checkbox" id="roomAllowDownload"> Allow recipient to download originals</label>
+      <label class="check-row"><input type="checkbox" id="roomWatermark" checked> Show watermark while viewing</label>
+      <button class="primary-btn wide" id="createRoom">Create Secure Share Room <span>→</span></button>
+      <p id="roomStatus" class="security-note" role="status" aria-live="polite"></p>
+      <div id="roomOutput" class="room-output hidden" aria-live="polite"><img id="roomQr" alt="Secure share room QR code"><div><strong>Secure room ready</strong><a id="roomLink" target="_blank" rel="noopener noreferrer"></a><small id="roomExpires"></small><button class="outline-btn" id="copyRoomLink" type="button">Copy secure link</button><button class="outline-btn" id="copyRoomKey" type="button">Copy owner recovery key</button><small>Save the recovery key privately. It can revoke the room from another device.</small></div></div>
+    </div>
+    <aside class="security-card room-management">
+      <div class="card-head"><div><span class="eyebrow">ROOM MANAGEMENT</span><h3>Your share rooms</h3></div><span class="live-dot">● private</span></div>
+      <p class="security-note">Owner keys are kept in this browser. You can also use a saved recovery key below.</p>
+      <div id="roomList" class="room-list"><p class="empty-state">No rooms created in this browser.</p></div>
+      <div class="room-recovery"><label>Room link or token<input id="roomRecoveryToken" autocomplete="off" placeholder="Paste room URL or token"></label><label>Owner recovery key<input id="roomRecoveryKey" type="password" autocomplete="off" placeholder="Paste private owner key"></label><div class="room-recovery-actions"><button class="outline-btn" id="recoverRoomLog" type="button">Show access log</button><button class="outline-btn" id="recoverRoomRevoke" type="button">Revoke room</button></div></div>
+      <div id="roomAccessLog" class="room-access-log" aria-live="polite"></div>
+    </aside>
+  </div>
+</section>

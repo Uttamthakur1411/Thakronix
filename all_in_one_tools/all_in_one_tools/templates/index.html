@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thakronix | All-in-One Free Online Tools</title>
+<!-- Main Website CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=2) }}">
+
+    <!-- Converter & Compressor CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/converter.css', v=2) }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<!-- Animated Background -->
+<div class="background">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span class="logo-icon">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+            </span>
+            Thakro<span>nix</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#tools">All Tools</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#categories">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <button class="theme-btn" id="themeToggle">
+                        <i class="bi bi-moon-stars-fill"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+    <div class="container">
+        <div class="hero-content">
+            <div class="badge-pill">
+                <span class="pulse-dot"></span>
+                100% Free Tools • No Signup Required
+            </div>
+
+            <h1>
+                Everything You Need.
+                <span>One Powerful Platform.</span>
+            </h1>
+
+            <p class="hero-text">
+                Convert images, create QR codes, generate photo art,
+                work with PDFs and discover powerful utilities —
+                all in one simple and secure place.
+            </p>
+
+            <!-- SEARCH -->
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" id="toolSearch" placeholder="Search for a tool...">
+                <button>Search</button>
+            </div>
+
+            <div class="quick-links">
+                <span>Popular:</span>
+                <a href="#tools">Image Converter</a>
+                <a href="#tools">QR Generator</a>
+                <a href="#tools">Sketch Art</a>
+                <a href="#tools">PDF Tools</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="bi bi-tools"></i>
+                <div>
+                    <h3>20+</h3>
+                    <p>Powerful Tools</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="bi bi-lightning-charge"></i>
+                <div>
+                    <h3>Fast</h3>
+                    <p>Instant Processing</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="bi bi-shield-check"></i>
+                <div>
+                    <h3>Private</h3>
+                    <p>Secure Processing</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <i class="bi bi-phone"></i>
+                <div>
+                    <h3>100%</h3>
+                    <p>Responsive</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TOOLS -->
+<section class="tools-section" id="tools">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="section-label">EXPLORE</span>
+                <h2>
+                    Popular <span>Tools</span>
+                </h2>
+                <p>
+                    Everything you need to create, convert and manage
+                    your digital files.
+                </p>
+            </div>
+            <a href="#categories" class="view-all">
+                View All Tools
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="tools-grid">
+            <!-- IMAGE CONVERTER -->
+            <div class="tool-card" data-name="image converter jpg png webp">
+                <div class="tool-icon image-icon">
+                    <i class="bi bi-images"></i>
+                </div>
+                <span class="tool-tag">IMAGE</span>
+                <h3>Image Converter</h3>
+                <p>Convert JPG, PNG, WebP and other image formats quickly and easily.</p>
+                <a href="{{ url_for('image_converter') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- SKETCH -->
+            <div class="tool-card" data-name="ai sketch art photo">
+                <div class="tool-icon sketch-icon">
+                    <i class="bi bi-palette"></i>
+                </div>
+                <span class="tool-tag">AI ART</span>
+                <h3>Sketch Art</h3>
+                <p>Transform your photos into beautiful pencil and artistic sketch effects.</p>
+                <a href="{{ url_for('sketch') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- QR -->
+            <div class="tool-card" data-name="qr code generator url">
+                <div class="tool-icon qr-icon">
+                    <i class="bi bi-qr-code"></i>
+                </div>
+                <span class="tool-tag">UTILITY</span>
+                <h3>QR Generator</h3>
+                <p>Create professional QR codes from URLs, text and other information.</p>
+                <a href="{{ url_for('qr_generator') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- YOUTUBE DOWNLOADER -->
+            <div class="tool-card" data-name="youtube video downloader mp4 audio">
+                <div class="tool-icon qr-icon">
+                    <i class="bi bi-youtube"></i>
+                </div>
+                <span class="tool-tag">MEDIA</span>
+                <h3>YouTube Downloader</h3>
+                <p>Preview YouTube videos, inspect metadata, and download thumbnails or media files responsibly.</p>
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- PDF -->
+            <div class="tool-card" data-name="pdf merge split compress">
+                <div class="tool-icon pdf-icon">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                </div>
+                <span class="tool-tag">DOCUMENT</span>
+                <h3>PDF Tools</h3>
+                <p>Merge, split, compress and manage your PDF documents with ease.</p>
+                <a href="{{ url_for('pdf_tools') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- IMAGE COMPRESSOR -->
+            <div class="tool-card" data-name="image compressor reduce size">
+                <div class="tool-icon compress-icon">
+                    <i class="bi bi-file-zip"></i>
+                </div>
+                <span class="tool-tag">IMAGE</span>
+                <h3>Image Compressor</h3>
+                <p>Reduce image file size while maintaining the best possible quality.</p>
+                <a href="{{ url_for('image_compressor') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+
+            <!-- TEXT -->
+            <div class="tool-card" data-name="word counter character text">
+                <div class="tool-icon text-icon">
+                    <i class="bi bi-text-paragraph"></i>
+                </div>
+                <span class="tool-tag">TEXT</span>
+                <h3>Text Tools</h3>
+                <p>Count words, characters, clean text and convert text cases instantly.</p>
+                <a href="{{ url_for('tools') }}" class="tool-link">
+                    Open Tool
+                    <i class="bi bi-arrow-up-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories-section" id="categories">
+    <div class="container">
+        <div class="section-heading center">
+            <span class="section-label">CATEGORIES</span>
+            <h2>
+                Tools For <span>Everything</span>
+            </h2>
+            <p>
+                Explore our growing collection of free online tools.
+            </p>
+        </div>
+
+        <div class="category-grid">
+            <div class="category-card">
+                <i class="bi bi-image"></i>
+                <h4>Image Tools</h4>
+                <span>6+ Tools</span>
+            </div>
+
+            <div class="category-card">
+                <i class="bi bi-file-earmark-pdf"></i>
+                <h4>PDF Tools</h4>
+                <span>5+ Tools</span>
+            </div>
+
+            <div class="category-card">
+                <i class="bi bi-qr-code"></i>
+                <h4>QR Tools</h4>
+                <span>3+ Tools</span>
+            </div>
+
+            <div class="category-card">
+                <i class="bi bi-fonts"></i>
+                <h4>Text Tools</h4>
+                <span>6+ Tools</span>
+            </div>
+
+            <div class="category-card">
+                <i class="bi bi-shield-lock"></i>
+                <h4>Security</h4>
+                <span>4+ Tools</span>
+            </div>
+
+            <div class="category-card">
+                <i class="bi bi-calculator"></i>
+                <h4>Utilities</h4>
+                <span>8+ Tools</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+    <div class="container">
+        <div class="about-box">
+            <div class="about-content">
+                <span class="section-label">WHY Thakronix?</span>
+                <h2>
+                    Simple Tools.
+                    <span>Powerful Results.</span>
+                </h2>
+                <p>
+                    Thakronix is designed to bring useful digital tools
+                    together in one modern platform. Our goal is to make
+                    everyday tasks faster, simpler and accessible to everyone.
+                </p>
+
+                <div class="about-features">
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        No mandatory signup
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Fast processing
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Easy downloads
+                    </div>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        Mobile friendly
+                    </div>
+                </div>
+            </div>
+
+            <div class="about-visual">
+                <div class="floating-icon icon-one">
+                    <i class="bi bi-image"></i>
+                </div>
+                <div class="floating-icon icon-two">
+                    <i class="bi bi-qr-code"></i>
+                </div>
+                <div class="floating-icon icon-three">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                </div>
+                <div class="main-logo">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div>
+                <a class="navbar-brand" href="/">
+                    <span class="logo-icon">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                    </span>
+                    Thakro<span>nix</span>
+                </a>
+                <p>
+                    Powerful tools. One simple platform.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#tools">Tools</a>
+                <a href="#categories">Categories</a>
+                <a href="#about">About</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Thakronix. Built with Python & Flask.</p>
+            <div>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

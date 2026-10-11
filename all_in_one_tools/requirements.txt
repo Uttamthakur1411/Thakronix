@@ -1,0 +1,15 @@
+Flask
+cryptography>=42.0.0
+flask-cors
+Pillow
+qrcode
+PyMuPDF
+pypdf
+opencv-python
+requests
+yt-dlp[default]
+reportlab
+python-docx
+pytesseract
+js2py
+gunicorn>=23.0,<24.0

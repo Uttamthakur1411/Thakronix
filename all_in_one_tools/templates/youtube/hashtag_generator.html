@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashtag Generator | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>#️⃣ YouTube Hashtag Generator</h1>
+            <p>Generate effective hashtags for your YouTube content</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="topic">Video Topic</label>
+                <input type="text" id="topic" placeholder="e.g., AI Tools, Fitness, Cooking">
+            </div>
+
+            <div class="input-group">
+                <label for="niche">Niche/Category</label>
+                <select id="niche">
+                    <option value="tech">Technology</option>
+                    <option value="education">Education</option>
+                    <option value="lifestyle">Lifestyle</option>
+                    <option value="entertainment">Entertainment</option>
+                    <option value="business">Business</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="music">Music</option>
+                    <option value="fitness">Fitness</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="language">Language</label>
+                <select id="language">
+                    <option value="english">English</option>
+                    <option value="hindi">Hindi</option>
+                    <option value="hinglish">Hinglish</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="count">Number of Hashtags</label>
+                <select id="count">
+                    <option value="10">10 Hashtags</option>
+                    <option value="20" selected>20 Hashtags</option>
+                    <option value="30">30 Hashtags</option>
+                    <option value="50">50 Hashtags</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="generateHashtags()">
+                    <i class="bi bi-lightning-charge"></i> Generate Hashtags
+                </button>
+                <button class="btn btn-secondary" onclick="clearHashtags()">
+                    <i class="bi bi-arrow-clockwise"></i> Clear
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div class="result-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Hashtags Generated</div>
+                    <div class="meta-value" id="hashtagCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Trending</div>
+                    <div class="meta-value" id="trendingCount">0</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Niche</div>
+                    <div class="meta-value" id="nicheDisplay">-</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <strong>📋 Copy Ready Format:</strong>
+                    <div id="copyFormat" style="word-wrap: break-word; margin-top: 10px; font-family: monospace; font-size: 0.9rem;"></div>
+                </div>
+            </div>
+
+            <div id="hashtagsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 25px;"></div>
+
+            <div class="button-group">
+                <button class="btn btn-success" onclick="copyFormatted()">
+                    <i class="bi bi-files"></i> Copy Formatted
+                </button>
+                <button class="btn btn-secondary" onclick="copyOne()">
+                    <i class="bi bi-hash"></i> Copy Per Line
+                </button>
+                <button class="btn btn-secondary" onclick="downloadHashtags()">
+                    <i class="bi bi-download"></i> Download
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    let currentHashtags = [];
+
+    const hashtagLibrary = {
+        tech: {
+            english: ['#AI', '#Technology', '#Coding', '#Programming', '#WebDevelopment', '#SoftwareDeveloper', '#TechNews', '#Innovation', '#AI', '#StartUp', '#CloudComputing', '#Cybersecurity', '#MachineLearning', '#DataScience', '#Python', '#JavaScript', '#Developer', '#TechBlog', '#DigitalTransformation', '#FutureOfTech'],
+            hindi: ['#तकनीक', '#प्रोग्रामिंग', '#कोडिंग', '#एआई', '#डेवलपर', '#टेक', '#भारत', '#ऑनलाइन', '#सीखो', '#सफलता'],
+            hinglish: ['#TechInIndia', '#CodingKaAB', '#ProgrammerLife', '#DevHumKaun', '#AIRevolution', '#LearnCoding', '#CodeWithMe', '#TechBlog', '#SmartIndia', '#FutureTech']
+        },
+        education: {
+            english: ['#Education', '#Learning', '#OnlineLearning', '#Student', '#Study', '#Course', '#Tutorial', '#Skill', '#Knowledge', '#School', '#University', '#TeacherLife', '#Education', '#StudyTips', '#ExamPrep', '#Motivation', '#Success', '#EducationMatters', '#SmartStudy', '#OnlineCourse'],
+            hindi: ['#शिक्षा', '#पढाई', '#सीखना', '#छात्र', '#स्कूल', '#ज्ञान', '#कोर्स', '#सफलता', '#परीक्षा', '#मेहनत'],
+            hinglish: ['#PdhaiKaYatra', '#StudentLife', '#ExamKiBattle', '#MotivationDaily', '#StudySmarter', '#OnlineClass', '#LearnWithMe', '#SuccessStories', '#EducationFirst', '#KnowledgeIsLife']
+        },
+        lifestyle: {
+            english: ['#Lifestyle', '#MotivationalQuotes', '#PersonalGrowth', '#DailyLife', '#HealthyLiving', '#Wellness', '#MindsetMatters', '#GoalSetting', '#Success', '#Happiness', '#SelfCare', '#MentalHealth', '#Productivity', '#Motivation', '#Blessed', '#LifestyleVlog', '#DayInMyLife', '#RoutineVideo', '#HealthTips', '#WellnessJourney'],
+            hindi: ['#जीवन', '#सफलता', '#प्रेरणा', '#स्वास्थ्य', '#खुशी', '#लक्ष्य', '#विकास', '#दिनचर्या', '#प्रेरक', '#शांति'],
+            hinglish: ['#LifestyleVlog', '#DailyMotivation', '#HealthyHabits', '#SuccessPath', '#GoalAchiever', '#PersonalDevelopment', '#WellnessMatters', '#MotivationMode', '#LifeLessons', '#PositiveVibes']
+        }
+    };
+
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function generateHashtags() {
+        const topic = document.getElementById('topic').value;
+        const niche = document.getElementById('niche').value;
+        const language = document.getElementById('language').value;
+        const count = parseInt(document.getElementById('count').value);
+
+        if (!topic) {
+            showAlert('Please enter a topic', 'warning');
+            return;
+        }
+
+        // Get hashtags from library
+        let hashtags = hashtagLibrary[niche]?.[language] || [];
+        
+        // Add topic-specific hashtags
+        const topicTags = [
+            `#${topic.replace(/\s+/g, '')}`,
+            `#${topic.split(' ')[0]}`,
+            `#${topic.split(' ')[0]}Tutorial`,
+            `#${topic.split(' ')[0]}Tips`,
+        ];
+
+        hashtags = [...new Set([...hashtags, ...topicTags])].slice(0, count);
+        currentHashtags = hashtags;
+
+        document.getElementById('hashtagCount').textContent = hashtags.length;
+        document.getElementById('trendingCount').textContent = Math.floor(hashtags.length * 0.4);
+        document.getElementById('nicheDisplay').textContent = niche.charAt(0).toUpperCase() + niche.slice(1);
+
+        // Copy format display
+        document.getElementById('copyFormat').textContent = hashtags.join(' ');
+
+        // Grid display
+        const gridHtml = hashtags.map(ht => `
+            <div class="tag clickable" onclick="copyHash('${ht}')" style="text-align: center; padding: 10px 8px;">
+                ${ht}
+            </div>
+        `).join('');
+
+        document.getElementById('hashtagsGrid').innerHTML = gridHtml;
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Hashtags generated!', 'success');
+    }
+
+    function copyHash(hashtag) {
+        navigator.clipboard.writeText(hashtag).then(() => {
+            showAlert(`Copied: ${hashtag}`, 'success');
+        });
+    }
+
+    function copyFormatted() {
+        const text = currentHashtags.join(' ');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('Hashtags copied (space-separated)!', 'success');
+        });
+    }
+
+    function copyOne() {
+        const text = currentHashtags.join('\n');
+        navigator.clipboard.writeText(text).then(() => {
+            showAlert('Hashtags copied (one per line)!', 'success');
+        });
+    }
+
+    function downloadHashtags() {
+        let csv = 'Hashtag,Type\n';
+        currentHashtags.forEach(ht => {
+            csv += `"${ht}","Custom"\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'hashtags.csv';
+        a.click();
+        showAlert('Hashtags downloaded!', 'success');
+    }
+
+    function clearHashtags() {
+        document.getElementById('topic').value = '';
+        document.getElementById('resultSection').style.display = 'none';
+        currentHashtags = [];
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch Art Generator - Thakronix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        .navbar {
+            background-color: #1e293b;
+            border-bottom: 1px solid #334155;
+        }
+        .upload-card {
+            background: #1e293b;
+            border: 2px dashed #475569;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .upload-card:hover {
+            border-color: #818cf8;
+            background: #243147;
+        }
+        .preview-box {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #334155;
+        }
+        .preview-img {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        .btn-custom {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .btn-custom:hover {
+            opacity: 0.9;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-white fs-4" href="/"><i class="fa-solid fa-shapes text-primary me-2"></i>Thakronix</a>
+            <a href="/tools" class="btn btn-outline-light btn-sm"><i class="fa-solid fa-arrow-left me-1"></i> All Tools</a>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="text-center mb-4">
+            <h1 class="fw-bold"><i class="fa-solid fa-palette text-purple me-2"></i>AI Pencil Sketch Generator</h1>
+            <p class="text-secondary">Transform your ordinary photos into detailed, realistic pencil sketch artwork.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <!-- Upload Box -->
+                <div class="upload-card mb-4" id="uploadArea" onclick="document.getElementById('imageInput').click()">
+                    <i class="fa-solid fa-cloud-arrow-up fs-1 text-primary mb-3"></i>
+                    <h4>Drop your image here or click to browse</h4>
+                    <p class="text-secondary mb-0">Supports JPG, PNG, WebP (Max 20MB)</p>
+                    <input type="file" id="imageInput" accept="image/*" class="d-none">
+                </div>
+
+                <!-- Controls & Preview Section -->
+                <div id="processSection" style="display: none;">
+                    <div class="card bg-dark border-secondary p-4 mb-4">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <label for="intensityRange" class="form-label fw-bold">
+                                    Pencil Detail / Softness: <span id="intensityVal" class="text-primary">12</span>
+                                </label>
+                                <input type="range" class="form-range" id="intensityRange" min="3" max="40" value="12">
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button id="generateBtn" class="btn btn-custom w-100 mt-3 mt-md-0">
+                                    <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Convert to Sketch
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Grid -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="preview-box text-center">
+                                <h6 class="text-secondary mb-3"><i class="fa-solid fa-image me-1"></i> Original Photo</h6>
+                                <img id="originalPreview" src="" class="preview-img" alt="Original">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="preview-box text-center">
+                                <h6 class="text-secondary mb-3"><i class="fa-solid fa-pencil me-1"></i> Pencil Sketch Result</h6>
+                                <div id="sketchPlaceholder" class="p-5 text-secondary">
+                                    Click "Convert to Sketch" to generate artwork.
+                                </div>
+                                <img id="sketchPreview" src="" class="preview-img d-none" alt="Sketch">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="text-center d-none" id="downloadBox">
+                        <a id="downloadBtn" class="btn btn-success btn-lg px-4" download="pencil_sketch.jpg">
+                            <i class="fa-solid fa-download me-2"></i>Download Sketch Image
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+
+        const imageInput = document.getElementById("imageInput");
+        const uploadArea = document.getElementById("uploadArea");
+        const processSection = document.getElementById("processSection");
+        const originalPreview = document.getElementById("originalPreview");
+        const sketchPreview = document.getElementById("sketchPreview");
+        const sketchPlaceholder = document.getElementById("sketchPlaceholder");
+        const intensityRange = document.getElementById("intensityRange");
+        const intensityVal = document.getElementById("intensityVal");
+        const generateBtn = document.getElementById("generateBtn");
+        const downloadBox = document.getElementById("downloadBox");
+        const downloadBtn = document.getElementById("downloadBtn");
+
+        // Drag & Drop
+        uploadArea.addEventListener("dragover", (e) => { e.preventDefault(); uploadArea.style.borderColor = "#6366f1"; });
+        uploadArea.addEventListener("dragleave", () => { uploadArea.style.borderColor = "#475569"; });
+        uploadArea.addEventListener("drop", (e) => {
+            e.preventDefault();
+            if (e.dataTransfer.files.length) {
+                imageInput.files = e.dataTransfer.files;
+                handleFileSelect();
+            }
+        });
+
+        imageInput.addEventListener("change", handleFileSelect);
+
+        intensityRange.addEventListener("input", () => {
+            intensityVal.innerText = intensityRange.value;
+        });
+
+        function handleFileSelect() {
+            if (!imageInput.files.length) return;
+            selectedFile = imageInput.files[0];
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalPreview.src = e.target.result;
+                processSection.style.display = "block";
+                sketchPreview.classList.add("d-none");
+                sketchPlaceholder.style.display = "block";
+                downloadBox.classList.add("d-none");
+            };
+            reader.readAsDataURL(selectedFile);
+        }
+
+        // Convert Click
+        generateBtn.addEventListener("click", async () => {
+            if (!selectedFile) {
+                alert("Please select an image first!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("image", selectedFile);
+            formData.append("intensity", intensityRange.value);
+
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Drawing...';
+
+            try {
+                const response = await fetch("/api/sketch", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.message || "Failed to convert image.");
+                }
+
+                const blob = await response.blob();
+                const imgUrl = URL.createObjectURL(blob);
+
+                sketchPreview.src = imgUrl;
+                sketchPreview.classList.remove("d-none");
+                sketchPlaceholder.style.display = "none";
+
+                downloadBtn.href = imgUrl;
+                downloadBox.classList.remove("d-none");
+
+            } catch (error) {
+                alert("Error: " + error.message);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles me-2"></i>Convert to Sketch';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f5f1">
+  <title>{{ tool_id|replace('-', ' ')|title }} | Thakronix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/privacy_dev_tools.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/privacy_dev_tools_polish.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/privacy_dev_tools_mobile.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/privacy_dev_tool_page.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/link_bio.css') }}">
+</head>
+<body class="tool-page" data-tool-page="{{ tool_id }}">
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">+</span> Thakronix</a>
+    <div class="top-actions"><span class="local-indicator"><i></i> Browser processing</span><a class="back-link" href="/privacy-dev-tools">All 43 tools</a></div>
+  </header>
+  <main class="tool-page-shell">
+    <div class="page-navigation"><a href="/privacy-dev-tools" aria-label="Back to all tools">← <span>Tool catalog</span></a><button id="resetTool" class="icon-button" type="button" title="Reset tool" aria-label="Reset tool">↺</button></div>
+    <section class="workspace" aria-live="polite">
+      <div class="workspace-heading"><div><span class="eyebrow" id="toolCategory">TOOL WORKSPACE</span><h1 id="toolTitle">Loading tool</h1><p id="toolDescription"></p></div></div>
+      <div id="toolPanel" class="tool-panel"></div>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='js/privacy_dev_tools.js') }}"></script>
+</body>
+</html>

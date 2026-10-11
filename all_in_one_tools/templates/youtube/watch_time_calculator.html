@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Time Calculator | Thakronix</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube/youtube-tools.css') }}">
+</head>
+<body>
+{% include "youtube/_tool_nav.html" %}
+
+<div class="tool-wrapper">
+    <div class="container">
+        <a href="{{ url_for('youtube_tools') }}" class="back-button">
+            <i class="bi bi-arrow-left"></i> Back to YouTube Tools
+        </a>
+
+        <div class="tool-header">
+            <h1>⏱️ YouTube Watch Time Calculator</h1>
+            <p>Calculate total watch time needed for monetization milestones</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="videoCount">Number of Videos</label>
+                <input type="number" id="videoCount" min="1" value="10" placeholder="How many videos">
+            </div>
+
+            <div class="input-group">
+                <label for="avgDuration">Average Video Duration (minutes)</label>
+                <input type="number" id="avgDuration" min="0.5" step="0.5" value="10" placeholder="Average length">
+            </div>
+
+            <div class="input-group">
+                <label for="uploadFrequency">Upload Frequency</label>
+                <select id="uploadFrequency">
+                    <option value="1">Weekly (1 per week)</option>
+                    <option value="2">Bi-weekly (1 every 2 weeks)</option>
+                    <option value="4">Monthly (1 per month)</option>
+                    <option value="7">Every 7 days</option>
+                    <option value="14">Every 14 days</option>
+                    <option value="30">Every 30 days</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="avgViewPercentage">Average Viewer Completion %</label>
+                <input type="number" id="avgViewPercentage" min="1" max="100" value="50" placeholder="What % of videos people watch">
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="calculate()">
+                    <i class="bi bi-calculator"></i> Calculate
+                </button>
+                <button class="btn btn-secondary" onclick="resetCalculator()">
+                    <i class="bi bi-arrow-clockwise"></i> Reset
+                </button>
+            </div>
+        </div>
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Total Watch Time Needed</div>
+                    <div id="totalWatchTime" style="font-size: 2.5rem; font-weight: 700; margin: 10px 0;"></div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">from <span id="totalViewers"></span> required viewers</div>
+                </div>
+            </div>
+
+            <div class="result-meta">
+                <div class="meta-item">
+                    <div class="meta-label">4,000 Hours Target</div>
+                    <div class="meta-value" id="progressPercent">0%</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Days to Reach Target</div>
+                    <div class="meta-value" id="daysToTarget">-</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Watch Time Per Video</div>
+                    <div class="meta-value" id="watchPerVideo">-</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Required CTR</div>
+                    <div class="meta-value" id="requiredCTR">-</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3>📊 Milestone Breakdown</h3>
+                <div id="milestones"></div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3>📈 Monthly Projection</h3>
+                <div id="projection"></div>
+            </div>
+
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="downloadReport()">
+                    <i class="bi bi-download"></i> Download Report
+                </button>
+            </div>
+        </div>
+
+        <div id="alertBox" style="display: none; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    function showAlert(message, type = 'error') {
+        const alertBox = document.getElementById('alertBox');
+        alertBox.innerHTML = `<div class="alert alert-${type}"><i class="bi bi-exclamation-circle"></i> ${message}</div>`;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 5000);
+    }
+
+    function calculate() {
+        const videoCount = parseInt(document.getElementById('videoCount').value);
+        const avgDuration = parseFloat(document.getElementById('avgDuration').value);
+        const uploadFrequency = parseInt(document.getElementById('uploadFrequency').value);
+        const avgViewPercentage = parseInt(document.getElementById('avgViewPercentage').value) / 100;
+
+        if (!videoCount || !avgDuration) {
+            showAlert('Please fill all fields', 'warning');
+            return;
+        }
+
+        // Calculate total watch time per video
+        const watchTimePerVideo = avgDuration * avgViewPercentage;
+        
+        // Total watch time from all videos
+        const totalWatchMinutes = videoCount * watchTimePerVideo;
+        const totalWatchHours = totalWatchMinutes / 60;
+
+        // For monetization (4000 hours needed)
+        const targetHours = 4000;
+        const progressPercent = Math.min(100, (totalWatchHours / targetHours) * 100);
+
+        // Days to reach target
+        const daysPerUpload = uploadFrequency;
+        const daysToReachTarget = (videoCount / (1 / daysPerUpload)) * ((targetHours - totalWatchHours) / watchTimePerVideo);
+
+        // Required viewers to hit 4000 hours
+        const requiredViewersFor4k = 4000 * 60 / avgDuration;
+        const avgViewersNeeded = (4000 * 60 / avgDuration) / videoCount;
+
+        // Display results
+        document.getElementById('totalWatchTime').textContent = Math.floor(totalWatchHours).toLocaleString() + ' hours';
+        document.getElementById('totalViewers').textContent = Math.floor(avgViewersNeeded).toLocaleString();
+        document.getElementById('progressPercent').textContent = progressPercent.toFixed(1) + '%';
+        document.getElementById('daysToTarget').textContent = Math.max(0, Math.ceil(daysToReachTarget)) + ' days';
+        document.getElementById('watchPerVideo').textContent = watchTimePerVideo.toFixed(2) + ' min';
+        
+        const requiredCTR = (avgViewersNeeded / 1000).toFixed(2) + '%';
+        document.getElementById('requiredCTR').textContent = requiredCTR;
+
+        // Milestones
+        const milestones = [
+            { hours: 100, label: '100 Hours' },
+            { hours: 500, label: '500 Hours' },
+            { hours: 1000, label: '1K Hours' },
+            { hours: 4000, label: '4K Hours (Monetization)' }
+        ];
+
+        let milestonesHtml = '';
+        milestones.forEach(m => {
+            const percent = Math.min(100, (totalWatchHours / m.hours) * 100);
+            milestonesHtml += `
+                <div class="card">
+                    <div style="margin-bottom: 8px;">
+                        <strong>${m.label}</strong> - ${percent.toFixed(1)}%
+                    </div>
+                    <div style="background: #e0e0e0; height: 8px; border-radius: 4px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #667eea, #764ba2); height: 100%; width: ${percent}%;"></div>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('milestones').innerHTML = milestonesHtml;
+
+        // Projection
+        let projectionHtml = '';
+        let cumulativeHours = 0;
+        for (let month = 1; month <= 6; month++) {
+            const videosInMonth = Math.ceil(month * (1 / (uploadFrequency / 30)));
+            const watchHoursMonth = videosInMonth * watchTimePerVideo / 60;
+            cumulativeHours += watchHoursMonth;
+            projectionHtml += `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>Month ${month}</strong><br>
+                            <small>${videosInMonth} videos planned</small>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.2rem; color: #667eea; font-weight: 700;">${Math.ceil(cumulativeHours)} hours</div>
+                            <small>cumulative</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        document.getElementById('projection').innerHTML = projectionHtml;
+
+        document.getElementById('resultSection').style.display = 'block';
+        showAlert('Calculation complete!', 'success');
+    }
+
+    function downloadReport() {
+        const report = `YouTube Watch Time Calculator Report
+===================================================
+
+Configuration:
+- Number of Videos: ${document.getElementById('videoCount').value}
+- Average Duration: ${document.getElementById('avgDuration').value} minutes
+- Upload Frequency: Every ${document.getElementById('uploadFrequency').value} days
+- Average Completion: ${document.getElementById('avgViewPercentage').value}%
+
+Results:
+- Total Watch Time: ${document.getElementById('totalWatchTime').textContent}
+- Progress to 4K Hours: ${document.getElementById('progressPercent').textContent}
+- Days to Target: ${document.getElementById('daysToTarget').textContent}
+- Watch Time Per Video: ${document.getElementById('watchPerVideo').textContent}
+- Required CTR: ${document.getElementById('requiredCTR').textContent}
+
+Generated on: ${new Date().toLocaleString()}
+`;
+        const blob = new Blob([report], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'watch-time-report.txt';
+        a.click();
+        showAlert('Report downloaded!', 'success');
+    }
+
+    function resetCalculator() {
+        document.getElementById('videoCount').value = '10';
+        document.getElementById('avgDuration').value = '10';
+        document.getElementById('uploadFrequency').value = '1';
+        document.getElementById('avgViewPercentage').value = '50';
+        document.getElementById('resultSection').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>

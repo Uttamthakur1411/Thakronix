@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF Tools | Thakronix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #07111f;
+            color: #eef2ff;
+        }
+        .tool-shell {
+            padding-top: 120px;
+            min-height: 100vh;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .page-badge {
+            display: inline-block;
+            padding: 0.45rem 1rem;
+            border-radius: 50px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            color: #d8b4fe;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .page-header h1 {
+            font-size: clamp(2.2rem, 4vw, 4rem);
+            font-weight: 800;
+        }
+        .page-header h1 span {
+            background: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 50%, #f9a8d4 100%);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .page-header p {
+            color: rgba(226, 232, 240, 0.7);
+            max-width: 760px;
+            margin: 0 auto;
+            font-size: 1.06rem;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+            gap: 1.25rem;
+        }
+        .tool-panel {
+            grid-column: span 6;
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 22px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.30);
+            padding: 1.4rem;
+            backdrop-filter: blur(12px);
+        }
+        .tool-panel h3 {
+            font-size: 1.35rem;
+            margin-bottom: 0.5rem;
+        }
+        .tool-panel p {
+            color: rgba(191, 219, 254, 0.75);
+            margin-bottom: 1rem;
+        }
+        .upload-box {
+            border: 2px dashed rgba(96, 165, 250, 0.6);
+            background: rgba(15, 23, 42, 0.65);
+            border-radius: 18px;
+            padding: 2rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .upload-box:hover {
+            border-color: #8b5cf6;
+            transform: translateY(-2px);
+        }
+        .upload-box i {
+            font-size: 2.8rem;
+            color: #7dd3fc;
+            margin-bottom: 0.8rem;
+        }
+        .upload-box h4 {
+            font-size: 1.15rem;
+            margin-bottom: 0.35rem;
+        }
+        .upload-box small {
+            color: rgba(148, 163, 184, 0.8);
+        }
+        .hidden-input {
+            display: none;
+        }
+        .tool-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.7rem;
+            margin-top: 1rem;
+        }
+        .primary-btn, .secondary-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+        .primary-btn {
+            background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+            color: white;
+        }
+        .secondary-btn {
+            background: rgba(148, 163, 184, 0.1);
+            color: #e2e8f0;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+        }
+        .preview-wrap {
+            margin-top: 1rem;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 18px;
+            overflow: hidden;
+            min-height: 180px;
+            padding: 1rem;
+        }
+        .preview-wrap img {
+            width: 100%;
+            max-height: 260px;
+            object-fit: contain;
+            display: block;
+            background: linear-gradient(45deg, rgba(15, 23, 42, 0.7), rgba(30, 41, 59, 0.7));
+        }
+        .form-control, .form-select {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            color: white;
+        }
+        .form-control::placeholder {
+            color: rgba(148, 163, 184, 0.7);
+        }
+        .status-box {
+            margin-top: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            color: #dbeafe;
+            border: 1px solid rgba(96, 165, 250, 0.15);
+            display: none;
+        }
+        .status-box.show {
+            display: block;
+        }
+        .status-box.error {
+            border-color: rgba(248, 113, 113, 0.35);
+            color: #fecaca;
+        }
+        .status-box.success {
+            border-color: rgba(74, 222, 128, 0.35);
+            color: #bbf7d0;
+        }
+        @media (max-width: 991px) {
+            .tool-panel { grid-column: span 12; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+                Thakro<span>nix</span>
+            </a>
+            <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-house-door me-1"></i>Home</a>
+        </div>
+    </nav>
+
+    <main class="tool-shell">
+        <div class="container">
+            <div class="page-header">
+                <div class="page-badge">PDF & Document Suite</div>
+                <h1>Convert, merge, split and <span>manage PDFs</span></h1>
+                <p>Handle all your document workflows in one responsive workspace from JPG to PDF, Word to PDF, text extraction, OCR, and secure PDF actions.</p>
+            </div>
+
+            <div class="tools-grid">
+                <section class="tool-panel">
+                    <h3><i class="bi bi-file-earmark-arrow-up me-2"></i>PDF → JPG</h3>
+                    <p>Convert the first page of a PDF into a JPG image.</p>
+                    <div class="upload-box" data-upload-target="pdf-jpg"><i class="bi bi-cloud-arrow-up"></i><h4>Upload PDF</h4><small>PDF only</small><input type="file" class="hidden-input" accept="application/pdf"></div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="pdf-jpg">Convert</button>
+                    </div>
+                    <div class="preview-wrap"><img id="pdfJpgPreview" alt="Converted JPG preview" /></div>
+                    <a id="pdfJpgDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download JPG</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-file-earmark-arrow-down me-2"></i>JPG → PDF</h3>
+                    <p>Turn an image into a clean single-page PDF.</p>
+                    <div class="upload-box" data-upload-target="jpg-pdf"><i class="bi bi-cloud-arrow-up"></i><h4>Upload JPG / Image</h4><small>JPG, PNG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="jpg-pdf">Create PDF</button>
+                    </div>
+                    <div class="preview-wrap"><img id="jpgPdfPreview" alt="Image preview" /></div>
+                    <a id="jpgPdfDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download PDF</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-files me-2"></i>PDF Merger</h3>
+                    <p>Combine multiple PDFs into one combined document.</p>
+                    <div class="upload-box" data-upload-target="pdf-merge"><i class="bi bi-cloud-arrow-up"></i><h4>Select PDFs</h4><small>Multiple PDF files</small><input type="file" class="hidden-input" accept="application/pdf" multiple></div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="pdf-merge">Merge PDFs</button>
+                    </div>
+                    <a id="pdfMergeDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download Merged PDF</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-scissors me-2"></i>PDF Splitter</h3>
+                    <p>Split a PDF by page range, such as 1-3 or 4-6.</p>
+                    <div class="upload-box" data-upload-target="pdf-split"><i class="bi bi-cloud-arrow-up"></i><h4>Upload PDF</h4><small>PDF only</small><input type="file" class="hidden-input" accept="application/pdf"></div>
+                    <div class="row g-2 mt-2">
+                        <div class="col-md-6">
+                            <label class="form-label small text-light">Start page</label>
+                            <input type="number" id="splitStart" class="form-control" value="1" min="1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-light">End page</label>
+                            <input type="number" id="splitEnd" class="form-control" value="1" min="1">
+                        </div>
+                    </div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="pdf-split">Split PDF</button>
+                    </div>
+                    <a id="pdfSplitDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download Split PDF</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-arrows-angle-contract me-2"></i>PDF Compressor</h3>
+                    <p>Reduce PDF size and compress its visual quality.</p>
+                    <div class="upload-box" data-upload-target="pdf-compress"><i class="bi bi-cloud-arrow-up"></i><h4>Upload PDF</h4><small>PDF only</small><input type="file" class="hidden-input" accept="application/pdf"></div>
+                    <div class="mt-3">
+                        <label class="form-label small text-light">Compression level</label>
+                        <input type="range" id="compressQuality" class="form-range" min="0.3" max="1" step="0.1" value="0.7">
+                    </div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="pdf-compress">Compress</button>
+                    </div>
+                    <a id="pdfCompressDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download Compressed PDF</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-shield-lock me-2"></i>PDF Unlock / Protect</h3>
+                    <p>Unlock protected PDFs with a password or save an unprotected copy.</p>
+                    <div class="upload-box" data-upload-target="pdf-protect"><i class="bi bi-cloud-arrow-up"></i><h4>Upload PDF</h4><small>PDF only</small><input type="file" class="hidden-input" accept="application/pdf"></div>
+                    <input type="password" id="pdfPassword" class="form-control mt-3" placeholder="Password (if required)">
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="pdf-protect">Unlock PDF</button>
+                    </div>
+                    <a id="pdfProtectDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download Unlocked PDF</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-arrow-clockwise me-2"></i>PDF Page Rotator</h3>
+                    <p>Rotate a PDF by 90° increments for better orientation.</p>
+                    <div class="upload-box" data-upload-target="pdf-rotate"><i class="bi bi-cloud-arrow-up"></i><h4>Upload PDF</h4><small>PDF only</small><input type="file" class="hidden-input" accept="application/pdf"></div>
+                    <div class="mt-3">
+                        <label class="form-label small text-light">Rotation angle</label>
+                        <select id="rotateAngle" class="form-select">
+                            <option value="90">90°</option>
+                            <option value="180">180°</option>
+                            <option value="270">270°</option>
+                        </select>
+                    </div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="pdf-rotate">Rotate PDF</button>
+                    </div>
+                    <a id="pdfRotateDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download Rotated PDF</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-filetype-doc me-2"></i>Word → PDF</h3>
+                    <p>Convert DOCX files to a simple PDF document.</p>
+                    <div class="upload-box" data-upload-target="word-pdf"><i class="bi bi-cloud-arrow-up"></i><h4>Upload Word File</h4><small>.docx</small><input type="file" class="hidden-input" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"></div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="word-pdf">Convert to PDF</button>
+                    </div>
+                    <a id="wordPdfDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download PDF</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-file-earmark-word me-2"></i>PDF → Word</h3>
+                    <p>Extract text from a PDF and save it as a Word document.</p>
+                    <div class="upload-box" data-upload-target="pdf-word"><i class="bi bi-cloud-arrow-up"></i><h4>Upload PDF</h4><small>PDF only</small><input type="file" class="hidden-input" accept="application/pdf"></div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="pdf-word">Convert to Word</button>
+                    </div>
+                    <a id="pdfWordDownload" class="secondary-btn text-decoration-none mt-3 d-inline-block" style="display:none;">Download DOCX</a>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-text-paragraph me-2"></i>Text Extractor</h3>
+                    <p>Pull readable text from a PDF file instantly.</p>
+                    <div class="upload-box" data-upload-target="pdf-text"><i class="bi bi-cloud-arrow-up"></i><h4>Upload PDF</h4><small>PDF only</small><input type="file" class="hidden-input" accept="application/pdf"></div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="pdf-text">Extract Text</button>
+                    </div>
+                    <textarea id="pdfTextOutput" class="form-control mt-3" rows="8" placeholder="Extracted text will appear here..."></textarea>
+                </section>
+
+                <section class="tool-panel">
+                    <h3><i class="bi bi-eye me-2"></i>OCR — Image → Text</h3>
+                    <p>Extract text from images via OCR with Tesseract.</p>
+                    <div class="upload-box" data-upload-target="ocr"><i class="bi bi-cloud-arrow-up"></i><h4>Upload Image</h4><small>PNG, JPG, WEBP</small><input type="file" class="hidden-input" accept="image/*"></div>
+                    <div class="tool-actions">
+                        <button class="primary-btn" data-action="ocr">Run OCR</button>
+                    </div>
+                    <textarea id="ocrTextOutput" class="form-control mt-3" rows="8" placeholder="OCR text will appear here..."></textarea>
+                </section>
+            </div>
+
+            <div id="pdfStatusBox" class="status-box"></div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const state = {};
+
+        function showStatus(message, type = 'success') {
+            const box = document.getElementById('pdfStatusBox');
+            if (!box) return;
+            box.textContent = message;
+            box.className = 'status-box show ' + type;
+        }
+
+        function attachUploadBox(trigger) {
+            const box = document.querySelector('[data-upload-target="' + trigger + '"]');
+            if (!box) return;
+            const input = box.querySelector('input');
+            box.addEventListener('click', () => input.click());
+            input.addEventListener('change', () => {
+                const file = input.files[0];
+                if (file) state[trigger] = file;
+            });
+        }
+
+        ['pdf-jpg', 'jpg-pdf', 'pdf-merge', 'pdf-split', 'pdf-compress', 'pdf-protect', 'pdf-rotate', 'word-pdf', 'pdf-word', 'pdf-text', 'ocr'].forEach(attachUploadBox);
+
+        document.querySelectorAll('[data-action]').forEach(button => {
+            button.addEventListener('click', async () => {
+                const action = button.dataset.action;
+                try {
+                    if (action === 'pdf-jpg') {
+                        const file = state['pdf-jpg'];
+                        if (!file) throw new Error('Please select a PDF file first.');
+                        const formData = new FormData();
+                        formData.append('pdf', file);
+                        const res = await fetch('/api/pdf-to-jpg', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('Conversion failed.');
+                        const url = URL.createObjectURL(data);
+                        const preview = document.getElementById('pdfJpgPreview');
+                        preview.src = url;
+                        const download = document.getElementById('pdfJpgDownload');
+                        download.href = url;
+                        download.download = 'converted-page.jpg';
+                        download.style.display = 'inline-block';
+                        showStatus('PDF converted to JPG successfully.', 'success');
+                    }
+                    else if (action === 'jpg-pdf') {
+                        const file = state['jpg-pdf'];
+                        if (!file) throw new Error('Please select an image first.');
+                        const formData = new FormData();
+                        formData.append('image', file);
+                        const res = await fetch('/api/jpg-to-pdf', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('Conversion failed.');
+                        const url = URL.createObjectURL(data);
+                        const preview = document.getElementById('jpgPdfPreview');
+                        preview.src = URL.createObjectURL(file);
+                        const download = document.getElementById('jpgPdfDownload');
+                        download.href = url;
+                        download.download = 'image.pdf';
+                        download.style.display = 'inline-block';
+                        showStatus('Image converted to PDF successfully.', 'success');
+                    }
+                    else if (action === 'pdf-merge') {
+                        const files = [...(state['pdf-merge'] ? [state['pdf-merge']] : [])];
+                        const mergedBox = document.querySelector('[data-upload-target="pdf-merge"] input');
+                        const selected = mergedBox.files;
+                        if (!selected || selected.length < 2) throw new Error('Please select at least 2 PDF files.');
+                        const formData = new FormData();
+                        for (const file of selected) formData.append('pdfs', file);
+                        const res = await fetch('/api/pdf-merge', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('Merge failed.');
+                        const download = document.getElementById('pdfMergeDownload');
+                        const url = URL.createObjectURL(data);
+                        download.href = url;
+                        download.download = 'merged.pdf';
+                        download.style.display = 'inline-block';
+                        showStatus('PDFs merged successfully.', 'success');
+                    }
+                    else if (action === 'pdf-split') {
+                        const file = state['pdf-split'];
+                        if (!file) throw new Error('Please select a PDF file first.');
+                        const formData = new FormData();
+                        formData.append('pdf', file);
+                        formData.append('start_page', document.getElementById('splitStart').value);
+                        formData.append('end_page', document.getElementById('splitEnd').value);
+                        const res = await fetch('/api/pdf-split', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('Split failed.');
+                        const url = URL.createObjectURL(data);
+                        const download = document.getElementById('pdfSplitDownload');
+                        download.href = url;
+                        download.download = 'split.pdf';
+                        download.style.display = 'inline-block';
+                        showStatus('PDF split successfully.', 'success');
+                    }
+                    else if (action === 'pdf-compress') {
+                        const file = state['pdf-compress'];
+                        if (!file) throw new Error('Please select a PDF file first.');
+                        const formData = new FormData();
+                        formData.append('pdf', file);
+                        formData.append('quality', document.getElementById('compressQuality').value);
+                        const res = await fetch('/api/pdf-compress', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('Compression failed.');
+                        const url = URL.createObjectURL(data);
+                        const download = document.getElementById('pdfCompressDownload');
+                        download.href = url;
+                        download.download = 'compressed.pdf';
+                        download.style.display = 'inline-block';
+                        showStatus('PDF compressed successfully.', 'success');
+                    }
+                    else if (action === 'pdf-protect') {
+                        const file = state['pdf-protect'];
+                        if (!file) throw new Error('Please select a PDF file first.');
+                        const formData = new FormData();
+                        formData.append('pdf', file);
+                        formData.append('password', document.getElementById('pdfPassword').value || '');
+                        const res = await fetch('/api/pdf-unlock', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('Unlock failed.');
+                        const url = URL.createObjectURL(data);
+                        const download = document.getElementById('pdfProtectDownload');
+                        download.href = url;
+                        download.download = 'unlocked.pdf';
+                        download.style.display = 'inline-block';
+                        showStatus('PDF unlocked successfully.', 'success');
+                    }
+                    else if (action === 'pdf-rotate') {
+                        const file = state['pdf-rotate'];
+                        if (!file) throw new Error('Please select a PDF file first.');
+                        const formData = new FormData();
+                        formData.append('pdf', file);
+                        formData.append('angle', document.getElementById('rotateAngle').value);
+                        const res = await fetch('/api/pdf-rotate', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('Rotation failed.');
+                        const url = URL.createObjectURL(data);
+                        const download = document.getElementById('pdfRotateDownload');
+                        download.href = url;
+                        download.download = 'rotated.pdf';
+                        download.style.display = 'inline-block';
+                        showStatus('PDF rotated successfully.', 'success');
+                    }
+                    else if (action === 'word-pdf') {
+                        const file = state['word-pdf'];
+                        if (!file) throw new Error('Please select a Word file first.');
+                        const formData = new FormData();
+                        formData.append('docx', file);
+                        const res = await fetch('/api/word-to-pdf', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('Word conversion failed.');
+                        const url = URL.createObjectURL(data);
+                        const download = document.getElementById('wordPdfDownload');
+                        download.href = url;
+                        download.download = 'converted.pdf';
+                        download.style.display = 'inline-block';
+                        showStatus('Word file converted to PDF successfully.', 'success');
+                    }
+                    else if (action === 'pdf-word') {
+                        const file = state['pdf-word'];
+                        if (!file) throw new Error('Please select a PDF file first.');
+                        const formData = new FormData();
+                        formData.append('pdf', file);
+                        const res = await fetch('/api/pdf-to-word', { method: 'POST', body: formData });
+                        const data = await res.blob();
+                        if (!res.ok) throw new Error('PDF to Word failed.');
+                        const url = URL.createObjectURL(data);
+                        const download = document.getElementById('pdfWordDownload');
+                        download.href = url;
+                        download.download = 'converted.docx';
+                        download.style.display = 'inline-block';
+                        showStatus('PDF converted to Word successfully.', 'success');
+                    }
+                    else if (action === 'pdf-text') {
+                        const file = state['pdf-text'];
+                        if (!file) throw new Error('Please select a PDF file first.');
+                        const formData = new FormData();
+                        formData.append('pdf', file);
+                        const res = await fetch('/api/pdf-to-text', { method: 'POST', body: formData });
+                        const json = await res.json();
+                        if (!res.ok) throw new Error(json.message || 'Text extraction failed.');
+                        document.getElementById('pdfTextOutput').value = json.text || '';
+                        showStatus('Text extracted successfully.', 'success');
+                    }
+                    else if (action === 'ocr') {
+                        const file = state['ocr'];
+                        if (!file) throw new Error('Please select an image first.');
+                        const formData = new FormData();
+                        formData.append('image', file);
+                        const res = await fetch('/api/ocr-image', { method: 'POST', body: formData });
+                        const json = await res.json();
+                        if (!res.ok) throw new Error(json.message || 'OCR failed.');
+                        document.getElementById('ocrTextOutput').value = json.text || '';
+                        showStatus('OCR completed successfully.', 'success');
+                    }
+                } catch (err) {
+                    showStatus(err.message || 'An unexpected error occurred.', 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

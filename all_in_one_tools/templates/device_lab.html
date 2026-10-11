@@ -1,0 +1,130 @@
+{% extends 'media_tools/base.html' %}
+{% block title %}Device & Hardware Lab{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/productivity_hubs.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/device_lab.css') }}">
+{% endblock %}
+{% block content %}
+<section class="hub-page device-lab" id="deviceLab">
+    <header class="hub-hero">
+        <div class="hub-eyebrow"><i class="bi bi-cpu"></i> DEVICE &amp; HARDWARE LAB</div>
+        <h1>Inspect what your browser can <span>connect to</span></h1>
+        <p>Explore Bluetooth LE, USB, HID, Serial and built-in hardware through browser APIs. Connections and reports stay in this browser.</p>
+        <div class="hub-badges">
+            <span>Permission-first</span>
+            <span>Local processing</span>
+            <span>HTTPS / localhost required</span>
+        </div>
+    </header>
+
+    <section class="hub-catalog device-shell" aria-label="Device lab workspace">
+        <div class="device-overview">
+            <div class="device-overview-copy">
+                <span class="hub-kicker">LIVE CAPABILITIES</span>
+                <h2>Browser access on this device</h2>
+                <p id="deviceSupportSummary">Checking supported browser APIs...</p>
+            </div>
+            <div class="device-overview-status">
+                <span class="device-status-dot" id="bluetoothDot" aria-hidden="true"></span>
+                <div><strong id="bluetoothAvailability">Checking Bluetooth</strong><small id="bluetoothAvailabilityDetail">Availability is browser-reported and may require a secure context.</small></div>
+                <button class="hub-secondary" id="refreshBluetooth" type="button" title="Refresh Bluetooth status"><i class="bi bi-arrow-clockwise"></i><span>Refresh</span></button>
+            </div>
+        </div>
+
+        <div class="hub-heading device-heading">
+            <div><span class="hub-kicker">DEVICE WORKSPACES</span><h2>Choose a connection or diagnostic lab</h2></div>
+            <div class="device-actions"><button class="hub-primary" id="exportReport" type="button"><i class="bi bi-download"></i> Export JSON</button><button class="hub-secondary" id="printReport" type="button"><i class="bi bi-printer"></i> Print / PDF</button></div>
+        </div>
+
+        <nav class="device-tabs" role="tablist" aria-label="Device workspaces">
+            <button class="device-tab active" id="tab-capabilities" type="button" role="tab" aria-selected="true" aria-controls="panel-capabilities" data-panel="capabilities"><i class="bi bi-grid-1x2"></i> Capabilities</button>
+            <button class="device-tab" id="tab-bluetooth" type="button" role="tab" aria-selected="false" aria-controls="panel-bluetooth" data-panel="bluetooth"><i class="bi bi-bluetooth"></i> Bluetooth LE</button>
+            <button class="device-tab" id="tab-usb" type="button" role="tab" aria-selected="false" aria-controls="panel-usb" data-panel="usb"><i class="bi bi-usb-symbol"></i> USB</button>
+            <button class="device-tab" id="tab-hid" type="button" role="tab" aria-selected="false" aria-controls="panel-hid" data-panel="hid"><i class="bi bi-controller"></i> HID</button>
+            <button class="device-tab" id="tab-serial" type="button" role="tab" aria-selected="false" aria-controls="panel-serial" data-panel="serial"><i class="bi bi-terminal"></i> Serial</button>
+            <button class="device-tab" id="tab-media" type="button" role="tab" aria-selected="false" aria-controls="panel-media" data-panel="media"><i class="bi bi-camera-video"></i> Media</button>
+            <button class="device-tab" id="tab-input" type="button" role="tab" aria-selected="false" aria-controls="panel-input" data-panel="input"><i class="bi bi-keyboard"></i> Input</button>
+            <button class="device-tab" id="tab-display" type="button" role="tab" aria-selected="false" aria-controls="panel-display" data-panel="display"><i class="bi bi-display"></i> Display</button>
+        </nav>
+
+        <section class="device-panel active" id="panel-capabilities" role="tabpanel" aria-labelledby="tab-capabilities">
+            <div class="device-panel-head"><div><h3>Capability matrix</h3><p>Support is detected without requesting device permissions.</p></div><button class="hub-secondary" id="scanCapabilities" type="button"><i class="bi bi-radar"></i> Scan my device</button></div>
+            <div class="capability-grid" id="capabilityGrid" aria-live="polite"></div>
+            <div class="device-note"><i class="bi bi-info-circle"></i><span>Availability is not the same as permission. A browser only exposes connected devices after you choose them in its permission dialog.</span></div>
+        </section>
+
+        <section class="device-panel" id="panel-bluetooth" role="tabpanel" aria-labelledby="tab-bluetooth" hidden>
+            <div class="device-panel-head"><div><h3>Bluetooth LE device lab</h3><p>Choose a nearby BLE peripheral, connect to GATT and inspect services. Scanning starts only after your click.</p></div><span class="device-chip" id="bleConnectionState">Not connected</span></div>
+            <div class="device-layout">
+                <div class="device-card">
+                    <h4>Connection</h4>
+                    <div class="field"><label for="bleServiceUuid">Optional custom service UUID</label><input id="bleServiceUuid" placeholder="e.g. 12345678-1234-1234-1234-123456789abc" autocomplete="off"></div>
+                    <div class="device-actions"><button class="hub-primary" id="bleChoose" type="button"><i class="bi bi-bluetooth"></i> Scan &amp; connect</button><button class="hub-secondary" id="bleDisconnect" type="button" disabled><i class="bi bi-plug"></i> Disconnect</button></div>
+                    <dl class="device-facts"><div><dt>Device name</dt><dd id="bleDeviceName">No device selected</dd></div><div><dt>Device ID</dt><dd class="mono" id="bleDeviceId">Not available</dd></div><div><dt>GATT connection</dt><dd id="bleGattState">Disconnected</dd></div></dl>
+                    <div class="device-note warning"><i class="bi bi-exclamation-triangle"></i><span>Web Bluetooth does not expose RSSI or reliable physical distance. Signal strength cannot be measured here; connection stability and GATT events are shown instead.</span></div>
+                </div>
+                <div class="device-card">
+                    <h4>GATT services</h4>
+                    <div class="device-actions"><button class="hub-secondary" id="bleDiscover" type="button" disabled><i class="bi bi-arrow-repeat"></i> Discover services</button><button class="hub-secondary" id="bleExport" type="button" disabled><i class="bi bi-filetype-json"></i> Export session JSON</button></div>
+                    <div class="ble-stability" id="bleStability">No connection session yet.</div>
+                    <div id="bleServices" class="device-list empty-state">Connect to a device to list allowed services.</div>
+                </div>
+            </div>
+            <div class="device-card ble-characteristics-card">
+                <div class="device-panel-head"><div><h4>Characteristics &amp; notifications</h4><p>Read/write controls appear for the selected characteristic when its properties allow them.</p></div></div>
+                <div class="ble-characteristic-toolbar"><label class="field"><span>Service</span><select id="bleServiceSelect" disabled><option value="">Discover a service</option></select></label><label class="field"><span>Characteristic</span><select id="bleCharacteristicSelect" disabled><option value="">Choose a service first</option></select></label></div>
+                <div class="device-actions"><button class="hub-secondary" id="bleRead" type="button" disabled><i class="bi bi-book"></i> Read</button><button class="hub-secondary" id="bleNotify" type="button" disabled><i class="bi bi-bell"></i> Start notifications</button></div>
+                <div class="field ble-write-field"><label for="bleWriteValue">Write value (UTF-8, or hex bytes when enabled)</label><div class="inline-field"><input id="bleWriteValue" placeholder="Value to write" disabled><label class="inline-check"><input id="bleWriteHex" type="checkbox"> Hex</label><button class="hub-secondary" id="bleWrite" type="button" disabled>Write</button></div></div>
+                <pre class="device-output" id="bleValueOutput" aria-live="polite">Characteristic values and notification packets appear here.</pre>
+            </div>
+            <div class="device-card"><div class="device-panel-head"><div><h4>Session timeline</h4><p>Connection events are stored locally in this browser.</p></div><button class="hub-secondary" id="clearBleHistory" type="button">Clear history</button></div><ol class="event-log" id="bleEventLog"></ol></div>
+        </section>
+
+        <section class="device-panel" id="panel-usb" role="tabpanel" aria-labelledby="tab-usb" hidden>
+            <div class="device-panel-head"><div><h3>USB device explorer</h3><p>Inspect compatible USB devices you explicitly select in the browser prompt.</p></div><span class="device-chip" id="usbState">Not connected</span></div>
+            <div class="device-card"><div class="device-layout"><div class="field"><label for="usbVendorId">Optional vendor ID (hex)</label><input id="usbVendorId" placeholder="e.g. 2341" inputmode="text"></div><div class="device-actions align-end"><button class="hub-primary" id="usbChoose" type="button"><i class="bi bi-usb-symbol"></i> Choose USB device</button><button class="hub-secondary" id="usbDisconnect" type="button" disabled>Close connection</button></div></div><div id="usbInfo" class="device-list empty-state">No USB device selected.</div></div>
+        </section>
+
+        <section class="device-panel" id="panel-hid" role="tabpanel" aria-labelledby="tab-hid" hidden>
+            <div class="device-panel-head"><div><h3>WebHID inspector</h3><p>Review HID collections and input reports from a device you choose.</p></div><span class="device-chip" id="hidState">Not connected</span></div>
+            <div class="device-card"><div class="device-actions"><button class="hub-primary" id="hidChoose" type="button"><i class="bi bi-controller"></i> Choose HID device</button><button class="hub-secondary" id="hidDisconnect" type="button" disabled>Disconnect</button></div><div id="hidInfo" class="device-list empty-state">No HID device selected.</div></div>
+            <div class="device-card"><div class="device-panel-head"><div><h4>Input report monitor</h4><p>Raw report bytes from authorized HID devices.</p></div><button class="hub-secondary" id="clearHidLog" type="button">Clear</button></div><pre class="device-output" id="hidLog">Waiting for an input report.</pre></div>
+        </section>
+
+        <section class="device-panel" id="panel-serial" role="tabpanel" aria-labelledby="tab-serial" hidden>
+            <div class="device-panel-head"><div><h3>Serial port monitor</h3><p>Connect to a compatible serial device such as a supported Arduino or ESP32 board.</p></div><span class="device-chip" id="serialState">Not connected</span></div>
+            <div class="device-card">
+                <div class="serial-controls"><label class="field"><span>Baud rate</span><select id="serialBaud"><option>9600</option><option>19200</option><option selected>115200</option><option>230400</option><option>460800</option><option>921600</option></select></label><label class="field"><span>Display mode</span><select id="serialMode"><option value="ascii">ASCII / UTF-8</option><option value="hex">Hex bytes</option></select></label><label class="inline-check serial-autoscroll"><input id="serialAutoScroll" type="checkbox" checked> Auto-scroll</label></div>
+                <div class="device-actions"><button class="hub-primary" id="serialConnect" type="button"><i class="bi bi-plug"></i> Choose port &amp; connect</button><button class="hub-secondary" id="serialDisconnect" type="button" disabled>Disconnect</button><button class="hub-secondary" id="serialSave" type="button"><i class="bi bi-download"></i> Export log</button><button class="hub-secondary" id="serialClear" type="button">Clear log</button></div>
+                <div class="serial-console" id="serialLog" role="log" aria-live="polite"></div>
+                <form class="serial-send" id="serialSendForm"><label class="field" for="serialInput"><span>Send to device</span><input id="serialInput" placeholder="Type a command" disabled></label><button class="hub-primary" id="serialSend" type="submit" disabled><i class="bi bi-send"></i> Send</button><label class="inline-check"><input id="serialNewline" type="checkbox" checked> Newline</label></form>
+            </div>
+        </section>
+
+        <section class="device-panel" id="panel-media" role="tabpanel" aria-labelledby="tab-media" hidden>
+            <div class="device-panel-head"><div><h3>Camera, microphone &amp; speaker lab</h3><p>Media capture asks for permission only after you start a test. Stop tracks when finished.</p></div></div>
+            <div class="device-layout media-test-grid">
+                <div class="device-card"><h4>Camera</h4><video id="cameraPreview" autoplay muted playsinline></video><div class="device-actions"><button class="hub-primary" id="cameraStart" type="button">Start camera test</button><button class="hub-secondary" id="cameraStop" type="button" disabled>Stop</button></div><p class="device-caption" id="cameraStatus">Camera is off.</p></div>
+                <div class="device-card"><h4>Microphone</h4><div class="level-meter"><span id="micLevel"></span></div><div class="device-actions"><button class="hub-primary" id="micStart" type="button">Start microphone test</button><button class="hub-secondary" id="micStop" type="button" disabled>Stop</button></div><p class="device-caption" id="micStatus">Microphone is off.</p></div>
+                <div class="device-card"><h4>Speaker</h4><p>Play a short reference tone. Keep your system volume low before starting.</p><label class="field"><span>Test frequency</span><select id="speakerFrequency"><option value="440">440 Hz</option><option value="1000">1000 Hz</option><option value="2000">2000 Hz</option></select></label><button class="hub-primary" id="speakerTest" type="button"><i class="bi bi-volume-up"></i> Play 1 second tone</button></div>
+            </div>
+        </section>
+
+        <section class="device-panel" id="panel-input" role="tabpanel" aria-labelledby="tab-input" hidden>
+            <div class="device-panel-head"><div><h3>Keyboard &amp; gamepad tester</h3><p>Input values stay on this page. Key presses are not recorded to history.</p></div></div>
+            <div class="device-layout">
+                <div class="device-card"><h4>Keyboard event tester</h4><div class="keyboard-display" id="keyDisplay" tabindex="0">Focus here, then press a key</div><div class="device-facts"><div><dt>Key</dt><dd id="keyName">-</dd></div><div><dt>Code</dt><dd class="mono" id="keyCode">-</dd></div><div><dt>Modifiers</dt><dd id="keyModifiers">-</dd></div></div></div>
+                <div class="device-card"><div class="device-panel-head"><div><h4>Gamepad monitor</h4><p>Connect a controller and press a button to expose it to this page.</p></div><button class="hub-secondary" id="gamepadRefresh" type="button">Refresh</button></div><div id="gamepadInfo" class="device-list empty-state">No gamepad detected.</div></div>
+            </div>
+        </section>
+
+        <section class="device-panel" id="panel-display" role="tabpanel" aria-labelledby="tab-display" hidden>
+            <div class="device-panel-head"><div><h3>Display &amp; browser diagnostics</h3><p>Viewport and screen data available to this page, without requesting extra permissions.</p></div><button class="hub-secondary" id="refreshDisplay" type="button">Refresh display data</button></div>
+            <div class="capability-grid" id="displayInfo"></div>
+        </section>
+    </section>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/device_lab.js') }}"></script>
+{% endblock %}

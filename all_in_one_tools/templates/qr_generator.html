@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR & Generator Tools | Thakronix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/qr_generator.css') }}">
+</head>
+
+<body>
+    <div class="background">
+        <span class="orb orb-1"></span>
+        <span class="orb orb-2"></span>
+        <span class="orb orb-3"></span>
+    </div>
+
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+                Thakro<span>nix</span>
+            </a>
+            <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-house-door me-1"></i>Home</a>
+        </div>
+    </nav>
+
+    <main class="converter-page qr-page">
+        <div class="container">
+            <div class="qr-header">
+                <div class="tool-badge"><i class="bi bi-qr-code"></i> QR & GENERATOR SUITE</div>
+                <h1>Generate QR codes, scan, barcode, and random tools</h1>
+                <p>Build QR codes for URLs, WiFi, vCards, and text; scan camera or uploaded images; generate barcodes; and create strong passwords, UUIDs, and random numbers all from one responsive workspace.</p>
+            </div>
+
+            <div class="tool-layout">
+                <section class="generator-panel large-panel">
+                    <div class="panel-header">
+                        <h2><i class="bi bi-qr-code me-2"></i>QR Code Generator</h2>
+                        <span class="panel-tag">Core</span>
+                    </div>
+
+                    <div class="form-grid two-col">
+                        <div class="field-block full-width">
+                            <label for="qrInputText">Content</label>
+                            <textarea id="qrInputText" placeholder="Enter URL, plain text, phone number, email, or any content..." rows="4"></textarea>
+                        </div>
+                        <div class="field-block">
+                            <label for="qrForegroundColor">Foreground</label>
+                            <input id="qrForegroundColor" type="color" value="#0e172c">
+                        </div>
+                        <div class="field-block">
+                            <label for="qrBackgroundColor">Background</label>
+                            <input id="qrBackgroundColor" type="color" value="#ffffff">
+                        </div>
+                        <div class="field-block">
+                            <label for="qrSizeSelect">Size</label>
+                            <select id="qrSizeSelect">
+                                <option value="240">240</option>
+                                <option value="320">320</option>
+                                <option value="360" selected>360</option>
+                                <option value="480">480</option>
+                                <option value="640">640</option>
+                            </select>
+                        </div>
+                        <div class="field-block">
+                            <label for="qrErrorCorrection">Correction</label>
+                            <select id="qrErrorCorrection">
+                                <option value="L">Low</option>
+                                <option value="M">Medium</option>
+                                <option value="Q" selected>Quality</option>
+                                <option value="H">High</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="qrGenerateBtn" class="primary-btn">Generate QR</button>
+                        <button id="qrClearBtn" class="secondary-btn">Clear</button>
+                    </div>
+
+                    <div class="preview-box">
+                        <canvas id="qrPreviewCanvas" width="360" height="360"></canvas>
+                        <div id="qrEmptyState" class="empty-state active">
+                            <i class="bi bi-qr-code"></i>
+                            <h3>QR preview will appear here</h3>
+                        </div>
+                    </div>
+
+                    <div class="meta-row">
+                        <div class="meta-item">
+                            <span>Content</span>
+                            <strong id="qrOutputText">-</strong>
+                        </div>
+                    </div>
+
+                    <div class="download-row compact-download-row">
+                        <button id="qrDownloadPngBtn" class="primary-btn compact-btn" disabled>PNG</button>
+                        <button id="qrDownloadJpgBtn" class="secondary-btn compact-btn" disabled>JPG</button>
+                        <button id="qrDownloadSvgBtn" class="secondary-btn compact-btn" disabled>SVG</button>
+                        <button id="qrCopyBtn" class="secondary-btn compact-btn" disabled>Copy</button>
+                    </div>
+
+                    <div id="qrStatusMessage" class="status-message"></div>
+                </section>
+
+                <section class="generator-panel">
+                    <div class="panel-header">
+                        <h2><i class="bi bi-camera-fill me-2"></i>QR Code Scanner</h2>
+                        <span class="panel-tag">Scan</span>
+                    </div>
+
+                    <div class="scanner-container">
+                        <video id="cameraPreview" autoplay playsinline muted></video>
+                        <canvas id="cameraCanvas" hidden></canvas>
+                    </div>
+
+                    <div class="action-row">
+                        <button id="cameraStartBtn" class="primary-btn">Use Camera</button>
+                        <label class="secondary-btn file-label">
+                            Upload Image
+                            <input id="qrScanUpload" type="file" accept="image/*">
+                        </label>
+                    </div>
+
+                    <div class="field-block">
+                        <label for="scannerOutput">Scanned Result</label>
+                        <textarea id="scannerOutput" rows="5" placeholder="Scan a QR code from the camera or upload an image."></textarea>
+                    </div>
+                </section>
+            </div>
+
+            <div class="special-grid">
+                <section class="generator-panel">
+                    <div class="panel-header">
+                        <h2><i class="bi bi-wifi me-2"></i>WiFi QR Generator</h2>
+                        <span class="panel-tag">WiFi</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field-block">
+                            <label for="wifiSsid">SSID / Network</label>
+                            <input id="wifiSsid" type="text" placeholder="Home WiFi">
+                        </div>
+                        <div class="field-block">
+                            <label for="wifiPassword">Password</label>
+                            <input id="wifiPassword" type="text" placeholder="********">
+                        </div>
+                        <div class="field-block full-width">
+                            <label for="wifiType">Security</label>
+                            <select id="wifiType">
+                                <option value="WPA">WPA/WPA2</option>
+                                <option value="WEP">WEP</option>
+                                <option value="nopass">No password</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="action-row"><button id="generateWifiBtn" class="primary-btn">Generate WiFi QR</button></div>
+                    <canvas id="wifiQrCanvas" width="220" height="220"></canvas>
+                </section>
+
+                <section class="generator-panel">
+                    <div class="panel-header">
+                        <h2><i class="bi bi-link-45deg me-2"></i>URL QR Generator</h2>
+                        <span class="panel-tag">URL</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field-block full-width">
+                            <label for="urlInput">Website URL</label>
+                            <input id="urlInput" type="url" placeholder="https://example.com">
+                        </div>
+                    </div>
+                    <div class="action-row"><button id="generateUrlBtn" class="primary-btn">Generate URL QR</button></div>
+                    <canvas id="urlQrCanvas" width="220" height="220"></canvas>
+                </section>
+
+                <section class="generator-panel" id="vcard-generator">
+                    <div class="panel-header">
+                        <h2><i class="bi bi-person-vcard me-2"></i>vCard QR Generator</h2>
+                        <span class="panel-tag">Contact</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field-block"><label for="vcardName">Name</label><input id="vcardName" type="text" placeholder="John Doe"></div>
+                        <div class="field-block"><label for="vcardPhone">Phone</label><input id="vcardPhone" type="tel" placeholder="+123456789"></div>
+                        <div class="field-block"><label for="vcardEmail">Email</label><input id="vcardEmail" type="email" placeholder="john@example.com"></div>
+                        <div class="field-block"><label for="vcardOrg">Company</label><input id="vcardOrg" type="text" placeholder="Thakronix"></div>
+                    </div>
+                    <div class="action-row"><button id="generateVcardBtn" class="primary-btn">Generate vCard QR</button></div>
+                    <canvas id="vcardQrCanvas" width="220" height="220"></canvas>
+                </section>
+            </div>
+
+            <div class="special-grid lower-grid">
+                <section class="generator-panel">
+                    <div class="panel-header">
+                        <h2><i class="bi bi-upc-scan me-2"></i>Barcode Generator</h2>
+                        <span class="panel-tag">Barcode</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field-block full-width">
+                            <label for="barcodeValue">Value</label>
+                            <input id="barcodeValue" type="text" value="123456789012" placeholder="Enter barcode value">
+                        </div>
+                        <div class="field-block full-width">
+                            <label for="barcodeType">Format</label>
+                            <select id="barcodeType">
+                                <option value="CODE128">CODE128</option>
+                                <option value="CODE39">CODE39</option>
+                                <option value="EAN13">EAN13</option>
+                                <option value="UPC">UPC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="action-row"><button id="generateBarcodeBtn" class="primary-btn">Generate Barcode</button></div>
+                    <svg id="barcodeSvg" class="barcode-svg"></svg>
+                </section>
+
+                <section class="generator-panel">
+                    <div class="panel-header">
+                        <h2><i class="bi bi-shield-lock me-2"></i>Password Generator</h2>
+                        <span class="panel-tag">Security</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field-block full-width">
+                            <label for="passwordLength">Length</label>
+                            <input id="passwordLength" type="number" min="8" max="64" value="16">
+                        </div>
+                    </div>
+                    <div class="action-row">
+                        <button id="generatePasswordBtn" class="primary-btn">Generate Password</button>
+                    </div>
+                    <div class="output-box">
+                        <input id="passwordOutput" type="text" readonly>
+                    </div>
+                </section>
+
+                <section class="generator-panel" id="uuid-generator">
+                    <div class="panel-header">
+                        <h2><i class="bi bi-123 me-2"></i>UUID & Random Numbers</h2>
+                        <span class="panel-tag">Utility</span>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="field-block full-width">
+                            <label for="randomMin">Min</label>
+                            <input id="randomMin" type="number" value="1">
+                        </div>
+                        <div class="field-block full-width">
+                            <label for="randomMax">Max</label>
+                            <input id="randomMax" type="number" value="100">
+                        </div>
+                    </div>
+                    <div class="action-row">
+                        <button id="generateUuidBtn" class="secondary-btn">Generate UUID</button>
+                        <button id="generateRandomBtn" class="primary-btn">Random Number</button>
+                    </div>
+                    <div class="output-box stacked">
+                        <input id="uuidOutput" type="text" readonly placeholder="UUID output">
+                        <input id="randomOutput" type="text" readonly placeholder="Random number output">
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/qr_generator.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security Studio | Thakronix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/security.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/security-layout.css', v=3) }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/security-extra.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/security/image_share.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/security/password_generator.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/security/entropy.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/security/common_passwords.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/security/domain_lookup.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/security/ip_lookup.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/security/temporary_share_room.css') }}">
+</head>
+<body>
+<header class="topbar"><a href="/" class="brand"><span class="brand-mark">+</span> Thakronix</a><div class="top-actions"><a href="/" class="back-link">Back to tools</a><button class="icon-btn" id="securityTheme">◐</button></div></header>
+<main class="security-shell">
+<aside class="security-sidebar"><div class="eyebrow">SECURITY STUDIO</div><h1>Protect the<br><em>important stuff.</em></h1><p>Privacy-first tools for secrets, domains, networks and temporary files.</p>
+<nav class="security-nav">
+<label class="security-tool-search"><i class="bi bi-search" aria-hidden="true"></i><input id="securityToolSearch" type="search" placeholder="Search security tools" aria-label="Search security tools"></label>
+<button class="security-nav-item active" data-security-tool="image-share"><span>01</span><b>Secure Image Share</b><small>Encrypted temporary links</small></button>
+<button class="security-nav-item" data-security-tool="password-generator"><span>02</span><b>Password Studio</b><small>CSPRNG generator</small></button>
+<button class="security-nav-item" data-security-tool="entropy"><span>03</span><b>Entropy Checker</b><small>Password X-Ray</small></button>
+<button class="security-nav-item" data-security-tool="common-passwords"><span>04</span><b>Common Passwords</b><small>Local risk scanner</small></button>
+<button class="security-nav-item" data-security-tool="domain"><span>05</span><b>Domain RDAP</b><small>Security snapshot</small></button>
+<button class="security-nav-item" data-security-tool="ip"><span>06</span><b>IP Intelligence</b><small>Network explorer</small></button>
+<button class="security-nav-item" data-security-tool="headers"><span>07</span><b>Headers Checker</b><small>Web hardening</small></button>
+<button class="security-nav-item" data-security-tool="ssl"><span>08</span><b>SSL / TLS</b><small>Certificate health</small></button>
+<button class="security-nav-item" data-security-tool="url-safety"><span>09</span><b>URL Safety</b><small>Phishing triage</small></button>
+<button class="security-nav-item" data-security-tool="file-integrity"><span>10</span><b>File Integrity</b><small>Hash comparison</small></button>
+<button class="security-nav-item" data-security-tool="metadata"><span>11</span><b>Metadata Cleaner</b><small>Privacy scrubber</small></button>
+<button class="security-nav-item" data-security-tool="jwt"><span>12</span><b>JWT Inspector</b><small>Claims viewer</small></button>
+<button class="security-nav-item" data-security-tool="secrets"><span>13</span><b>Secret Scanner</b><small>Local code scan</small></button>
+<button class="security-nav-item" data-security-tool="hash"><span>14</span><b>Hash Generator</b><small>Digest tool</small></button>
+<button class="security-nav-item" data-security-tool="qr"><span>15</span><b>QR Security</b><small>Safe preview</small></button>
+<button class="security-nav-item" data-security-tool="http"><span>16</span><b>HTTP Checker</b><small>Redirect trace</small></button>
+<button class="security-nav-item" data-security-tool="cors"><span>17</span><b>CORS Checker</b><small>API config</small></button>
+<button class="security-nav-item" data-security-tool="room"><span>18</span><b>Temporary Share Room</b><small>Selected documents · expiry · access log</small></button>
+</nav><div class="privacy-note"><span>●</span><div><strong>Privacy by design</strong><br><small>Local generation. Explicit network lookups.</small></div></div></aside>
+<section class="security-workspace"><div class="workspace-head"><div><span class="eyebrow" id="securityKicker">PRIVATE SHARING</span><h2 id="securityTitle">Secure Image Share</h2><p id="securityDescription">Encrypt before storage, expire automatically.</p></div><div class="head-actions"><button class="soft-btn" id="securityReset">Reset</button></div></div>
+{% include 'security/image_share.html' %}{% include 'security/temporary_share_room.html' %}{% include 'security/password_generator.html' %}{% include 'security/entropy.html' %}{% include 'security/common_passwords.html' %}{% include 'security/domain_lookup.html' %}{% include 'security/ip_lookup.html' %}{% include 'security/headers.html' %}{% include 'security/ssl.html' %}{% include 'security/url_safety.html' %}{% include 'security/file_integrity.html' %}{% include 'security/metadata.html' %}{% include 'security/jwt.html' %}{% include 'security/secrets.html' %}{% include 'security/hash.html' %}{% include 'security/qr.html' %}{% include 'security/http.html' %}{% include 'security/cors.html' %}
+</section></main>
+<script src="{{ url_for('static', filename='js/security.js', v=2) }}"></script><script src="{{ url_for('static', filename='js/security-extra.js', v=2) }}"></script>
+</body></html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Tools Studio | Thakronix</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ai_tools.css', v=2) }}" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body class="ai-body">
+  <div class="background">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+  </div>
+
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <span class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></span>
+        Thakro<span>nix</span>
+      </a>
+      <div class="nav-actions">
+        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+        <a class="nav-link" href="{{ url_for('calculators') }}">Calculators</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="ai-page">
+    <div class="container">
+      <div class="converter-header">
+        <div class="tool-badge"><i class="bi bi-stars"></i> AI STUDIO</div>
+        <h1>Build smarter <span>AI workflows</span></h1>
+        <p>Generate prompts, scripts, plans, names and ideas in one clean tool workspace.</p>
+      </div>
+
+      <div class="ai-shell">
+        <aside class="ai-sidebar">
+          <div class="eyebrow">AI WORKSPACE</div>
+          <h1>Everything in one smart studio.</h1>
+          <p>Prompt, write, plan, and optimize with a polished workflow built for creators, teams and founders.</p>
+
+          <nav class="ai-nav">
+            <a href="#content-ai">Content AI</a>
+            <a href="#career-ai">Career AI</a>
+            <a href="#creator-ai">Creator AI</a>
+            <a href="#developer-ai">Developer AI</a>
+            <a href="#business-ai">Business AI</a>
+            <a href="#local-ai">Local & Privacy AI</a>
+          </nav>
+
+          <div class="ai-mini-list">
+            <div><span class="dot dot-1"></span> Prompt Architect</div>
+            <div><span class="dot dot-2"></span> Resume Builder</div>
+            <div><span class="dot dot-3"></span> Script Generator</div>
+            <div><span class="dot dot-4"></span> Regex Helper</div>
+          </div>
+        </aside>
+
+        <section class="ai-workspace">
+          <div class="workspace-head">
+            <div>
+              <span class="section-label">SMART TOOLS</span>
+              <h2>AI Studio <span>Collection</span></h2>
+            </div>
+            <button class="soft-btn" id="aiResetAll">Reset all</button>
+          </div>
+
+          <div class="ai-section" id="content-ai">
+            <div class="ai-section-head">
+              <h3>Content AI</h3>
+              <span>Writing, rewriting, summarizing and outreach</span>
+            </div>
+
+            <div class="ai-grid">
+              <article class="ai-tool-panel" data-scope="content">
+                <h4>AI Prompt Architect</h4>
+                <textarea id="promptInput" placeholder="Example: Create a 5-step AI workflow for a startup founder who wants to build a product in 30 days.">Create a 5-step AI workflow for a startup founder who wants to build a product in 30 days.</textarea>
+                <button data-ai-generate="prompt">Generate prompt</button>
+                <div class="ai-output" id="promptOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="content">
+                <h4>AI Text Rewriter</h4>
+                <textarea id="rewriteInput" placeholder="Paste any sentence or paragraph here...">Our company builds digital experiences for modern brands and helps them grow with clarity, strategy, and efficient design workflows.</textarea>
+                <button data-ai-generate="rewrite">Rewrite</button>
+                <div class="ai-output" id="rewriteOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="content">
+                <h4>AI Summarizer</h4>
+                <textarea id="summaryInput" placeholder="Paste article, transcript or notes here...">AI tools save time for creators, marketers, coders and students. The best results come when a workflow is structured, the output is reviewed, and the human adds judgment. This makes automation helpful without removing the personal touch.</textarea>
+                <button data-ai-generate="summary">Summarize</button>
+                <div class="ai-output" id="summaryOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="content">
+                <h4>AI Grammar & Writing Fixer</h4>
+                <textarea id="grammarInput" placeholder="Paste messy text here...">The report were delayed becuase the team didnt review the draft before the deadline and the presention was not polished.</textarea>
+                <button data-ai-generate="grammar">Fix text</button>
+                <div class="ai-output" id="grammarOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="content">
+                <h4>AI Email Studio</h4>
+                <textarea id="emailInput" placeholder="What is the email about?">I am applying for the Product Designer role and want to share my portfolio, relevant experience, and interest in building user-focused digital products.</textarea>
+                <button data-ai-generate="email">Generate email</button>
+                <div class="ai-output" id="emailOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="content">
+                <h4>AI Blog Studio</h4>
+                <textarea id="blogInput" placeholder="Topic and audience...">Topic: AI productivity for students. Audience: college learners. Goal: helpful and practical content.</textarea>
+                <button data-ai-generate="blog">Build outline</button>
+                <div class="ai-output" id="blogOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="content">
+                <h4>AI Content Repurposer</h4>
+                <textarea id="repurposeInput" placeholder="Paste your long-form content here...">A short video on building daily writing habits can lead to better clarity, stronger discipline, and better long-term creative output.</textarea>
+                <button data-ai-generate="repurpose">Convert formats</button>
+                <div class="ai-output" id="repurposeOutput"></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="ai-section" id="career-ai">
+            <div class="ai-section-head">
+              <h3>Career AI</h3>
+              <span>Resume, cover letters, interview practice and job matching</span>
+            </div>
+
+            <div class="ai-grid">
+              <article class="ai-tool-panel" data-scope="career">
+                <h4>AI Resume Builder</h4>
+                <textarea id="resumeInput" placeholder="Tell us name, role, key skills and experience.">Name: Rahul Sharma. Role: Frontend Developer. Skills: HTML, CSS, JavaScript, React, UI design, performance optimization. Experience: 2 years in product teams.</textarea>
+                <button data-ai-generate="resume">Build resume</button>
+                <div class="ai-output" id="resumeOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="career">
+                <h4>AI Resume Analyzer</h4>
+                <textarea id="resumeAnalyzeInput" placeholder="Paste your resume summary or full text...">Strong projects, good communication, but no measurable impact numbers and limited keyword alignment with product roles.</textarea>
+                <button data-ai-generate="resumeAnalyze">Analyze</button>
+                <div class="ai-output" id="resumeAnalyzeOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="career">
+                <h4>AI Cover Letter Generator</h4>
+                <textarea id="coverInput" placeholder="Job title, company and experience...">Role: Senior Product Designer. Company: Thakronix Labs. Experience: 4 years designing SaaS dashboards and mobile workflows.</textarea>
+                <button data-ai-generate="cover">Generate cover letter</button>
+                <div class="ai-output" id="coverOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="career">
+                <h4>AI Interview Coach</h4>
+                <textarea id="interviewInput" placeholder="Focus area and role...">Role: frontend developer. Focus: behavioral and technical questions. Candidate is preparing for a mid-level role.</textarea>
+                <button data-ai-generate="interview">Generate questions</button>
+                <div class="ai-output" id="interviewOutput"></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="ai-section" id="creator-ai">
+            <div class="ai-section-head">
+              <h3>Creator AI</h3>
+              <span>Social content, hooks, scripts and publishing ideas</span>
+            </div>
+
+            <div class="ai-grid">
+              <article class="ai-tool-panel" data-scope="creator">
+                <h4>AI Social Media Studio</h4>
+                <textarea id="socialInput" placeholder="Topic, audience and platform...">Topic: AI productivity for founders. Audience: startup builders. Platform: LinkedIn.</textarea>
+                <button data-ai-generate="social">Generate post</button>
+                <div class="ai-output" id="socialOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="creator">
+                <h4>AI Hook Generator</h4>
+                <textarea id="hookInput" placeholder="Video or article topic...">Why most content strategies fail after the first month.</textarea>
+                <button data-ai-generate="hook">Generate hooks</button>
+                <div class="ai-output" id="hookOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="creator">
+                <h4>AI Script Generator</h4>
+                <textarea id="scriptInput" placeholder="Video topic...">Explaining how small AI workflows can save a freelancer 5 hours every week.</textarea>
+                <button data-ai-generate="script">Generate script</button>
+                <div class="ai-output" id="scriptOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="creator">
+                <h4>AI Thumbnail Concept Generator</h4>
+                <textarea id="thumbnailInput" placeholder="Video title...">3 AI tools that actually improved my weekly workflow.</textarea>
+                <button data-ai-generate="thumbnail">Build concept</button>
+                <div class="ai-output" id="thumbnailOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="creator">
+                <h4>AI Content Calendar</h4>
+                <textarea id="calendarInput" placeholder="Niche and posting frequency...">Niche: productivity and AI. Frequency: 4 posts/week. Audience: creators and freelancers.</textarea>
+                <button data-ai-generate="calendar">Generate plan</button>
+                <div class="ai-output" id="calendarOutput"></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="ai-section" id="developer-ai">
+            <div class="ai-section-head">
+              <h3>Developer AI</h3>
+              <span>Regex, SQL, JSON, API and code explanations</span>
+            </div>
+
+            <div class="ai-grid">
+              <article class="ai-tool-panel" data-scope="developer">
+                <h4>AI Regex Generator</h4>
+                <textarea id="regexInput" placeholder="Describe the pattern you need...">Indian mobile number with optional +91 prefix and 10 digits.</textarea>
+                <button data-ai-generate="regex">Generate regex</button>
+                <div class="ai-output" id="regexOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="developer">
+                <h4>AI SQL Generator</h4>
+                <textarea id="sqlInput" placeholder="Business question...">Find the top 5 customers with highest order value in the last 30 days.</textarea>
+                <button data-ai-generate="sql">Generate SQL</button>
+                <div class="ai-output" id="sqlOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="developer">
+                <h4>AI JSON Formatter + Explainer</h4>
+                <textarea id="jsonInput" placeholder="Paste raw JSON here...">{"name":"Rahul","experience":2,"skills":["Python","SQL","React"]}</textarea>
+                <button data-ai-generate="json">Format & explain</button>
+                <div class="ai-output" id="jsonOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="developer">
+                <h4>AI API Generator</h4>
+                <textarea id="apiInput" placeholder="Describe the API you want...">Create a REST API for a student management system with login, list students, add marks and get reports.</textarea>
+                <button data-ai-generate="api">Design API</button>
+                <div class="ai-output" id="apiOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="developer">
+                <h4>AI Code Explainer</h4>
+                <textarea id="codeInput" placeholder="Paste code here...">def factorial(n):\n    if n &lt;= 1:\n        return 1\n    return n * factorial(n-1)</textarea>
+                <button data-ai-generate="code">Explain code</button>
+                <div class="ai-output" id="codeOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="developer">
+                <h4>AI Error Explainer</h4>
+                <textarea id="errorInput" placeholder="Paste the traceback or error message...">Traceback (most recent call last):\n  File "main.py", line 8, in &lt;module&gt;\n    print(data["users"][0])\nTypeError: list indices must be integers or slices, not str</textarea>
+                <button data-ai-generate="error">Explain error</button>
+                <div class="ai-output" id="errorOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="developer">
+                <h4>AI README Generator</h4>
+                <textarea id="readmeInput" placeholder="What does the project do?...">A Flask app for image conversion, PDFs, QR codes and utility reports. Built for small businesses and creators.</textarea>
+                <button data-ai-generate="readme">Write README</button>
+                <div class="ai-output" id="readmeOutput"></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="ai-section" id="business-ai">
+            <div class="ai-section-head">
+              <h3>Business AI</h3>
+              <span>Names, ideas, SEO and brand strategy</span>
+            </div>
+
+            <div class="ai-grid">
+              <article class="ai-tool-panel" data-scope="business">
+                <h4>AI Business Name</h4>
+                <textarea id="businessNameInput" placeholder="Industry and keywords...">Industry: EdTech. Keywords: learning, smart, easy.</textarea>
+                <button data-ai-generate="businessName">Generate names</button>
+                <div class="ai-output" id="businessNameOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="business">
+                <h4>AI Domain Suggestion</h4>
+                <textarea id="domainInput" placeholder="Business keywords...">AI productivity tools for teams.</textarea>
+                <button data-ai-generate="domain">Suggest domains</button>
+                <div class="ai-output" id="domainOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="business">
+                <h4>AI About Us Generator</h4>
+                <textarea id="aboutInput" placeholder="Brief company description...">A design-first SaaS company helping creators and small businesses automate client work with cleaner workflows.</textarea>
+                <button data-ai-generate="aboutUs">Generate copy</button>
+                <div class="ai-output" id="aboutUsOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="business">
+                <h4>AI Idea Generator Lab</h4>
+                <textarea id="ideaInput" placeholder="Industry + audience + budget...">Industry: AI productivity. Audience: students. Budget: low-cost MVP.</textarea>
+                <button data-ai-generate="idea">Generate ideas</button>
+                <div class="ai-output" id="ideaOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="business">
+                <h4>AI Feature Generator</h4>
+                <textarea id="featureInput" placeholder="App or product type...">A job portal for freshers and companies.</textarea>
+                <button data-ai-generate="feature">Suggest features</button>
+                <div class="ai-output" id="featureOutput"></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="ai-section" id="local-ai">
+            <div class="ai-section-head">
+              <h3>Local & Privacy AI</h3>
+              <span>Private workflows, local data and browser-friendly tools</span>
+            </div>
+
+            <div class="ai-grid">
+              <article class="ai-tool-panel" data-scope="local">
+                <h4>AI Private Chat</h4>
+                <textarea id="chatInput" placeholder="Ask anything locally...">Give me a launch checklist for a small AI tool website.</textarea>
+                <button data-ai-generate="chat">Generate answer</button>
+                <div class="ai-output" id="chatOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="local">
+                <h4>AI Chat with Text File</h4>
+                <textarea id="fileChatInput" placeholder="Paste text file content...">New customers came from Instagram, referrals, and organic search. The most consistent source is referral partnerships with small agencies.</textarea>
+                <button data-ai-generate="fileChat">Summarize data</button>
+                <div class="ai-output" id="fileChatOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="local">
+                <h4>AI Document Q&A</h4>
+                <textarea id="docInput" placeholder="Paste content or document notes...">Our onboarding flow improved completion rate by 22% after reducing clicks and adding clearer prompts during setup.</textarea>
+                <button data-ai-generate="docQA">Answer questions</button>
+                <div class="ai-output" id="docQAOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="local">
+                <h4>AI Text-to-Speech</h4>
+                <textarea id="ttsInput" placeholder="Write the script you want to hear...">Welcome to your AI workspace. Keep your workflows simple, clear and useful.</textarea>
+                <button data-ai-generate="tts">Create voice prompt</button>
+                <div class="ai-output" id="ttsOutput"></div>
+              </article>
+
+              <article class="ai-tool-panel" data-scope="local">
+                <h4>AI Speech-to-Text</h4>
+                <textarea id="sttInput" placeholder="Transcription directions...">A clean summary of this meeting: we agreed on a launch window, a simple pricing plan, and a creator-first strategy.</textarea>
+                <button data-ai-generate="stt">Generate transcript</button>
+                <div class="ai-output" id="sttOutput"></div>
+              </article>
+            </div>
+          </div>
+
+          <div class="ai-section compact-section">
+            <div class="ai-section-head">
+              <h3>Expanded AI Catalog</h3>
+              <span>Every requested family covered in one studio</span>
+            </div>
+            <div class="ai-catalog-grid">
+              <span>Website Roaster</span>
+              <span>Description Generator</span>
+              <span>Tags Generator</span>
+              <span>Video Titles</span>
+              <span>Channel Name</span>
+              <span>Business Name</span>
+              <span>Bio Generator</span>
+              <span>Image Generator</span>
+              <span>Website Directory</span>
+              <span>Love Calculator</span>
+              <span>Baby Name Generator</span>
+              <span>AI Translator</span>
+              <span>Text Detector</span>
+              <span>Data Extractor</span>
+              <span>Database Schema</span>
+              <span>API Designer</span>
+              <span>README Builder</span>
+              <span>Project Generator</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='js/ai_tools.js', v=4) }}"></script>
+</body>
+</html>
