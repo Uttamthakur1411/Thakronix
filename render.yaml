@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: thakronix
+    runtime: python
+    plan: free
+    rootDir: all_in_one_tools
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120 app:app
+    healthCheckPath: /
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
