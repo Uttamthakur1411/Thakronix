@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --chdir all_in_one_tools --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120 app:app
+    startCommand: if [ ! -f app.py ] && [ -f all_in_one_tools/app.py ]; then cd all_in_one_tools; fi; exec gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120 app:app
     healthCheckPath: /
     envVars:
       - key: PYTHON_VERSION
